@@ -1,0 +1,187 @@
+import React, { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { Menu, X, Facebook, Instagram, Linkedin, MapPin, Phone, Mail, GraduationCap } from 'lucide-react';
+
+interface LayoutProps {
+  children: React.ReactNode;
+}
+
+const Layout: React.FC<LayoutProps> = ({ children }) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const location = useLocation();
+
+  const isActive = (path: string) => location.pathname === path;
+
+  const navLinks = [
+    { name: 'الرئيسية', path: '/' },
+    { name: 'الدورات', path: '/courses' },
+    { name: 'المدربون', path: '/instructors' },
+    { name: 'من نحن', path: '/about' },
+    { name: 'اتصل بنا', path: '/contact' },
+  ];
+
+  return (
+    <div className="flex flex-col min-h-screen">
+      {/* Top Bar */}
+      <div className="bg-primary-900 text-white py-2 text-sm hidden md:block">
+        <div className="container mx-auto px-4 flex justify-between items-center">
+          <div className="flex items-center gap-6">
+            <span className="flex items-center gap-2"><Phone size={14} /> 0773 220 0003</span>
+            <span className="flex items-center gap-2"><Mail size={14} /> info@shamsia.edu</span>
+          </div>
+          <div className="flex gap-4">
+             <a href="https://www.facebook.com/profile.php?id=61554748052998" target="_blank" rel="noopener noreferrer" className="hover:text-secondary-500 transition"><Facebook size={14} /></a>
+             <a href="https://www.instagram.com/shamsia.iq/" target="_blank" rel="noopener noreferrer" className="hover:text-secondary-500 transition"><Instagram size={14} /></a>
+             <a href="#" className="hover:text-secondary-500 transition"><Linkedin size={14} /></a>
+          </div>
+        </div>
+      </div>
+
+      {/* Header */}
+      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-slate-100">
+        <div className="container mx-auto px-4 py-3">
+          <div className="flex justify-between items-center">
+            {/* Logo */}
+            <Link to="/" className="flex items-center gap-3">
+              <img src="https://k.top4top.io/p_3662fca071.png" alt="Shamsia Logo" className="h-12 w-auto" />
+              <span className="text-2xl font-bold text-primary-800 hidden sm:block">شمسية</span>
+            </Link>
+
+            {/* Desktop Navigation */}
+            <nav className="hidden md:flex items-center gap-8">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  className={`font-medium transition-colors duration-200 ${
+                    isActive(link.path)
+                      ? 'text-primary-600 font-bold'
+                      : 'text-slate-600 hover:text-primary-600'
+                  }`}
+                >
+                  {link.name}
+                </Link>
+              ))}
+            </nav>
+
+            {/* CTA & Mobile Menu Button */}
+            <div className="flex items-center gap-4">
+              <Link to="/contact" className="hidden md:inline-block px-6 py-2 bg-secondary-500 hover:bg-secondary-600 text-white font-bold rounded-lg transition shadow-md shadow-secondary-500/20">
+                سجل الآن
+              </Link>
+              <button
+                className="md:hidden text-slate-700 p-1"
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+              >
+                {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Navigation */}
+        {isMenuOpen && (
+          <div className="md:hidden bg-white border-t border-slate-100">
+            <nav className="flex flex-col p-4 gap-3">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  className={`p-2 rounded-md ${
+                    isActive(link.path) ? 'bg-primary-50 text-primary-700' : 'text-slate-600'
+                  }`}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {link.name}
+                </Link>
+              ))}
+              <Link
+                to="/contact"
+                className="mt-2 w-full text-center px-4 py-3 bg-secondary-500 text-white font-bold rounded-lg"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                تسجيل جديد
+              </Link>
+            </nav>
+          </div>
+        )}
+      </header>
+
+      {/* Main Content */}
+      <main className="flex-grow">
+        {children}
+      </main>
+
+      {/* Footer */}
+      <footer className="bg-primary-900 text-white pt-16 pb-8">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+            
+            {/* Column 1: About */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 mb-4">
+                 <GraduationCap className="text-secondary-500" size={32} />
+                 <h3 className="text-2xl font-bold">شمسية</h3>
+              </div>
+              <p className="text-primary-100 text-sm leading-relaxed">
+                منصة شمسية الألكترونية منصة تعمل بأيادٍ عراقية وعربية، هدفها تحقيق مفهوم التنمية المستدامة (SDG).
+              </p>
+            </div>
+
+            {/* Column 2: Quick Links */}
+            <div>
+              <h4 className="text-lg font-bold mb-6 border-r-4 border-secondary-500 pr-3">روابط سريعة</h4>
+              <ul className="space-y-2 text-primary-100">
+                <li><Link to="/courses" className="hover:text-secondary-400 transition">جميع الدورات</Link></li>
+                <li><Link to="/instructors" className="hover:text-secondary-400 transition">فريق المدربين</Link></li>
+                <li><Link to="/about" className="hover:text-secondary-400 transition">الاعتمادات</Link></li>
+                <li><Link to="/contact" className="hover:text-secondary-400 transition">سياسة الخصوصية</Link></li>
+              </ul>
+            </div>
+
+             {/* Column 3: Categories */}
+             <div>
+              <h4 className="text-lg font-bold mb-6 border-r-4 border-secondary-500 pr-3">التصنيفات</h4>
+              <ul className="space-y-2 text-primary-100">
+                <li><Link to="/courses" className="hover:text-secondary-400 transition">التقنية والبرمجة</Link></li>
+                <li><Link to="/courses" className="hover:text-secondary-400 transition">الأمن السيبراني</Link></li>
+                <li><Link to="/courses" className="hover:text-secondary-400 transition">الإدارة والقيادة</Link></li>
+                <li><Link to="/courses" className="hover:text-secondary-400 transition">تطوير الذات</Link></li>
+              </ul>
+            </div>
+
+            {/* Column 4: Contact */}
+            <div>
+              <h4 className="text-lg font-bold mb-6 border-r-4 border-secondary-500 pr-3">تواصل معنا</h4>
+              <ul className="space-y-4 text-primary-100">
+                <li className="flex items-start gap-3">
+                  <MapPin className="text-secondary-500 mt-1" size={18} />
+                  <span>العراق، بغداد</span>
+                </li>
+                <li className="flex items-center gap-3">
+                  <Phone className="text-secondary-500" size={18} />
+                  <span className="ltr">0773 220 0003</span>
+                </li>
+                <li className="flex items-center gap-3">
+                  <Mail className="text-secondary-500" size={18} />
+                  <span>info@shamsia.edu</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+          
+          <div className="border-t border-primary-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-primary-200">
+            <p>جميع الحقوق محفوظة © منصة شمسية {new Date().getFullYear()}</p>
+            <div className="flex gap-4">
+              <a href="https://www.facebook.com/profile.php?id=61554748052998" target="_blank" rel="noopener noreferrer" className="bg-primary-800 p-2 rounded-full hover:bg-secondary-500 hover:text-white transition"><Facebook size={18}/></a>
+              <a href="https://www.instagram.com/shamsia.iq/" target="_blank" rel="noopener noreferrer" className="bg-primary-800 p-2 rounded-full hover:bg-secondary-500 hover:text-white transition"><Instagram size={18}/></a>
+              <a href="#" className="bg-primary-800 p-2 rounded-full hover:bg-secondary-500 hover:text-white transition"><Linkedin size={18}/></a>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+export default Layout;
