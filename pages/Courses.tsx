@@ -16,19 +16,20 @@ const Courses: React.FC = () => {
   });
 
   return (
-    <div className="bg-slate-50 min-h-screen pb-20">
+    <div className="bg-slate-50 min-h-screen pb-24">
       {/* Header */}
-      <div className="bg-primary-900 py-16 text-white">
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl font-bold mb-4">دوراتنا التدريبية</h1>
-          <p className="text-primary-200 text-lg max-w-2xl mx-auto">
+      <div className="bg-primary-900 py-16 text-white overflow-hidden relative">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 animate-pulse"></div>
+        <div className="container mx-auto px-4 text-center relative z-10">
+          <h1 className="text-4xl font-bold mb-4 animate-fade-in-down">دوراتنا التدريبية</h1>
+          <p className="text-primary-200 text-lg max-w-2xl mx-auto animate-fade-in-up delay-100">
             تصفح مكتبتنا الواسعة من الدورات التدريبية المصممة لرفع كفاءتك المهنية والشخصية
           </p>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 -mt-8">
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
+      <div className="container mx-auto px-4 -mt-8 relative z-20">
+        <div className="bg-white rounded-xl shadow-lg p-6 mb-8 animate-scale-in delay-200">
           <div className="flex flex-col md:flex-row gap-6 items-center justify-between">
             {/* Categories */}
             <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-hide">
@@ -37,9 +38,9 @@ const Courses: React.FC = () => {
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
+                  className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
                     selectedCategory === cat 
-                      ? 'bg-primary-600 text-white shadow-md' 
+                      ? 'bg-primary-600 text-white shadow-md transform scale-105' 
                       : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                   }`}
                 >
@@ -54,7 +55,7 @@ const Courses: React.FC = () => {
               <input 
                 type="text" 
                 placeholder="ابحث عن دورة..." 
-                className="w-full pl-4 pr-10 py-2 rounded-lg border border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none transition"
+                className="w-full pl-4 pr-10 py-2 rounded-lg border border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none transition duration-300"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -65,12 +66,14 @@ const Courses: React.FC = () => {
         {/* Results */}
         {filteredCourses.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredCourses.map(course => (
-              <CourseCard key={course.id} course={course} />
+            {filteredCourses.map((course, index) => (
+              <div key={course.id} className={`animate-fade-in-up delay-${(index % 5) * 100 + 300}`}>
+                <CourseCard course={course} />
+              </div>
             ))}
           </div>
         ) : (
-          <div className="text-center py-20">
+          <div className="text-center py-20 animate-fade-in">
             <div className="bg-slate-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
               <Search size={40} className="text-slate-400" />
             </div>

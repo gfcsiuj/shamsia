@@ -24,6 +24,7 @@ export interface Course {
   studentsCount: number;
   description: string;
   objectives: string[];
+  targetAudience: string[]; // New field
   syllabus: { week: string; topic: string }[];
   startDate: string;
 }
@@ -34,4 +35,14 @@ export interface Testimonial {
   role: string;
   content: string;
   image: string;
+}
+
+export interface Resource {
+  id: string;
+  title: string;
+  type: 'article' | 'pdf' | 'video';
+  category: string;
+  date: string;
+  url: string;
+  description: string;
 }

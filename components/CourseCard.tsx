@@ -72,11 +72,11 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
           <div className="flex flex-col">
             {course.oldPrice && (
               <span className="text-xs text-slate-400 line-through">
-                {course.oldPrice} ر.س
+                {course.oldPrice.toLocaleString()} د.ع
               </span>
             )}
             <span className="text-xl font-bold text-primary-700">
-              {course.price === 0 ? 'مجاناً' : `${course.price} ر.س`}
+              {course.price === 0 ? 'مجاناً' : `${course.price.toLocaleString()} د.ع`}
             </span>
           </div>
           <Link 

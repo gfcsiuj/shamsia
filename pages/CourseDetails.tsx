@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Calendar, Clock, Award, PlayCircle, CheckCircle, User, BarChart } from 'lucide-react';
+import { Calendar, Clock, Award, PlayCircle, CheckCircle, User, BarChart, Users } from 'lucide-react';
 import { COURSES, INSTRUCTORS } from '../constants';
 
 const CourseDetails: React.FC = () => {
@@ -12,7 +12,7 @@ const CourseDetails: React.FC = () => {
   if (!course) {
     return (
       <div className="min-h-[50vh] flex items-center justify-center">
-        <div className="text-center">
+        <div className="text-center animate-fade-in">
           <h2 className="text-2xl font-bold mb-4">الدورة غير موجودة</h2>
           <Link to="/courses" className="text-primary-600 hover:underline">العودة للدورات</Link>
         </div>
@@ -21,31 +21,31 @@ const CourseDetails: React.FC = () => {
   }
 
   return (
-    <div className="bg-slate-50 min-h-screen pb-20">
+    <div className="bg-slate-50 min-h-screen pb-24">
       {/* Header / Hero */}
-      <div className="bg-primary-900 text-white pt-12 pb-24">
+      <div className="bg-primary-900 text-white pt-8 md:pt-12 pb-16 md:pb-24">
         <div className="container mx-auto px-4">
            <div className="flex flex-col lg:flex-row gap-8 items-start">
-             <div className="lg:w-2/3">
-                <span className="inline-block bg-secondary-500 text-white text-xs font-bold px-3 py-1 rounded-full mb-4">
+             <div className="lg:w-2/3 animate-fade-in-right">
+                <span className="inline-block bg-secondary-500 text-white text-xs font-bold px-3 py-1 rounded-full mb-4 animate-scale-in delay-100">
                   {course.category}
                 </span>
-                <h1 className="text-3xl md:text-5xl font-bold mb-6 leading-tight">{course.title}</h1>
-                <p className="text-primary-100 text-lg mb-8 leading-relaxed max-w-2xl">
+                <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6 leading-tight animate-fade-in-up delay-200">{course.title}</h1>
+                <p className="text-primary-100 text-base md:text-lg mb-6 md:mb-8 leading-relaxed max-w-2xl animate-fade-in-up delay-300">
                   {course.description}
                 </p>
                 
-                <div className="flex flex-wrap gap-6 text-sm md:text-base">
+                <div className="flex flex-wrap gap-4 md:gap-6 text-sm md:text-base animate-fade-in-up delay-400">
                   <div className="flex items-center gap-2">
-                    <User className="text-secondary-400" size={20} />
+                    <User className="text-secondary-400" size={18} />
                     <span>المدرب: {instructor?.name}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <BarChart className="text-secondary-400" size={20} />
+                    <BarChart className="text-secondary-400" size={18} />
                     <span>المستوى: {course.level}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Award className="text-secondary-400" size={20} />
+                    <Award className="text-secondary-400" size={18} />
                     <span>شهادة إتمام معتمدة</span>
                   </div>
                 </div>
@@ -54,59 +54,77 @@ const CourseDetails: React.FC = () => {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 -mt-16 relative z-10">
+      <div className="container mx-auto px-4 -mt-10 md:-mt-16 relative z-10">
         <div className="flex flex-col lg:flex-row gap-8">
           
           {/* Main Content Column */}
-          <div className="lg:w-2/3">
+          <div className="lg:w-2/3 animate-fade-in-up delay-500">
             {/* Video Placeholder */}
             <div className="bg-black rounded-xl overflow-hidden aspect-video shadow-lg mb-8 relative group cursor-pointer">
-              <img src={course.image} alt={course.title} className="w-full h-full object-cover opacity-60 group-hover:opacity-40 transition" />
+              <img src={course.image} alt={course.title} className="w-full h-full object-cover opacity-60 group-hover:opacity-40 transition duration-500" />
               <div className="absolute inset-0 flex items-center justify-center">
-                <PlayCircle size={64} className="text-white drop-shadow-lg group-hover:scale-110 transition" />
+                <PlayCircle size={64} className="text-white drop-shadow-lg group-hover:scale-110 transition scale-90 md:scale-100 duration-300" />
               </div>
             </div>
 
             {/* Tabs Navigation */}
-            <div className="bg-white rounded-t-xl border-b border-slate-200 flex overflow-x-auto">
+            <div className="bg-white rounded-t-xl border-b border-slate-200 flex overflow-x-auto scrollbar-hide">
               <button 
                 onClick={() => setActiveTab('about')}
-                className={`px-8 py-4 font-bold text-sm md:text-base whitespace-nowrap border-b-2 transition ${activeTab === 'about' ? 'border-primary-600 text-primary-600 bg-primary-50' : 'border-transparent text-slate-500 hover:text-slate-800'}`}
+                className={`flex-shrink-0 px-6 md:px-8 py-4 font-bold text-sm md:text-base whitespace-nowrap border-b-2 transition ${activeTab === 'about' ? 'border-primary-600 text-primary-600 bg-primary-50' : 'border-transparent text-slate-500 hover:text-slate-800'}`}
               >
                 عن الدورة
               </button>
               <button 
                 onClick={() => setActiveTab('syllabus')}
-                className={`px-8 py-4 font-bold text-sm md:text-base whitespace-nowrap border-b-2 transition ${activeTab === 'syllabus' ? 'border-primary-600 text-primary-600 bg-primary-50' : 'border-transparent text-slate-500 hover:text-slate-800'}`}
+                className={`flex-shrink-0 px-6 md:px-8 py-4 font-bold text-sm md:text-base whitespace-nowrap border-b-2 transition ${activeTab === 'syllabus' ? 'border-primary-600 text-primary-600 bg-primary-50' : 'border-transparent text-slate-500 hover:text-slate-800'}`}
               >
                 المنهج الدراسي
               </button>
               <button 
                 onClick={() => setActiveTab('instructor')}
-                className={`px-8 py-4 font-bold text-sm md:text-base whitespace-nowrap border-b-2 transition ${activeTab === 'instructor' ? 'border-primary-600 text-primary-600 bg-primary-50' : 'border-transparent text-slate-500 hover:text-slate-800'}`}
+                className={`flex-shrink-0 px-6 md:px-8 py-4 font-bold text-sm md:text-base whitespace-nowrap border-b-2 transition ${activeTab === 'instructor' ? 'border-primary-600 text-primary-600 bg-primary-50' : 'border-transparent text-slate-500 hover:text-slate-800'}`}
               >
                 المدرب
               </button>
             </div>
 
             {/* Tab Content */}
-            <div className="bg-white rounded-b-xl shadow-sm p-8 min-h-[400px]">
+            <div className="bg-white rounded-b-xl shadow-sm p-6 md:p-8 min-h-[400px]">
               {activeTab === 'about' && (
                 <div className="animate-fade-in space-y-8">
                   <div>
-                    <h3 className="text-2xl font-bold text-slate-800 mb-4">ماذا ستتعلم؟</h3>
+                    <h3 className="text-xl md:text-2xl font-bold text-slate-800 mb-4">ماذا ستتعلم؟</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {course.objectives.map((obj, i) => (
                         <div key={i} className="flex items-start gap-3">
                           <CheckCircle className="text-secondary-500 flex-shrink-0 mt-1" size={20} />
-                          <span className="text-slate-600">{obj}</span>
+                          <span className="text-slate-600 text-sm md:text-base">{obj}</span>
                         </div>
                       ))}
                     </div>
                   </div>
+
+                  {/* Target Audience Section - New Feature */}
+                  <div className="bg-primary-50 p-6 rounded-xl border border-primary-100">
+                    <h3 className="text-lg md:text-xl font-bold text-primary-800 mb-4 flex items-center gap-2">
+                       <Users size={22} />
+                       الفئة المستهدفة
+                    </h3>
+                    <p className="text-sm text-slate-500 mb-4">هذه الدورة مصممة خصيصاً لـ:</p>
+                    <ul className="grid grid-cols-1 gap-3">
+                      {course.targetAudience.map((target, i) => (
+                        <li key={i} className="flex items-center gap-2 text-slate-700 font-medium text-sm md:text-base">
+                          <div className="w-2 h-2 rounded-full bg-secondary-500"></div>
+                          {target}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
                   <div>
-                    <h3 className="text-2xl font-bold text-slate-800 mb-4">وصف شامل</h3>
-                    <p className="text-slate-600 leading-relaxed">
+                    <h3 className="text-xl md:text-2xl font-bold text-slate-800 mb-4">وصف شامل</h3>
+                    <p className="text-slate-600 leading-relaxed text-sm md:text-base">
                       تقدم هذه الدورة تجربة تعليمية فريدة تمزج بين النظرية والتطبيق. 
                       سواء كنت مبتدئاً أو محترفاً يسعى لتطوير مهاراته، فإن المحتوى المقدم هنا مصمم ليسد الفجوة بين المعرفة الأكاديمية واحتياجات سوق العمل.
                       <br /><br />
@@ -118,16 +136,16 @@ const CourseDetails: React.FC = () => {
 
               {activeTab === 'syllabus' && (
                 <div className="animate-fade-in space-y-4">
-                  <h3 className="text-2xl font-bold text-slate-800 mb-6">محتوى الدورة</h3>
+                  <h3 className="text-xl md:text-2xl font-bold text-slate-800 mb-6">محتوى الدورة</h3>
                   {course.syllabus.map((week, i) => (
-                    <div key={i} className="border border-slate-100 rounded-lg p-4 hover:border-primary-200 transition bg-slate-50 hover:bg-white">
+                    <div key={i} className={`border border-slate-100 rounded-lg p-4 hover:border-primary-200 transition bg-slate-50 hover:bg-white animate-fade-in-up delay-${i * 100}`}>
                       <div className="flex items-center gap-4">
-                        <div className="bg-primary-100 text-primary-700 w-12 h-12 rounded-lg flex items-center justify-center font-bold text-lg">
+                        <div className="bg-primary-100 text-primary-700 w-10 h-10 md:w-12 md:h-12 rounded-lg flex items-center justify-center font-bold text-base md:text-lg flex-shrink-0">
                           {i + 1}
                         </div>
                         <div>
-                          <h4 className="font-bold text-slate-800">{week.week}</h4>
-                          <p className="text-slate-500">{week.topic}</p>
+                          <h4 className="font-bold text-slate-800 text-sm md:text-base">{week.week}</h4>
+                          <p className="text-slate-500 text-xs md:text-sm">{week.topic}</p>
                         </div>
                       </div>
                     </div>
@@ -136,12 +154,12 @@ const CourseDetails: React.FC = () => {
               )}
 
               {activeTab === 'instructor' && instructor && (
-                <div className="animate-fade-in flex flex-col md:flex-row gap-8 items-center md:items-start text-center md:text-right">
-                  <img src={instructor.image} alt={instructor.name} className="w-32 h-32 rounded-full object-cover shadow-md" />
+                <div className="animate-fade-in flex flex-col md:flex-row gap-6 md:gap-8 items-center md:items-start text-center md:text-right">
+                  <img src={instructor.image} alt={instructor.name} className="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover shadow-md" />
                   <div>
-                    <h3 className="text-2xl font-bold text-slate-800 mb-2">{instructor.name}</h3>
+                    <h3 className="text-xl md:text-2xl font-bold text-slate-800 mb-2">{instructor.name}</h3>
                     <p className="text-secondary-600 font-medium mb-4">{instructor.role}</p>
-                    <p className="text-slate-600 leading-relaxed mb-6">
+                    <p className="text-slate-600 leading-relaxed mb-6 text-sm md:text-base">
                       {instructor.bio}
                     </p>
                     <Link to="/instructors" className="text-primary-600 font-bold hover:underline">
@@ -154,16 +172,17 @@ const CourseDetails: React.FC = () => {
           </div>
 
           {/* Sidebar */}
-          <div className="lg:w-1/3">
-            <div className="bg-white rounded-xl shadow-lg p-6 sticky top-24 border border-slate-100">
-              <div className="text-3xl font-extrabold text-primary-800 mb-2">
-                {course.price} ر.س <span className="text-sm font-normal text-slate-500">/ شامل الضريبة</span>
+          <div className="lg:w-1/3 animate-fade-in-left delay-500">
+            <div className="bg-white rounded-xl shadow-lg p-6 lg:sticky lg:top-24 border border-slate-100">
+              <div className="text-2xl md:text-3xl font-extrabold text-primary-800 mb-2">
+                {course.price.toLocaleString()} د.ع <span className="text-xs md:text-sm font-normal text-slate-500">/ شامل الضريبة</span>
               </div>
               {course.oldPrice && (
-                <div className="text-slate-400 line-through text-sm mb-6">{course.oldPrice} ر.س</div>
+                <div className="text-slate-400 line-through text-sm mb-6">{course.oldPrice.toLocaleString()} د.ع</div>
               )}
 
-              <Link to="/contact" className="block w-full bg-secondary-500 hover:bg-secondary-600 text-white font-bold text-center py-4 rounded-xl transition shadow-lg shadow-secondary-500/20 mb-6">
+              {/* Updated Register Button */}
+              <Link to={`/courses/${course.id}/register`} className="block w-full bg-secondary-500 hover:bg-secondary-600 text-white font-bold text-center py-4 rounded-xl transition shadow-lg shadow-secondary-500/20 mb-6 transform hover:scale-105 duration-300">
                 سجل الآن
               </Link>
 

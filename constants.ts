@@ -1,4 +1,4 @@
-import { Course, Instructor, Testimonial } from './types';
+import { Course, Instructor, Testimonial, Resource } from './types';
 
 export const INSTRUCTORS: Instructor[] = [
   {
@@ -37,8 +37,8 @@ export const COURSES: Course[] = [
     title: 'أساسيات الأمن السيبراني',
     category: 'Cyber Security',
     level: 'مبتدئ',
-    price: 350,
-    oldPrice: 500,
+    price: 75000,
+    oldPrice: 100000,
     image: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=800',
     instructorId: 'inst-1',
     duration: '6 أسابيع',
@@ -52,6 +52,11 @@ export const COURSES: Course[] = [
       'تعلم طرق حماية البيانات الشخصية والمؤسسية',
       'أساسيات التشفير والشبكات',
     ],
+    targetAudience: [
+      'طلاب تكنولوجيا المعلومات والحاسبات',
+      'المهتمين بمجال أمن المعلومات',
+      'مسؤولي الأنظمة والشبكات المبتدئين'
+    ],
     syllabus: [
       { week: 'الأسبوع 1', topic: 'مقدمة في أمن المعلومات' },
       { week: 'الأسبوع 2', topic: 'أنواع البرمجيات الخبيثة' },
@@ -64,7 +69,7 @@ export const COURSES: Course[] = [
     title: 'تطوير واجهات المستخدم React',
     category: 'Tech',
     level: 'متوسط',
-    price: 450,
+    price: 90000,
     image: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?auto=format&fit=crop&q=80&w=800',
     instructorId: 'inst-3',
     duration: '8 أسابيع',
@@ -78,6 +83,11 @@ export const COURSES: Course[] = [
       'ربط التطبيق مع API',
       'بناء مشروع متكامل',
     ],
+    targetAudience: [
+      'مطوري الواجهات الأمامية (Frontend Developers)',
+      'الطلاب الذين يرغبون بتعلم أطر عمل حديثة',
+      'مبرمجي JavaScript'
+    ],
     syllabus: [
       { week: 'الأسبوع 1', topic: 'مراجعة JavaScript ES6' },
       { week: 'الأسبوع 2', topic: 'مقدمة في React JSX' },
@@ -90,7 +100,7 @@ export const COURSES: Course[] = [
     title: 'القيادة الإدارية الناجحة',
     category: 'Admin Skills',
     level: 'متقدم',
-    price: 600,
+    price: 125000,
     image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=800',
     instructorId: 'inst-2',
     duration: '4 أسابيع',
@@ -104,6 +114,11 @@ export const COURSES: Course[] = [
       'اتخاذ القرارات وحل المشكلات',
       'التواصل القيادي الفعال',
     ],
+    targetAudience: [
+      'مدراء الأقسام ورؤساء الفرق',
+      'رواد الأعمال وأصحاب المشاريع',
+      'المرشحين للمناصب القيادية'
+    ],
     syllabus: [
       { week: 'الأسبوع 1', topic: 'سمات القائد الناجح' },
       { week: 'الأسبوع 2', topic: 'بناء وإدارة الفرق' },
@@ -115,7 +130,7 @@ export const COURSES: Course[] = [
     title: 'مهارات التفوق الدراسي',
     category: 'Student Skills',
     level: 'مبتدئ',
-    price: 150,
+    price: 25000,
     image: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&q=80&w=800',
     instructorId: 'inst-4',
     duration: '2 أسابيع',
@@ -128,6 +143,11 @@ export const COURSES: Course[] = [
       'طرق الحفظ والمراجعة الذكية',
       'التعامل مع قلق الاختبارات',
     ],
+    targetAudience: [
+      'طلاب المدارس الثانوية والجامعات',
+      'أولياء الأمور المهتمين بتطوير أبنائهم',
+      'المرشدين التربويين'
+    ],
     syllabus: [
       { week: 'الأسبوع 1', topic: 'تنظيم البيئة الدراسية' },
       { week: 'الأسبوع 2', topic: 'تقنيات التذكر والخرائط الذهنية' },
@@ -138,7 +158,7 @@ export const COURSES: Course[] = [
     title: 'مقدمة في الذكاء الاصطناعي',
     category: 'Tech',
     level: 'مبتدئ',
-    price: 300,
+    price: 60000,
     image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=800',
     instructorId: 'inst-3',
     duration: '5 أسابيع',
@@ -150,6 +170,11 @@ export const COURSES: Course[] = [
       'فهم تاريخ ومستقبل AI',
       'التعرف على التعلم الآلي',
       'أخلاقيات الذكاء الاصطناعي',
+    ],
+    targetAudience: [
+      'المهتمين بالتقنيات الحديثة',
+      'الطلاب والباحثين',
+      'رواد الأعمال في المجال التقني'
     ],
     syllabus: [
       { week: 'الأسبوع 1', topic: 'ما هو الذكاء الاصطناعي؟' },
@@ -172,5 +197,53 @@ export const TESTIMONIALS: Testimonial[] = [
     role: 'مديرة مشاريع',
     content: 'حصلت على شهادة إدارة المشاريع بفضل الدورة المكثفة هنا. أنصح الجميع بالتسجيل.',
     image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200',
+  },
+];
+
+export const RESOURCES: Resource[] = [
+  {
+    id: 'r-1',
+    title: 'دليل الأمن السيبراني للمبتدئين',
+    type: 'pdf',
+    category: 'Cyber Security',
+    date: '2024-01-15',
+    url: '#',
+    description: 'كتيب شامل يحتوي على أهم المصطلحات والمفاهيم في عالم أمن المعلومات.',
+  },
+  {
+    id: 'r-2',
+    title: 'كيف تبدأ مسارك في البرمجة؟',
+    type: 'article',
+    category: 'Tech',
+    date: '2024-02-01',
+    url: '#',
+    description: 'مقال تفصيلي يشرح خارطة الطريق لتعلم لغات البرمجة الأكثر طلباً في السوق.',
+  },
+  {
+    id: 'r-3',
+    title: 'ورشة عمل: القيادة في الأزمات',
+    type: 'video',
+    category: 'Admin Skills',
+    date: '2023-12-20',
+    url: '#',
+    description: 'تسجيل كامل لورشة عمل تفاعلية عن استراتيجيات القيادة الناجحة وقت الأزمات.',
+  },
+  {
+    id: 'r-4',
+    title: 'أهم 10 أدوات للطلاب الجامعيين',
+    type: 'article',
+    category: 'Student Skills',
+    date: '2024-01-25',
+    url: '#',
+    description: 'مقال يستعرض أفضل التطبيقات والمواقع التي تساعد الطالب على تنظيم وقته ودراسته.',
+  },
+  {
+    id: 'r-5',
+    title: 'أساسيات الشبكات (كتاب إلكتروني)',
+    type: 'pdf',
+    category: 'Cyber Security',
+    date: '2023-11-10',
+    url: '#',
+    description: 'مرجع سريع لفهم كيفية عمل الشبكات والبروتوكولات الأساسية.',
   },
 ];
