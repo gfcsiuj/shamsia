@@ -4,7 +4,7 @@ import { db, storage } from '../../lib/firebase';
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { Course, Instructor, MediaItem } from '../../types';
-import { Plus, Pencil, Trash2, X, Upload, Loader2, Save, ArrowRight, Minus, Image as ImageIcon, Video, Link as LinkIcon, Users, Tag, CheckSquare, Layers } from 'lucide-react';
+import { Plus, Pencil, Trash2, X, Upload, Loader2, Save, ArrowRight, Minus, Image as ImageIcon, Video, Link as LinkIcon, Users, Tag, CheckSquare, Layers, Layout, FileText, List } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const CoursesAdmin: React.FC = () => {
@@ -258,7 +258,7 @@ const CoursesAdmin: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {courses.map((course) => (
                 <div key={course.id} className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition group">
-                    <div className="h-40 relative">
+                    <div className="h-40 relative bg-slate-100">
                         {course.media && course.media[0] ? (
                              course.media[0].type === 'video' ? (
                                 <div className="w-full h-full bg-slate-900 flex items-center justify-center text-white"><Video size={32} /></div>
@@ -273,7 +273,7 @@ const CoursesAdmin: React.FC = () => {
                     <div className="p-5">
                         <h3 className="font-bold text-slate-800 mb-1 line-clamp-1">{course.title}</h3>
                         <div className="flex items-center gap-2 text-xs text-slate-500 mb-4">
-                            <span>{course.price > 0 ? course.price.toLocaleString() : 'مجاناً'}</span>
+                            <span className="font-semibold text-primary-600">{course.price > 0 ? course.price.toLocaleString() : 'مجاناً'}</span>
                             <span>•</span>
                             <span>{course.studentsCount} طالب</span>
                         </div>
@@ -295,37 +295,50 @@ const CoursesAdmin: React.FC = () => {
 
         {/* Full Screen Form Overlay */}
         {isEditing && (
-          <div className="fixed inset-0 z-50 bg-slate-100 flex flex-col animate-fade-in overflow-hidden">
+          <div className="fixed inset-0 z-50 bg-slate-50 flex flex-col animate-fade-in overflow-hidden">
              {/* Form Header */}
-             <div className="bg-white px-6 py-4 shadow-sm flex justify-between items-center z-10 border-b border-slate-200">
-                <div className="flex items-center gap-4">
+             <div className="bg-white px-6 py-4 shadow-sm flex flex-col md:flex-row justify-between items-center z-20 border-b border-slate-200 gap-4">
+                <div className="flex items-center gap-4 w-full md:w-auto">
                     <button onClick={() => setIsEditing(false)} className="p-2 hover:bg-slate-100 rounded-full text-slate-500 transition"><X /></button>
-                    <h2 className="text-xl font-bold text-slate-800">{formData.id ? 'تعديل دورة' : 'إنشاء دورة جديدة'}</h2>
+                    <div>
+                         <h2 className="text-xl font-bold text-slate-800">{formData.id ? 'تعديل دورة' : 'إنشاء دورة جديدة'}</h2>
+                         <p className="text-xs text-slate-500 hidden md:block">{formData.title || 'دورة جديدة بلا عنوان'}</p>
+                    </div>
                 </div>
-                <div className="flex items-center gap-2 bg-slate-100 p-1 rounded-lg">
-                     {['basic', 'details', 'syllabus'].map((t) => (
+                
+                <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl w-full md:w-auto justify-center">
+                     {[
+                        { id: 'basic', label: 'البيانات الأساسية', icon: Layout },
+                        { id: 'details', label: 'تفاصيل المحتوى', icon: FileText },
+                        { id: 'syllabus', label: 'المنهج الدراسي', icon: List }
+                     ].map((t) => (
                          <button
-                            key={t}
-                            onClick={() => setActiveTab(t as any)}
-                            className={`px-4 py-1.5 rounded-md font-bold text-sm transition ${activeTab === t ? 'bg-white text-primary-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                            key={t.id}
+                            onClick={() => setActiveTab(t.id as any)}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-sm transition ${activeTab === t.id ? 'bg-white text-primary-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
                          >
-                             {t === 'basic' ? 'البيانات الأساسية' : t === 'details' ? 'تفاصيل المحتوى' : 'المنهج الدراسي'}
+                             <t.icon size={16} className="hidden sm:block" />
+                             {t.label}
                          </button>
                      ))}
                 </div>
-                <button 
-                    onClick={handleSubmit} 
-                    disabled={saveLoading}
-                    className="px-6 py-2 rounded-lg bg-primary-600 text-white hover:bg-primary-700 font-bold transition flex items-center gap-2 shadow-md shadow-primary-200 disabled:opacity-70"
-                >
-                    {saveLoading ? <Loader2 className="animate-spin" size={20} /> : <Save size={20} />}
-                    حفظ
-                </button>
+
+                <div className="flex gap-2 w-full md:w-auto">
+                    <button type="button" onClick={() => setIsEditing(false)} className="px-4 py-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 font-bold transition flex-1 md:flex-none justify-center">إلغاء</button>
+                    <button 
+                        onClick={handleSubmit} 
+                        disabled={saveLoading}
+                        className="px-6 py-2 rounded-lg bg-primary-600 text-white hover:bg-primary-700 font-bold transition flex items-center justify-center gap-2 shadow-lg shadow-primary-200 disabled:opacity-70 flex-1 md:flex-none"
+                    >
+                        {saveLoading ? <Loader2 className="animate-spin" size={20} /> : <Save size={20} />}
+                        حفظ
+                    </button>
+                </div>
              </div>
 
              {/* Form Body - Scrollable */}
-             <div className="flex-1 overflow-y-auto p-6 md:p-8">
-                 <div className="max-w-5xl mx-auto space-y-8">
+             <div className="flex-1 overflow-y-auto p-4 md:p-8 custom-scrollbar">
+                 <div className="max-w-6xl mx-auto space-y-8 pb-20">
                      
                      {/* Basic Info Tab */}
                      {activeTab === 'basic' && (
@@ -341,13 +354,16 @@ const CoursesAdmin: React.FC = () => {
                                          </div>
                                          <div>
                                              <label className="label">التصنيف</label>
-                                             <select className="input" value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})}>
-                                                 <option value="Tech">التقنية والبرمجة</option>
-                                                 <option value="Human Development">التنمية البشرية</option>
-                                                 <option value="Cyber Security">الأمن السيبراني</option>
-                                                 <option value="Admin Skills">المهارات الإدارية</option>
-                                                 <option value="Student Skills">المهارات الطلابية</option>
-                                             </select>
+                                             <div className="relative">
+                                                <select className="input appearance-none" value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})}>
+                                                    <option value="Tech">التقنية والبرمجة</option>
+                                                    <option value="Human Development">التنمية البشرية</option>
+                                                    <option value="Cyber Security">الأمن السيبراني</option>
+                                                    <option value="Admin Skills">المهارات الإدارية</option>
+                                                    <option value="Student Skills">المهارات الطلابية</option>
+                                                </select>
+                                                <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400"><Layout size={16}/></div>
+                                             </div>
                                          </div>
                                          <div>
                                              <label className="label">المستوى</label>
@@ -379,37 +395,39 @@ const CoursesAdmin: React.FC = () => {
                                      </div>
                                  </div>
 
-                                 <div className="card border-primary-100 bg-primary-50/50">
-                                      <h3 className="section-title text-primary-800 border-primary-100">المدربين</h3>
-                                      <div className="flex flex-wrap gap-2 mb-3">
+                                 <div className="card border-primary-100 bg-primary-50/30">
+                                      <h3 className="section-title text-primary-800 border-primary-100 flex items-center gap-2">
+                                          <Users size={18} className="text-primary-600"/>
+                                          المدربين
+                                      </h3>
+                                      <div className="flex flex-wrap gap-2 mb-4">
                                           {formData.instructorIds?.map(id => {
                                               const inst = instructors.find(i => i.id === id);
                                               return inst ? (
-                                                  <div key={id} className="flex items-center gap-2 bg-white text-primary-700 px-3 py-1.5 rounded-full text-sm font-medium border border-primary-100 shadow-sm">
-                                                      <img src={inst.image} className="w-5 h-5 rounded-full object-cover"/>
+                                                  <div key={id} className="flex items-center gap-2 bg-white text-primary-700 pl-2 pr-3 py-1.5 rounded-full text-sm font-bold border border-primary-100 shadow-sm animate-pop-in">
+                                                      <img src={inst.image} className="w-6 h-6 rounded-full object-cover border border-slate-100"/>
                                                       {inst.name}
-                                                      <button onClick={() => toggleInstructor(id)} className="hover:text-red-500"><X size={14}/></button>
+                                                      <button onClick={() => toggleInstructor(id)} className="hover:text-red-500 bg-primary-50 rounded-full p-0.5 ml-1"><X size={12}/></button>
                                                   </div>
                                               ) : null;
                                           })}
+                                          {formData.instructorIds?.length === 0 && <span className="text-sm text-slate-400 py-2">لم يتم اختيار مدربين بعد</span>}
                                       </div>
-                                      <div className="relative group">
-                                          <button type="button" className="input text-start text-slate-500 flex justify-between items-center bg-white">
-                                              <span>اختر المدربين...</span>
-                                              <Users size={16} />
-                                          </button>
-                                          <div className="absolute top-full left-0 right-0 bg-white border border-slate-200 shadow-lg rounded-lg mt-1 max-h-48 overflow-y-auto hidden group-hover:block hover:block z-10">
+                                      
+                                      <div className="border-t border-primary-100 pt-4">
+                                          <p className="text-xs font-bold text-primary-700 mb-3">اختر من القائمة:</p>
+                                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto custom-scrollbar">
                                               {instructors.map(inst => (
                                                   <div 
                                                     key={inst.id} 
                                                     onClick={() => toggleInstructor(inst.id)}
-                                                    className={`p-2 flex items-center gap-3 hover:bg-slate-50 cursor-pointer ${formData.instructorIds?.includes(inst.id) ? 'bg-primary-50' : ''}`}
+                                                    className={`p-2 flex items-center gap-3 rounded-lg border cursor-pointer transition ${formData.instructorIds?.includes(inst.id) ? 'bg-primary-100 border-primary-200' : 'bg-white border-slate-200 hover:border-primary-200'}`}
                                                   >
-                                                      <div className={`w-4 h-4 rounded border flex items-center justify-center ${formData.instructorIds?.includes(inst.id) ? 'bg-primary-500 border-primary-500' : 'border-slate-300'}`}>
-                                                          {formData.instructorIds?.includes(inst.id) && <CheckSquare size={12} className="text-white"/>}
+                                                      <div className={`w-5 h-5 rounded border flex items-center justify-center transition ${formData.instructorIds?.includes(inst.id) ? 'bg-primary-500 border-primary-500' : 'border-slate-300'}`}>
+                                                          {formData.instructorIds?.includes(inst.id) && <CheckSquare size={14} className="text-white"/>}
                                                       </div>
                                                       <img src={inst.image} className="w-8 h-8 rounded-full object-cover"/>
-                                                      <span className="text-sm font-medium">{inst.name}</span>
+                                                      <span className={`text-sm font-medium ${formData.instructorIds?.includes(inst.id) ? 'text-primary-800' : 'text-slate-600'}`}>{inst.name}</span>
                                                   </div>
                                               ))}
                                           </div>
@@ -417,31 +435,48 @@ const CoursesAdmin: React.FC = () => {
                                  </div>
 
                                  <div className="card border-blue-100 bg-blue-50/30">
-                                     <h3 className="section-title text-blue-800 border-blue-100">الوسائط (الغلاف والفيديو)</h3>
+                                     <h3 className="section-title text-blue-800 border-blue-100 flex items-center gap-2">
+                                         <ImageIcon size={18} className="text-blue-600" />
+                                         الوسائط (الغلاف والفيديو)
+                                     </h3>
                                      
                                      {/* Media List */}
-                                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-4">
+                                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
                                          {formData.media.map((item, i) => (
-                                             <div key={i} className="relative aspect-video bg-white rounded-lg overflow-hidden group border border-slate-200 shadow-sm">
+                                             <div key={i} className="relative aspect-video bg-white rounded-xl overflow-hidden group border border-slate-200 shadow-sm hover:shadow-md transition">
                                                  {item.type === 'video' ? (
-                                                     <div className="w-full h-full flex items-center justify-center text-slate-400"><Video size={24}/></div>
+                                                     <div className="w-full h-full bg-slate-900 flex items-center justify-center text-white"><Video size={24}/></div>
                                                  ) : (
                                                      <img src={item.url} className="w-full h-full object-cover"/>
                                                  )}
-                                                 <button onClick={() => removeMedia(i)} className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition"><X size={14}/></button>
-                                                 <span className="absolute bottom-1 left-1 bg-black/60 text-white text-[10px] px-1.5 py-0.5 rounded uppercase">{item.type}</span>
+                                                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                                                     <button onClick={() => removeMedia(i)} className="bg-white text-red-500 p-2 rounded-full hover:bg-red-50 transition transform hover:scale-110"><Trash2 size={18}/></button>
+                                                 </div>
+                                                 <span className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-sm text-white text-[10px] px-2 py-0.5 rounded-full uppercase font-bold tracking-wide">{item.type}</span>
                                              </div>
                                          ))}
+                                         {formData.media.length === 0 && (
+                                            <div className="aspect-video rounded-xl border-2 border-dashed border-blue-200 flex flex-col items-center justify-center text-blue-400 bg-white/50">
+                                                <ImageIcon size={32} className="mb-2 opacity-50" />
+                                                <span className="text-xs">لا توجد وسائط</span>
+                                            </div>
+                                         )}
                                      </div>
 
                                      {/* Add Media */}
-                                     <div className="bg-white p-4 rounded-xl border border-dashed border-blue-200">
-                                         <div className="flex gap-4 mb-3">
-                                             <label className="flex items-center gap-2 text-sm font-medium cursor-pointer">
-                                                 <input type="radio" name="mediaType" checked={mediaTypeInput === 'image'} onChange={() => setMediaTypeInput('image')} className="accent-blue-600"/> صورة
+                                     <div className="bg-white p-5 rounded-xl border border-blue-100 shadow-sm">
+                                         <div className="flex gap-6 mb-4 pb-4 border-b border-slate-50">
+                                             <label className="flex items-center gap-2 text-sm font-bold text-slate-700 cursor-pointer">
+                                                 <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${mediaTypeInput === 'image' ? 'border-blue-600' : 'border-slate-300'}`}>
+                                                     {mediaTypeInput === 'image' && <div className="w-2.5 h-2.5 rounded-full bg-blue-600"></div>}
+                                                 </div>
+                                                 <input type="radio" name="mediaType" checked={mediaTypeInput === 'image'} onChange={() => setMediaTypeInput('image')} className="hidden"/> صورة
                                              </label>
-                                             <label className="flex items-center gap-2 text-sm font-medium cursor-pointer">
-                                                 <input type="radio" name="mediaType" checked={mediaTypeInput === 'video'} onChange={() => setMediaTypeInput('video')} className="accent-blue-600"/> فيديو
+                                             <label className="flex items-center gap-2 text-sm font-bold text-slate-700 cursor-pointer">
+                                                 <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${mediaTypeInput === 'video' ? 'border-blue-600' : 'border-slate-300'}`}>
+                                                     {mediaTypeInput === 'video' && <div className="w-2.5 h-2.5 rounded-full bg-blue-600"></div>}
+                                                 </div>
+                                                 <input type="radio" name="mediaType" checked={mediaTypeInput === 'video'} onChange={() => setMediaTypeInput('video')} className="hidden"/> فيديو
                                              </label>
                                          </div>
                                          <div className="flex flex-col sm:flex-row gap-3">
@@ -449,22 +484,22 @@ const CoursesAdmin: React.FC = () => {
                                                  <div className="relative">
                                                      <input 
                                                         type="text" 
-                                                        className="input text-sm" 
+                                                        className="input text-sm pl-9" 
                                                         placeholder="رابط مباشر..." 
                                                         value={mediaLinkInput}
                                                         onChange={e => setMediaLinkInput(e.target.value)}
                                                      />
-                                                     <LinkIcon size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"/>
+                                                     <LinkIcon size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"/>
                                                  </div>
                                              </div>
-                                             <div className="text-center text-sm text-slate-400 flex items-center">أو</div>
+                                             <div className="text-center text-sm text-slate-400 flex items-center font-bold px-2">أو</div>
                                              <div>
-                                                  <label className="cursor-pointer bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 px-4 py-2.5 rounded-lg text-sm font-medium flex items-center gap-2 transition">
-                                                      <Upload size={16}/> {mediaFile ? 'تم اختيار ملف' : 'رفع ملف'}
+                                                  <label className={`cursor-pointer border border-slate-200 hover:border-blue-300 hover:bg-blue-50 text-slate-600 px-4 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition ${mediaFile ? 'bg-blue-50 border-blue-300 text-blue-700' : 'bg-slate-50'}`}>
+                                                      <Upload size={18}/> {mediaFile ? 'تم اختيار ملف' : 'رفع ملف'}
                                                       <input type="file" className="hidden" accept={mediaTypeInput === 'image' ? "image/*" : "video/*"} onChange={e => e.target.files && setMediaFile(e.target.files[0])} />
                                                   </label>
                                              </div>
-                                             <button type="button" onClick={handleAddMedia} disabled={!mediaLinkInput && !mediaFile} className="bg-blue-600 text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-blue-700 disabled:opacity-50 transition">إضافة</button>
+                                             <button type="button" onClick={handleAddMedia} disabled={!mediaLinkInput && !mediaFile} className="bg-blue-600 text-white px-6 py-2.5 rounded-xl font-bold text-sm hover:bg-blue-700 disabled:opacity-50 transition shadow-lg shadow-blue-200">إضافة</button>
                                          </div>
                                      </div>
                                  </div>
@@ -477,11 +512,17 @@ const CoursesAdmin: React.FC = () => {
                                      <div className="space-y-4">
                                          <div>
                                              <label className="label">السعر الحالي (د.ع)</label>
-                                             <input type="number" className="input" value={formData.price} onChange={e => setFormData({...formData, price: Number(e.target.value)})} />
+                                             <div className="relative">
+                                                <input type="number" className="input font-bold text-emerald-700" value={formData.price} onChange={e => setFormData({...formData, price: Number(e.target.value)})} />
+                                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">IQD</span>
+                                             </div>
                                          </div>
                                          <div>
                                              <label className="label">السعر السابق (اختياري)</label>
-                                             <input type="number" className="input" value={formData.oldPrice} onChange={e => setFormData({...formData, oldPrice: Number(e.target.value)})} />
+                                             <div className="relative">
+                                                <input type="number" className="input text-slate-500" value={formData.oldPrice} onChange={e => setFormData({...formData, oldPrice: Number(e.target.value)})} />
+                                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">IQD</span>
+                                             </div>
                                          </div>
                                          <div>
                                              <label className="label">المدة (مثال: 4 أسابيع)</label>
@@ -496,18 +537,18 @@ const CoursesAdmin: React.FC = () => {
 
                                  <div className="card">
                                      <h3 className="section-title">إعدادات إضافية</h3>
-                                     <div className="space-y-4">
+                                     <div className="space-y-5">
                                          <div>
                                              <label className="label">التقييم (من 5)</label>
                                              <input type="number" step="0.1" max="5" className="input" value={formData.rating} onChange={e => setFormData({...formData, rating: Number(e.target.value)})} />
                                          </div>
                                          
                                          <div>
-                                             <label className="label flex justify-between">
+                                             <label className="label flex justify-between items-center mb-3">
                                                  <span>عدد الطلاب</span>
-                                                 <div className="flex bg-slate-100 rounded-md p-0.5">
-                                                     <button type="button" onClick={() => setFormData({...formData, studentsCountMode: 'auto'})} className={`px-2 py-0.5 text-xs rounded ${formData.studentsCountMode === 'auto' ? 'bg-white shadow-sm text-primary-700' : 'text-slate-500'}`}>تلقائي</button>
-                                                     <button type="button" onClick={() => setFormData({...formData, studentsCountMode: 'manual'})} className={`px-2 py-0.5 text-xs rounded ${formData.studentsCountMode === 'manual' ? 'bg-white shadow-sm text-primary-700' : 'text-slate-500'}`}>يدوي</button>
+                                                 <div className="flex bg-slate-100 rounded-lg p-1">
+                                                     <button type="button" onClick={() => setFormData({...formData, studentsCountMode: 'auto'})} className={`px-2 py-1 text-xs font-bold rounded-md transition ${formData.studentsCountMode === 'auto' ? 'bg-white shadow-sm text-primary-700' : 'text-slate-500'}`}>تلقائي</button>
+                                                     <button type="button" onClick={() => setFormData({...formData, studentsCountMode: 'manual'})} className={`px-2 py-1 text-xs font-bold rounded-md transition ${formData.studentsCountMode === 'manual' ? 'bg-white shadow-sm text-primary-700' : 'text-slate-500'}`}>يدوي</button>
                                                  </div>
                                              </label>
                                              <input 
@@ -519,28 +560,33 @@ const CoursesAdmin: React.FC = () => {
                                              />
                                          </div>
 
-                                         <div>
-                                             <label className="label">علامات مميزة (Tags)</label>
-                                             <div className="flex flex-wrap gap-2 mb-2">
+                                         <div className="border-t border-slate-50 pt-4">
+                                             <label className="label flex items-center gap-2">
+                                                 <Tag size={14} /> علامات مميزة (Tags)
+                                             </label>
+                                             <div className="flex flex-wrap gap-2 mb-3">
                                                  {formData.tags?.map(tag => (
-                                                     <span key={tag} className="bg-secondary-50 text-secondary-700 text-xs px-2 py-1 rounded flex items-center gap-1 border border-secondary-100">
+                                                     <span key={tag} className="bg-secondary-50 text-secondary-700 text-xs font-bold px-2 py-1 rounded-md flex items-center gap-1 border border-secondary-100 animate-scale-in">
                                                          {tag}
-                                                         <button onClick={() => removeTag(tag)}><X size={12}/></button>
+                                                         <button onClick={() => removeTag(tag)} className="hover:text-red-500"><X size={12}/></button>
                                                      </span>
                                                  ))}
                                              </div>
-                                             <input 
-                                                type="text" 
-                                                className="input text-sm" 
-                                                placeholder="اكتب واضغط Enter..." 
-                                                onKeyDown={(e) => {
-                                                    if (e.key === 'Enter') {
-                                                        e.preventDefault();
-                                                        addTag(e.currentTarget.value);
-                                                        e.currentTarget.value = '';
-                                                    }
-                                                }} 
-                                             />
+                                             <div className="relative">
+                                                 <input 
+                                                    type="text" 
+                                                    className="input text-sm pr-9" 
+                                                    placeholder="اكتب واضغط Enter..." 
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === 'Enter') {
+                                                            e.preventDefault();
+                                                            addTag(e.currentTarget.value);
+                                                            e.currentTarget.value = '';
+                                                        }
+                                                    }} 
+                                                />
+                                                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400"><Plus size={16}/></div>
+                                             </div>
                                          </div>
                                      </div>
                                  </div>
@@ -552,44 +598,45 @@ const CoursesAdmin: React.FC = () => {
                      {activeTab === 'details' && (
                          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 animate-fade-in">
                              <div className="md:col-span-2 card">
-                                 <h3 className="section-title">الأوصاف</h3>
-                                 <div className="space-y-4">
+                                 <h3 className="section-title">الأوصاف والمحتوى النصي</h3>
+                                 <div className="space-y-6">
                                      <div>
-                                         <label className="label">وصف مختصر (للكارد)</label>
+                                         <label className="label">وصف مختصر (يظهر في الكارد)</label>
                                          <textarea className="input" rows={3} value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})}></textarea>
+                                         <p className="text-xs text-slate-400 mt-1 text-left">أقصى حد 150 حرف</p>
                                      </div>
                                      <div>
-                                         <label className="label">الإعلان التفصيلي</label>
-                                         <textarea className="input font-mono text-sm" rows={12} value={formData.longDescription} onChange={e => setFormData({...formData, longDescription: e.target.value})}></textarea>
+                                         <label className="label">تفاصيل الإعلان (يظهر في صفحة الدورة)</label>
+                                         <textarea className="input font-mono text-sm leading-relaxed" rows={12} value={formData.longDescription} onChange={e => setFormData({...formData, longDescription: e.target.value})}></textarea>
                                      </div>
                                  </div>
                              </div>
 
-                             <div className="card h-full border-orange-100 bg-orange-50/30">
+                             <div className="card h-full border-orange-100 bg-orange-50/30 flex flex-col">
                                  <div className="flex justify-between items-center mb-4 border-b border-orange-100 pb-2">
                                      <h3 className="section-title mb-0 border-none text-orange-800">ماذا ستتعلم (Objectives)</h3>
-                                     <button type="button" onClick={() => addArrayItem('objectives')} className="text-orange-600 hover:bg-orange-100 p-1 rounded transition"><Plus size={18}/></button>
+                                     <button type="button" onClick={() => addArrayItem('objectives')} className="text-orange-600 bg-orange-100 hover:bg-orange-200 p-1.5 rounded-lg transition"><Plus size={18}/></button>
                                  </div>
-                                 <div className="space-y-2">
+                                 <div className="space-y-3 flex-1">
                                      {formData.objectives.map((obj, i) => (
                                          <div key={i} className="flex gap-2">
-                                             <input type="text" className="input py-2 text-sm" value={obj} onChange={e => handleArrayChange('objectives', i, e.target.value)} />
-                                             <button type="button" onClick={() => removeArrayItem('objectives', i)} className="text-slate-400 hover:text-red-500"><Minus size={18}/></button>
+                                             <input type="text" className="input py-2 text-sm" value={obj} onChange={e => handleArrayChange('objectives', i, e.target.value)} placeholder={`الهدف ${i + 1}`} />
+                                             <button type="button" onClick={() => removeArrayItem('objectives', i)} className="text-slate-400 hover:text-red-500 p-2"><Minus size={18}/></button>
                                          </div>
                                      ))}
                                  </div>
                              </div>
 
-                             <div className="card h-full border-purple-100 bg-purple-50/30">
+                             <div className="card h-full border-purple-100 bg-purple-50/30 flex flex-col">
                                  <div className="flex justify-between items-center mb-4 border-b border-purple-100 pb-2">
                                      <h3 className="section-title mb-0 border-none text-purple-800">الفئة المستهدفة</h3>
-                                     <button type="button" onClick={() => addArrayItem('targetAudience')} className="text-purple-600 hover:bg-purple-100 p-1 rounded transition"><Plus size={18}/></button>
+                                     <button type="button" onClick={() => addArrayItem('targetAudience')} className="text-purple-600 bg-purple-100 hover:bg-purple-200 p-1.5 rounded-lg transition"><Plus size={18}/></button>
                                  </div>
-                                 <div className="space-y-2">
+                                 <div className="space-y-3 flex-1">
                                      {formData.targetAudience.map((aud, i) => (
                                          <div key={i} className="flex gap-2">
-                                             <input type="text" className="input py-2 text-sm" value={aud} onChange={e => handleArrayChange('targetAudience', i, e.target.value)} />
-                                             <button type="button" onClick={() => removeArrayItem('targetAudience', i)} className="text-slate-400 hover:text-red-500"><Minus size={18}/></button>
+                                             <input type="text" className="input py-2 text-sm" value={aud} onChange={e => handleArrayChange('targetAudience', i, e.target.value)} placeholder={`الفئة ${i + 1}`} />
+                                             <button type="button" onClick={() => removeArrayItem('targetAudience', i)} className="text-slate-400 hover:text-red-500 p-2"><Minus size={18}/></button>
                                          </div>
                                      ))}
                                  </div>
@@ -598,13 +645,13 @@ const CoursesAdmin: React.FC = () => {
                              <div className="card md:col-span-2">
                                  <div className="flex justify-between items-center mb-4 border-b border-slate-50 pb-2">
                                      <h3 className="section-title mb-0">الشهادات والاعتمادات</h3>
-                                     <button type="button" onClick={() => addArrayItem('certifications')} className="text-primary-600 hover:bg-primary-50 p-1 rounded"><Plus size={18}/></button>
+                                     <button type="button" onClick={() => addArrayItem('certifications')} className="text-primary-600 bg-primary-50 hover:bg-primary-100 p-1.5 rounded-lg transition"><Plus size={18}/></button>
                                  </div>
                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                      {formData.certifications?.map((cert, i) => (
                                          <div key={i} className="flex gap-2">
                                              <input type="text" className="input py-2 text-sm" value={cert} onChange={e => handleArrayChange('certifications', i, e.target.value)} placeholder="اسم الشهادة..." />
-                                             <button type="button" onClick={() => removeArrayItem('certifications', i)} className="text-slate-400 hover:text-red-500"><Minus size={18}/></button>
+                                             <button type="button" onClick={() => removeArrayItem('certifications', i)} className="text-slate-400 hover:text-red-500 p-2"><Minus size={18}/></button>
                                          </div>
                                      ))}
                                  </div>
@@ -614,42 +661,58 @@ const CoursesAdmin: React.FC = () => {
 
                      {/* Syllabus Tab */}
                      {activeTab === 'syllabus' && (
-                         <div className="card animate-fade-in border-indigo-100 bg-indigo-50/10">
-                             <div className="flex justify-between items-center mb-6 border-b border-indigo-100 pb-4">
-                                <h3 className="section-title mb-0 border-none text-indigo-900">المنهج الدراسي</h3>
-                                <button type="button" onClick={addSyllabusItem} className="bg-indigo-50 text-indigo-700 px-3 py-2 rounded-lg text-sm font-bold hover:bg-indigo-100 transition flex items-center gap-2">
-                                    <Plus size={16}/> إضافة أسبوع/محور
+                         <div className="card animate-fade-in border-indigo-100 bg-indigo-50/10 min-h-[500px]">
+                             <div className="flex justify-between items-center mb-8 border-b border-indigo-100 pb-4">
+                                <div>
+                                    <h3 className="section-title mb-1 border-none text-indigo-900">المنهج الدراسي</h3>
+                                    <p className="text-xs text-indigo-500">قم ببناء هيكل الدورة التدريبية أسبوعياً أو حسب المحاور</p>
+                                </div>
+                                <button type="button" onClick={addSyllabusItem} className="bg-indigo-600 text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-indigo-700 transition flex items-center gap-2 shadow-lg shadow-indigo-200">
+                                    <Plus size={16}/> إضافة محور جديد
                                 </button>
                              </div>
                              
                              <div className="space-y-4">
                                  {formData.syllabus.map((item, i) => (
-                                     <div key={i} className="flex flex-col md:flex-row gap-4 items-start bg-white p-4 rounded-xl border border-indigo-100 shadow-sm relative group">
+                                     <div key={i} className="flex flex-col md:flex-row gap-4 items-center bg-white p-5 rounded-2xl border border-indigo-100 shadow-sm relative group hover:shadow-md transition">
+                                         <div className="w-full md:w-16 flex justify-center">
+                                             <span className="w-8 h-8 rounded-full bg-indigo-50 text-indigo-600 font-bold flex items-center justify-center text-sm">{i + 1}</span>
+                                         </div>
                                          <div className="w-full md:w-1/4">
+                                             <label className="text-[10px] text-slate-400 font-bold uppercase mb-1 block">العنوان الفرعي</label>
                                              <input 
                                                 type="text" 
                                                 placeholder="الأسبوع 1" 
-                                                className="input bg-slate-50 border-slate-100 focus:bg-white" 
+                                                className="input bg-slate-50 border-slate-100 focus:bg-white text-sm py-2" 
                                                 value={item.week} 
                                                 onChange={e => handleSyllabusChange(i, 'week', e.target.value)} 
                                              />
                                          </div>
-                                         <div className="w-full md:w-3/4 flex gap-2">
-                                             <input 
-                                                type="text" 
-                                                placeholder="موضوع المحاضرة..." 
-                                                className="input bg-slate-50 border-slate-100 focus:bg-white" 
-                                                value={item.topic} 
-                                                onChange={e => handleSyllabusChange(i, 'topic', e.target.value)} 
-                                             />
-                                             <button type="button" onClick={() => {
-                                                  const newS = [...formData.syllabus];
-                                                  newS.splice(i, 1);
-                                                  setFormData({...formData, syllabus: newS});
-                                             }} className="text-slate-400 hover:text-red-500 p-3 opacity-0 group-hover:opacity-100 transition"><Trash2 size={18}/></button>
+                                         <div className="w-full md:w-3/4">
+                                             <label className="text-[10px] text-slate-400 font-bold uppercase mb-1 block">الموضوع</label>
+                                             <div className="flex gap-2">
+                                                 <input 
+                                                    type="text" 
+                                                    placeholder="موضوع المحاضرة..." 
+                                                    className="input bg-slate-50 border-slate-100 focus:bg-white text-sm py-2" 
+                                                    value={item.topic} 
+                                                    onChange={e => handleSyllabusChange(i, 'topic', e.target.value)} 
+                                                 />
+                                                 <button type="button" onClick={() => {
+                                                      const newS = [...formData.syllabus];
+                                                      newS.splice(i, 1);
+                                                      setFormData({...formData, syllabus: newS});
+                                                 }} className="text-slate-300 hover:text-red-500 p-2 transition hover:bg-red-50 rounded-lg"><Trash2 size={18}/></button>
+                                             </div>
                                          </div>
                                      </div>
                                  ))}
+                                 {formData.syllabus.length === 0 && (
+                                     <div className="text-center py-16 text-slate-400">
+                                         <List size={48} className="mx-auto mb-4 opacity-50 text-indigo-300"/>
+                                         <p>لم يتم إضافة أي محتوى للمنهج بعد.</p>
+                                     </div>
+                                 )}
                              </div>
                          </div>
                      )}
@@ -660,9 +723,12 @@ const CoursesAdmin: React.FC = () => {
       </div>
       <style>{`
         .label { @apply block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2; }
-        .input { @apply w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition bg-white text-slate-800; }
+        .input { @apply w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-primary-500 focus:ring-4 focus:ring-primary-100 outline-none transition bg-white text-slate-800 shadow-sm placeholder:text-slate-300; }
         .card { @apply bg-white p-6 rounded-2xl border border-slate-100 shadow-sm; }
-        .section-title { @apply text-lg font-bold text-slate-800 mb-4 pb-2 border-b border-slate-50; }
+        .section-title { @apply text-lg font-bold text-slate-800 mb-5 pb-3 border-b border-slate-50; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
       `}</style>
     </div>
   );

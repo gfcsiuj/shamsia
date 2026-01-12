@@ -4,7 +4,7 @@ import { db, storage } from '../../lib/firebase';
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { Instructor, Course } from '../../types';
-import { Plus, Pencil, Trash2, X, Upload, Loader2, Save, ArrowRight, Minus, Link as LinkIcon, MoreVertical, Briefcase, User, Award, Share2 } from 'lucide-react';
+import { Plus, Pencil, Trash2, X, Upload, Loader2, Save, ArrowRight, Minus, Link as LinkIcon, MoreVertical, Briefcase, User, Award, Share2, Facebook, Instagram, Linkedin, Twitter, Globe, Mail, Phone, Send, Youtube } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const InstructorsAdmin: React.FC = () => {
@@ -172,8 +172,22 @@ const InstructorsAdmin: React.FC = () => {
   };
 
   const getCourseCount = (instructorId: string) => {
-      // Adjusted for new instructorIds array in courses
       return courses.filter(c => c.instructorIds?.includes(instructorId)).length;
+  };
+
+  const getSocialIcon = (type: string) => {
+    switch (type) {
+        case 'facebook': return <Facebook size={16} />;
+        case 'instagram': return <Instagram size={16} />;
+        case 'linkedin': return <Linkedin size={16} />;
+        case 'twitter': return <Twitter size={16} />;
+        case 'youtube': return <Youtube size={16} />;
+        case 'telegram': return <Send size={16} />;
+        case 'website': return <Globe size={16} />;
+        case 'email': return <Mail size={16} />;
+        case 'phone': return <Phone size={16} />;
+        default: return <LinkIcon size={16} />;
+    }
   };
 
   return (
@@ -203,22 +217,25 @@ const InstructorsAdmin: React.FC = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {instructors.map((instructor) => (
-                <div key={instructor.id} className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 hover:shadow-md transition group relative overflow-hidden">
+                <div key={instructor.id} className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 hover:shadow-md transition group relative overflow-hidden flex flex-col">
                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary-500 to-secondary-500"></div>
                     <div className="flex justify-between items-start mb-4">
                         <img src={instructor.image} alt={instructor.name} className="w-16 h-16 rounded-full object-cover border-2 border-slate-100 shadow-sm" />
-                        <div className="flex gap-1">
+                        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                             <button onClick={() => handleEdit(instructor)} className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition" title="تعديل"><Pencil size={18} /></button>
                             <button onClick={() => handleDelete(instructor.id)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition" title="حذف"><Trash2 size={18} /></button>
                         </div>
                     </div>
                     
                     <h3 className="text-lg font-bold text-slate-800 mb-1">{instructor.name}</h3>
-                    <p className="text-xs text-primary-600 bg-primary-50 px-2 py-1 rounded-md inline-block mb-3">
-                        {instructor.roles[0] || 'غير محدد'}
-                    </p>
+                    <div className="flex flex-wrap gap-1 mb-3">
+                         {instructor.roles.slice(0, 2).map((role, i) => (
+                            <span key={i} className="text-xs text-primary-600 bg-primary-50 px-2 py-1 rounded-md">{role}</span>
+                         ))}
+                         {instructor.roles.length > 2 && <span className="text-xs text-slate-400 px-1 py-1">+{instructor.roles.length - 2}</span>}
+                    </div>
 
-                    <div className="flex items-center gap-4 text-sm text-slate-500 border-t border-slate-50 pt-3">
+                    <div className="mt-auto flex items-center gap-4 text-sm text-slate-500 border-t border-slate-50 pt-3">
                         <div className="flex items-center gap-1">
                             <Briefcase size={14} />
                             <span>{getCourseCount(instructor.id)} دورات</span>
@@ -242,7 +259,7 @@ const InstructorsAdmin: React.FC = () => {
 
         {/* Improved Modal */}
         {isEditing && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm transition-opacity">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-opacity">
             <div className="bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden shadow-2xl flex flex-col animate-scale-in">
               <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-white">
                 <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
@@ -253,175 +270,182 @@ const InstructorsAdmin: React.FC = () => {
               </div>
               
               <div className="overflow-y-auto p-6 bg-slate-50/50 flex-1">
-                  <form id="instructorForm" onSubmit={handleSubmit} className="space-y-6">
-                    {/* Section 1: Basic Info */}
-                    <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
-                        <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4 border-b border-slate-50 pb-2 flex items-center gap-2">
-                            <User size={16} /> المعلومات الشخصية
-                        </h3>
-                        <div className="flex flex-col md:flex-row gap-8">
-                            <div className="flex flex-col items-center gap-4">
-                                <div className="relative w-32 h-32 rounded-full overflow-hidden bg-slate-100 border-4 border-white shadow-md group cursor-pointer" onClick={() => document.getElementById('file-upload')?.click()}>
+                  <form id="instructorForm" onSubmit={handleSubmit} className="flex flex-col md:flex-row gap-6 h-full">
+                    
+                    {/* Left Column: Image & Socials */}
+                    <div className="md:w-1/3 flex flex-col gap-6">
+                        {/* Profile Image */}
+                        <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm flex flex-col items-center text-center">
+                            <div className="relative w-40 h-40 mb-4 group cursor-pointer" onClick={() => document.getElementById('file-upload')?.click()}>
+                                <div className="w-full h-full rounded-full overflow-hidden border-4 border-slate-50 shadow-md">
                                     {imageFile ? (
                                         <img src={URL.createObjectURL(imageFile)} alt="Preview" className="w-full h-full object-cover" />
                                     ) : formData.image ? (
                                         <img src={formData.image} alt="Current" className="w-full h-full object-cover" />
                                     ) : (
-                                        <div className="w-full h-full flex items-center justify-center text-slate-400 flex-col gap-2">
-                                            <Upload size={24}/>
-                                            <span className="text-[10px]">رفع صورة</span>
+                                        <div className="w-full h-full bg-slate-100 flex items-center justify-center text-slate-300">
+                                            <User size={48}/>
                                         </div>
                                     )}
-                                    <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300">
-                                        <Pencil className="text-white" size={24} />
-                                    </div>
                                 </div>
-                                <input id="file-upload" type="file" className="hidden" accept="image/*" onChange={(e) => e.target.files && setImageFile(e.target.files[0])} />
-                                
-                                <div className="w-full max-w-[200px]">
-                                     <label className="text-xs text-slate-500 mb-1 block">أو رابط خارجي</label>
-                                     <div className="relative">
-                                        <LinkIcon className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
-                                        <input 
-                                            type="text" 
-                                            value={formData.image}
-                                            onChange={(e) => setFormData({...formData, image: e.target.value})}
-                                            className="w-full pr-7 pl-2 py-1.5 text-xs rounded border border-slate-200 focus:border-primary-500 outline-none"
-                                            placeholder="https://..."
-                                        />
-                                    </div>
+                                <div className="absolute inset-0 bg-black/40 rounded-full flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition duration-300">
+                                    <Upload size={24} className="mb-1"/>
+                                    <span className="text-xs font-bold">تغيير الصورة</span>
                                 </div>
                             </div>
-
-                            <div className="flex-1 space-y-4">
-                                <div>
-                                    <label className="label">الاسم الكامل</label>
+                            <input id="file-upload" type="file" className="hidden" accept="image/*" onChange={(e) => e.target.files && setImageFile(e.target.files[0])} />
+                            
+                            <div className="w-full">
+                                <label className="text-xs text-slate-500 mb-1 block text-right px-1">أو عبر رابط</label>
+                                <div className="relative">
+                                    <LinkIcon className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
                                     <input 
                                         type="text" 
-                                        required
-                                        value={formData.name}
-                                        onChange={(e) => setFormData({...formData, name: e.target.value})}
-                                        className="input"
-                                        placeholder="د. محمد علي"
+                                        value={formData.image}
+                                        onChange={(e) => setFormData({...formData, image: e.target.value})}
+                                        className="w-full pr-8 pl-3 py-2 text-xs rounded-lg border border-slate-200 focus:border-primary-500 outline-none transition bg-slate-50 focus:bg-white"
+                                        placeholder="https://..."
                                     />
                                 </div>
-                                
-                                <div className="grid grid-cols-1 gap-4">
-                                    <div>
-                                        <label className="label">نبذة مختصرة (تظهر في البطاقة)</label>
-                                        <textarea 
-                                            rows={2}
-                                            value={formData.shortBio}
-                                            onChange={(e) => setFormData({...formData, shortBio: e.target.value})}
-                                            className="input resize-none"
-                                            placeholder="نبذة مختصرة جداً..."
-                                        ></textarea>
+                            </div>
+                        </div>
+
+                        {/* Social Media */}
+                        <div className="bg-white p-5 rounded-xl border border-slate-100 shadow-sm flex-1">
+                             <div className="flex justify-between items-center mb-4 pb-2 border-b border-slate-50">
+                                <h3 className="text-sm font-bold text-slate-700 flex items-center gap-2">
+                                    <Share2 size={16} className="text-secondary-500"/>
+                                    التواصل الاجتماعي
+                                </h3>
+                                <button type="button" onClick={addSocial} className="bg-primary-50 text-primary-600 hover:bg-primary-100 p-1.5 rounded-lg transition"><Plus size={16}/></button>
+                            </div>
+                            <div className="space-y-3 max-h-60 overflow-y-auto custom-scrollbar pr-1">
+                                {formData.socials.map((social, i) => (
+                                    <div key={i} className="flex gap-2 items-center bg-slate-50 p-2 rounded-lg border border-slate-200 group">
+                                        <div className="relative w-10">
+                                            <div className="absolute inset-y-0 right-0 flex items-center justify-center w-full pointer-events-none text-slate-500">
+                                                {getSocialIcon(social.type)}
+                                            </div>
+                                            <select 
+                                                value={social.type} 
+                                                onChange={e => handleSocialChange(i, 'type', e.target.value)}
+                                                className="w-full opacity-0 cursor-pointer h-full absolute inset-0"
+                                            >
+                                                <option value="facebook">فيسبوك</option>
+                                                <option value="instagram">انستغرام</option>
+                                                <option value="linkedin">لينكد إن</option>
+                                                <option value="twitter">X</option>
+                                                <option value="telegram">تيليجرام</option>
+                                                <option value="website">موقع</option>
+                                                <option value="email">ايميل</option>
+                                                <option value="phone">هاتف</option>
+                                                <option value="youtube">يوتيوب</option>
+                                            </select>
+                                        </div>
+                                        <input 
+                                            type="text" 
+                                            className="flex-1 bg-transparent text-xs outline-none px-2 font-medium" 
+                                            value={social.value}
+                                            onChange={e => handleSocialChange(i, 'value', e.target.value)}
+                                            placeholder="الرابط..."
+                                        />
+                                        <button type="button" onClick={() => removeSocial(i)} className="text-slate-300 hover:text-red-500 p-1 transition"><X size={14}/></button>
                                     </div>
-                                    <div>
-                                        <label className="label">السيرة الذاتية المفصلة</label>
-                                        <textarea 
-                                            rows={4}
-                                            value={formData.bio}
-                                            onChange={(e) => setFormData({...formData, bio: e.target.value})}
-                                            className="input resize-none"
-                                            placeholder="التفاصيل الكاملة، الخبرات، والمهارات..."
-                                        ></textarea>
-                                    </div>
-                                </div>
+                                ))}
+                                {formData.socials.length === 0 && (
+                                    <p className="text-center text-xs text-slate-400 py-4 italic">لا توجد حسابات</p>
+                                )}
                             </div>
                         </div>
                     </div>
 
-                    {/* Section 2: Roles & Certs */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm h-full">
-                            <div className="flex justify-between items-center mb-4 border-b border-slate-50 pb-2">
-                                <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                                    <Briefcase size={16} /> المسميات الوظيفية
-                                </h3>
-                                <button type="button" onClick={() => addArrayItem('roles')} className="text-primary-600 hover:bg-primary-50 p-1.5 rounded-lg transition"><Plus size={16}/></button>
-                            </div>
-                            <div className="space-y-3 max-h-48 overflow-y-auto pr-1">
-                                {formData.roles.map((role, i) => (
-                                    <div key={i} className="flex gap-2">
-                                        <input 
-                                            type="text" 
-                                            className="input py-2 text-sm" 
-                                            value={role} 
-                                            onChange={e => handleArrayChange(i, e.target.value, 'roles')}
-                                            placeholder="مثال: مطور برمجيات"
-                                        />
-                                        <button type="button" onClick={() => removeArrayItem(i, 'roles')} className="text-slate-400 hover:text-red-500 p-2 transition"><Minus size={18}/></button>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
+                    {/* Right Column: Details */}
+                    <div className="md:w-2/3 flex flex-col gap-6">
+                         {/* Basic Info */}
+                         <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
+                             <div className="grid grid-cols-1 gap-5">
+                                 <div>
+                                     <label className="label">الاسم الكامل</label>
+                                     <input 
+                                         type="text" 
+                                         required
+                                         value={formData.name}
+                                         onChange={(e) => setFormData({...formData, name: e.target.value})}
+                                         className="input"
+                                         placeholder="د. محمد علي"
+                                     />
+                                 </div>
+                                 <div>
+                                     <label className="label">نبذة مختصرة (تظهر في البطاقة)</label>
+                                     <input 
+                                        type="text"
+                                         value={formData.shortBio}
+                                         onChange={(e) => setFormData({...formData, shortBio: e.target.value})}
+                                         className="input"
+                                         placeholder="مدرب معتمد بخبرة 10 سنوات..."
+                                     />
+                                 </div>
+                                 <div>
+                                     <label className="label">السيرة الذاتية الكاملة</label>
+                                     <textarea 
+                                         rows={5}
+                                         value={formData.bio}
+                                         onChange={(e) => setFormData({...formData, bio: e.target.value})}
+                                         className="input resize-none"
+                                         placeholder="اكتب التفاصيل هنا..."
+                                     ></textarea>
+                                 </div>
+                             </div>
+                         </div>
 
-                        <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm h-full">
-                            <div className="flex justify-between items-center mb-4 border-b border-slate-50 pb-2">
-                                <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                                    <Award size={16} /> الشهادات والاعتمادات
-                                </h3>
-                                <button type="button" onClick={() => addArrayItem('certifications')} className="text-primary-600 hover:bg-primary-50 p-1.5 rounded-lg transition"><Plus size={16}/></button>
-                            </div>
-                            <div className="space-y-3 max-h-48 overflow-y-auto pr-1">
-                                {formData.certifications.map((cert, i) => (
-                                    <div key={i} className="flex gap-2">
-                                        <input 
-                                            type="text" 
-                                            className="input py-2 text-sm" 
-                                            value={cert} 
-                                            onChange={e => handleArrayChange(i, e.target.value, 'certifications')}
-                                            placeholder="مثال: PMP"
-                                        />
-                                        <button type="button" onClick={() => removeArrayItem(i, 'certifications')} className="text-slate-400 hover:text-red-500 p-2 transition"><Minus size={18}/></button>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
+                         {/* Roles & Certs */}
+                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-1">
+                             <div className="bg-white p-5 rounded-xl border border-slate-100 shadow-sm flex flex-col">
+                                <div className="flex justify-between items-center mb-4 pb-2 border-b border-slate-50">
+                                    <h3 className="text-sm font-bold text-slate-700 flex items-center gap-2">
+                                        <Briefcase size={16} className="text-secondary-500"/> المسميات الوظيفية
+                                    </h3>
+                                    <button type="button" onClick={() => addArrayItem('roles')} className="bg-primary-50 text-primary-600 hover:bg-primary-100 p-1.5 rounded-lg transition"><Plus size={16}/></button>
+                                </div>
+                                <div className="space-y-2 overflow-y-auto flex-1 max-h-48 pr-1">
+                                    {formData.roles.map((role, i) => (
+                                        <div key={i} className="flex gap-2">
+                                            <input 
+                                                type="text" 
+                                                className="input py-2 text-xs" 
+                                                value={role} 
+                                                onChange={e => handleArrayChange(i, e.target.value, 'roles')}
+                                                placeholder="مثال: مطور برمجيات"
+                                            />
+                                            <button type="button" onClick={() => removeArrayItem(i, 'roles')} className="text-slate-300 hover:text-red-500 p-2 transition"><Minus size={16}/></button>
+                                        </div>
+                                    ))}
+                                </div>
+                             </div>
 
-                    {/* Section 3: Socials */}
-                    <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
-                        <div className="flex justify-between items-center mb-4 border-b border-slate-50 pb-2">
-                             <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                                <Share2 size={16} /> التواصل الاجتماعي
-                            </h3>
-                            <button type="button" onClick={addSocial} className="text-primary-600 hover:bg-primary-50 p-1.5 rounded-lg transition"><Plus size={16}/></button>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {formData.socials.map((social, i) => (
-                                <div key={i} className="flex gap-2 items-center bg-slate-50 p-2 rounded-lg border border-slate-200">
-                                    <select 
-                                        value={social.type} 
-                                        onChange={e => handleSocialChange(i, 'type', e.target.value)}
-                                        className="bg-white border border-slate-200 text-slate-700 text-sm rounded-md px-2 py-2 outline-none w-28"
-                                    >
-                                        <option value="facebook">فيسبوك</option>
-                                        <option value="instagram">انستغرام</option>
-                                        <option value="linkedin">لينكد إن</option>
-                                        <option value="twitter">X</option>
-                                        <option value="telegram">تيليجرام</option>
-                                        <option value="website">موقع</option>
-                                        <option value="email">ايميل</option>
-                                        <option value="phone">هاتف</option>
-                                    </select>
-                                    <input 
-                                        type="text" 
-                                        className="flex-1 bg-transparent text-sm outline-none px-2" 
-                                        value={social.value}
-                                        onChange={e => handleSocialChange(i, 'value', e.target.value)}
-                                        placeholder="الرابط أو المعرف..."
-                                    />
-                                    <button type="button" onClick={() => removeSocial(i)} className="text-slate-400 hover:text-red-500 p-1 transition"><X size={16}/></button>
+                             <div className="bg-white p-5 rounded-xl border border-slate-100 shadow-sm flex flex-col">
+                                <div className="flex justify-between items-center mb-4 pb-2 border-b border-slate-50">
+                                    <h3 className="text-sm font-bold text-slate-700 flex items-center gap-2">
+                                        <Award size={16} className="text-secondary-500"/> الشهادات
+                                    </h3>
+                                    <button type="button" onClick={() => addArrayItem('certifications')} className="bg-primary-50 text-primary-600 hover:bg-primary-100 p-1.5 rounded-lg transition"><Plus size={16}/></button>
                                 </div>
-                            ))}
-                            {formData.socials.length === 0 && (
-                                <div className="col-span-2 text-center py-4 text-slate-400 text-sm italic">
-                                    أضف قنوات تواصل للمدرب
+                                <div className="space-y-2 overflow-y-auto flex-1 max-h-48 pr-1">
+                                    {formData.certifications.map((cert, i) => (
+                                        <div key={i} className="flex gap-2">
+                                            <input 
+                                                type="text" 
+                                                className="input py-2 text-xs" 
+                                                value={cert} 
+                                                onChange={e => handleArrayChange(i, e.target.value, 'certifications')}
+                                                placeholder="مثال: PMP"
+                                            />
+                                            <button type="button" onClick={() => removeArrayItem(i, 'certifications')} className="text-slate-300 hover:text-red-500 p-2 transition"><Minus size={16}/></button>
+                                        </div>
+                                    ))}
                                 </div>
-                            )}
-                        </div>
+                             </div>
+                         </div>
                     </div>
                   </form>
               </div>
@@ -435,7 +459,7 @@ const InstructorsAdmin: React.FC = () => {
                         className="px-8 py-2.5 rounded-xl bg-primary-600 text-white hover:bg-primary-700 font-bold transition flex items-center gap-2 disabled:opacity-70 shadow-lg shadow-primary-200"
                     >
                         {saveLoading ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />}
-                        حفظ البيانات
+                        حفظ المدرب
                     </button>
               </div>
             </div>
@@ -443,8 +467,11 @@ const InstructorsAdmin: React.FC = () => {
         )}
       </div>
       <style>{`
-        .label { @apply block text-sm font-bold text-slate-700 mb-2; }
-        .input { @apply w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition bg-white; }
+        .label { @apply block text-xs font-bold text-slate-500 mb-1.5; }
+        .input { @apply w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition bg-white text-sm text-slate-800; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
       `}</style>
     </div>
   );
