@@ -379,13 +379,13 @@ const CoursesAdmin: React.FC = () => {
                                      </div>
                                  </div>
 
-                                 <div className="card">
-                                      <h3 className="section-title">المدربين</h3>
+                                 <div className="card border-primary-100 bg-primary-50/50">
+                                      <h3 className="section-title text-primary-800 border-primary-100">المدربين</h3>
                                       <div className="flex flex-wrap gap-2 mb-3">
                                           {formData.instructorIds?.map(id => {
                                               const inst = instructors.find(i => i.id === id);
                                               return inst ? (
-                                                  <div key={id} className="flex items-center gap-2 bg-primary-50 text-primary-700 px-3 py-1.5 rounded-full text-sm font-medium border border-primary-100">
+                                                  <div key={id} className="flex items-center gap-2 bg-white text-primary-700 px-3 py-1.5 rounded-full text-sm font-medium border border-primary-100 shadow-sm">
                                                       <img src={inst.image} className="w-5 h-5 rounded-full object-cover"/>
                                                       {inst.name}
                                                       <button onClick={() => toggleInstructor(id)} className="hover:text-red-500"><X size={14}/></button>
@@ -394,7 +394,7 @@ const CoursesAdmin: React.FC = () => {
                                           })}
                                       </div>
                                       <div className="relative group">
-                                          <button type="button" className="input text-start text-slate-500 flex justify-between items-center">
+                                          <button type="button" className="input text-start text-slate-500 flex justify-between items-center bg-white">
                                               <span>اختر المدربين...</span>
                                               <Users size={16} />
                                           </button>
@@ -416,13 +416,13 @@ const CoursesAdmin: React.FC = () => {
                                       </div>
                                  </div>
 
-                                 <div className="card">
-                                     <h3 className="section-title">الوسائط (الغلاف والفيديو)</h3>
+                                 <div className="card border-blue-100 bg-blue-50/30">
+                                     <h3 className="section-title text-blue-800 border-blue-100">الوسائط (الغلاف والفيديو)</h3>
                                      
                                      {/* Media List */}
                                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-4">
                                          {formData.media.map((item, i) => (
-                                             <div key={i} className="relative aspect-video bg-slate-100 rounded-lg overflow-hidden group border border-slate-200">
+                                             <div key={i} className="relative aspect-video bg-white rounded-lg overflow-hidden group border border-slate-200 shadow-sm">
                                                  {item.type === 'video' ? (
                                                      <div className="w-full h-full flex items-center justify-center text-slate-400"><Video size={24}/></div>
                                                  ) : (
@@ -435,13 +435,13 @@ const CoursesAdmin: React.FC = () => {
                                      </div>
 
                                      {/* Add Media */}
-                                     <div className="bg-slate-50 p-4 rounded-xl border border-dashed border-slate-300">
+                                     <div className="bg-white p-4 rounded-xl border border-dashed border-blue-200">
                                          <div className="flex gap-4 mb-3">
                                              <label className="flex items-center gap-2 text-sm font-medium cursor-pointer">
-                                                 <input type="radio" name="mediaType" checked={mediaTypeInput === 'image'} onChange={() => setMediaTypeInput('image')} className="accent-primary-600"/> صورة
+                                                 <input type="radio" name="mediaType" checked={mediaTypeInput === 'image'} onChange={() => setMediaTypeInput('image')} className="accent-blue-600"/> صورة
                                              </label>
                                              <label className="flex items-center gap-2 text-sm font-medium cursor-pointer">
-                                                 <input type="radio" name="mediaType" checked={mediaTypeInput === 'video'} onChange={() => setMediaTypeInput('video')} className="accent-primary-600"/> فيديو
+                                                 <input type="radio" name="mediaType" checked={mediaTypeInput === 'video'} onChange={() => setMediaTypeInput('video')} className="accent-blue-600"/> فيديو
                                              </label>
                                          </div>
                                          <div className="flex flex-col sm:flex-row gap-3">
@@ -464,7 +464,7 @@ const CoursesAdmin: React.FC = () => {
                                                       <input type="file" className="hidden" accept={mediaTypeInput === 'image' ? "image/*" : "video/*"} onChange={e => e.target.files && setMediaFile(e.target.files[0])} />
                                                   </label>
                                              </div>
-                                             <button type="button" onClick={handleAddMedia} disabled={!mediaLinkInput && !mediaFile} className="bg-primary-600 text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-primary-700 disabled:opacity-50">إضافة</button>
+                                             <button type="button" onClick={handleAddMedia} disabled={!mediaLinkInput && !mediaFile} className="bg-blue-600 text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-blue-700 disabled:opacity-50 transition">إضافة</button>
                                          </div>
                                      </div>
                                  </div>
@@ -472,8 +472,8 @@ const CoursesAdmin: React.FC = () => {
 
                              {/* Right Column: Settings */}
                              <div className="space-y-6">
-                                 <div className="card">
-                                     <h3 className="section-title">التسعير والوقت</h3>
+                                 <div className="card border-emerald-100 bg-emerald-50/30">
+                                     <h3 className="section-title text-emerald-800 border-emerald-100">التسعير والوقت</h3>
                                      <div className="space-y-4">
                                          <div>
                                              <label className="label">السعر الحالي (د.ع)</label>
@@ -565,10 +565,10 @@ const CoursesAdmin: React.FC = () => {
                                  </div>
                              </div>
 
-                             <div className="card h-full">
-                                 <div className="flex justify-between items-center mb-4 border-b border-slate-50 pb-2">
-                                     <h3 className="section-title mb-0">ماذا ستتعلم (Objectives)</h3>
-                                     <button type="button" onClick={() => addArrayItem('objectives')} className="text-primary-600 hover:bg-primary-50 p-1 rounded"><Plus size={18}/></button>
+                             <div className="card h-full border-orange-100 bg-orange-50/30">
+                                 <div className="flex justify-between items-center mb-4 border-b border-orange-100 pb-2">
+                                     <h3 className="section-title mb-0 border-none text-orange-800">ماذا ستتعلم (Objectives)</h3>
+                                     <button type="button" onClick={() => addArrayItem('objectives')} className="text-orange-600 hover:bg-orange-100 p-1 rounded transition"><Plus size={18}/></button>
                                  </div>
                                  <div className="space-y-2">
                                      {formData.objectives.map((obj, i) => (
@@ -580,10 +580,10 @@ const CoursesAdmin: React.FC = () => {
                                  </div>
                              </div>
 
-                             <div className="card h-full">
-                                 <div className="flex justify-between items-center mb-4 border-b border-slate-50 pb-2">
-                                     <h3 className="section-title mb-0">الفئة المستهدفة</h3>
-                                     <button type="button" onClick={() => addArrayItem('targetAudience')} className="text-primary-600 hover:bg-primary-50 p-1 rounded"><Plus size={18}/></button>
+                             <div className="card h-full border-purple-100 bg-purple-50/30">
+                                 <div className="flex justify-between items-center mb-4 border-b border-purple-100 pb-2">
+                                     <h3 className="section-title mb-0 border-none text-purple-800">الفئة المستهدفة</h3>
+                                     <button type="button" onClick={() => addArrayItem('targetAudience')} className="text-purple-600 hover:bg-purple-100 p-1 rounded transition"><Plus size={18}/></button>
                                  </div>
                                  <div className="space-y-2">
                                      {formData.targetAudience.map((aud, i) => (
@@ -614,22 +614,22 @@ const CoursesAdmin: React.FC = () => {
 
                      {/* Syllabus Tab */}
                      {activeTab === 'syllabus' && (
-                         <div className="card animate-fade-in">
-                             <div className="flex justify-between items-center mb-6 border-b pb-4">
-                                <h3 className="section-title mb-0">المنهج الدراسي</h3>
-                                <button type="button" onClick={addSyllabusItem} className="bg-primary-50 text-primary-700 px-3 py-2 rounded-lg text-sm font-bold hover:bg-primary-100 transition flex items-center gap-2">
+                         <div className="card animate-fade-in border-indigo-100 bg-indigo-50/10">
+                             <div className="flex justify-between items-center mb-6 border-b border-indigo-100 pb-4">
+                                <h3 className="section-title mb-0 border-none text-indigo-900">المنهج الدراسي</h3>
+                                <button type="button" onClick={addSyllabusItem} className="bg-indigo-50 text-indigo-700 px-3 py-2 rounded-lg text-sm font-bold hover:bg-indigo-100 transition flex items-center gap-2">
                                     <Plus size={16}/> إضافة أسبوع/محور
                                 </button>
                              </div>
                              
                              <div className="space-y-4">
                                  {formData.syllabus.map((item, i) => (
-                                     <div key={i} className="flex flex-col md:flex-row gap-4 items-start bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                     <div key={i} className="flex flex-col md:flex-row gap-4 items-start bg-white p-4 rounded-xl border border-indigo-100 shadow-sm relative group">
                                          <div className="w-full md:w-1/4">
                                              <input 
                                                 type="text" 
                                                 placeholder="الأسبوع 1" 
-                                                className="input bg-white" 
+                                                className="input bg-slate-50 border-slate-100 focus:bg-white" 
                                                 value={item.week} 
                                                 onChange={e => handleSyllabusChange(i, 'week', e.target.value)} 
                                              />
@@ -638,7 +638,7 @@ const CoursesAdmin: React.FC = () => {
                                              <input 
                                                 type="text" 
                                                 placeholder="موضوع المحاضرة..." 
-                                                className="input bg-white" 
+                                                className="input bg-slate-50 border-slate-100 focus:bg-white" 
                                                 value={item.topic} 
                                                 onChange={e => handleSyllabusChange(i, 'topic', e.target.value)} 
                                              />
@@ -646,7 +646,7 @@ const CoursesAdmin: React.FC = () => {
                                                   const newS = [...formData.syllabus];
                                                   newS.splice(i, 1);
                                                   setFormData({...formData, syllabus: newS});
-                                             }} className="text-slate-400 hover:text-red-500 p-3"><Trash2 size={18}/></button>
+                                             }} className="text-slate-400 hover:text-red-500 p-3 opacity-0 group-hover:opacity-100 transition"><Trash2 size={18}/></button>
                                          </div>
                                      </div>
                                  ))}

@@ -1,5 +1,4 @@
 import React from 'react';
-import { signOut } from 'firebase/auth';
 import { auth } from '../../lib/firebase';
 import { useNavigate, Link } from 'react-router-dom';
 import { LogOut, Users, BookOpen, Settings, LayoutDashboard } from 'lucide-react';
@@ -8,7 +7,7 @@ const Dashboard: React.FC = () => {
   const navigate = useNavigate();
 
   const handleLogout = async () => {
-    await signOut(auth);
+    await auth.signOut();
     navigate('/admin/login');
   };
 
