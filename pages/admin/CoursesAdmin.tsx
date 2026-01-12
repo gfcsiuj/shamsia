@@ -50,8 +50,8 @@ const CoursesAdmin: React.FC = () => {
         getDocs(collection(db, 'instructors'))
       ]);
 
-      const coursesData = coursesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Course));
-      const instructorsData = instructorsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Instructor));
+      const coursesData = coursesSnap.docs.map(doc => ({ id: doc.id, ...(doc.data() as any) } as Course));
+      const instructorsData = instructorsSnap.docs.map(doc => ({ id: doc.id, ...(doc.data() as any) } as Instructor));
 
       setCourses(coursesData);
       setInstructors(instructorsData);

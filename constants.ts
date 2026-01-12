@@ -1,26 +1,41 @@
+
 import { Course, Instructor, Testimonial, Resource } from './types';
 
 export const INSTRUCTORS: Instructor[] = [
   {
     id: 'inst-ahmed',
     name: 'م. أحمد حسين',
-    role: 'خبير أمن سيبراني ومدرب دولي',
+    roles: ['خبير أمن سيبراني', 'مدرب دولي', 'قائد فريق CERT95'],
     image: 'https://k.top4top.io/p_366424bn91.jpeg',
+    shortBio: 'خبير أمن سيبراني ومدرب دولي معتمد، يمتلك خبرة تتجاوز 10 سنوات.',
     bio: 'خبير أمن سيبراني ومدرب دولي معتمد، يمتلك خبرة تتجاوز 10 سنوات في مجال الأمن السيبراني، الشبكات، والاختراق الأخلاقي. مدرب معتمد لدى Cisco وEC-Council، وقائد فريق CERT95. شارك في برامج تقييم وتدريب دولية، وقدم مئات الدورات وورش العمل حضوريًا وعبر الإنترنت. يتمتع بخبرة عملية وأكاديمية واسعة في اختبار الاختراق، الأدلة الجنائية الرقمية، وأمن الشبكات.',
+    certifications: ['Cisco Certified Trainer', 'CEH Master', 'CISSP'],
+    socials: [
+      { type: 'linkedin', value: 'https://linkedin.com' },
+      { type: 'email', value: 'ahmed@shamsia.edu' }
+    ]
   },
   {
     id: 'inst-2',
     name: 'سارة العلي',
-    role: 'مدربة مهارات إدارية',
+    roles: ['مدربة مهارات إدارية', 'مستشارة أعمال'],
     image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400',
-    bio: 'مستشارة إدارية معتمدة ساعدت أكثر من 50 شركة ناشئة على تنظيم هيكلها الإداري.',
+    shortBio: 'مستشارة إدارية معتمدة ساعدت أكثر من 50 شركة ناشئة.',
+    bio: 'مستشارة إدارية معتمدة ساعدت أكثر من 50 شركة ناشئة على تنظيم هيكلها الإداري. خبيرة في مجال الموارد البشرية والتطوير المؤسسي.',
+    certifications: ['PMP', 'MBA'],
+    socials: []
   },
   {
     id: 'inst-3',
     name: 'م. خالد الدوسري',
-    role: 'مطور برمجيات أول',
+    roles: ['مطور برمجيات أول', 'Full Stack Developer'],
     image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400',
-    bio: 'مهندس برمجيات متخصص في تطوير تطبيقات الويب باستخدام أحدث التقنيات.',
+    shortBio: 'مهندس برمجيات متخصص في تطوير تطبيقات الويب.',
+    bio: 'مهندس برمجيات متخصص في تطوير تطبيقات الويب باستخدام أحدث التقنيات. عمل مع كبرى الشركات التقنية في المنطقة.',
+    certifications: ['AWS Solution Architect'],
+    socials: [
+      { type: 'website', value: 'https://khaled.dev' }
+    ]
   },
 ];
 
@@ -172,7 +187,7 @@ export const COURSES: Course[] = [
 🔹 1️⃣ الشبكات – العمود الفقري للاختراق والحماية (CCNA Level)
 • فهم الشبكات من الصفر حتى الاحتراف
 • IP – Subnetting – Routing – Switching
-• كيف تُستغل الشبكات في الهجوم
+• كيف يُستغل الشبكات في الهجوم
 • كيف تُحمى الشبكات ضد الاختراق
 لا يوجد هاكر محترف بدون شبكات قوية
 ⸻

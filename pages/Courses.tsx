@@ -16,7 +16,7 @@ const Courses: React.FC = () => {
     const fetchCourses = async () => {
       try {
         const querySnapshot = await getDocs(collection(db, 'courses'));
-        const data = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Course));
+        const data = querySnapshot.docs.map(doc => ({ id: doc.id, ...(doc.data() as any) } as Course));
         setCourses(data);
       } catch (error) {
         console.error("Error fetching courses:", error);

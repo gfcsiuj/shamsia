@@ -21,7 +21,7 @@ const CourseDetails: React.FC = () => {
         const courseSnap = await getDoc(courseRef);
 
         if (courseSnap.exists()) {
-          const courseData = { id: courseSnap.id, ...courseSnap.data() } as Course;
+          const courseData = { id: courseSnap.id, ...(courseSnap.data() as any) } as Course;
           setCourse(courseData);
 
           // Fetch Instructor
@@ -29,7 +29,17 @@ const CourseDetails: React.FC = () => {
              const instructorRef = doc(db, 'instructors', courseData.instructorId);
              const instructorSnap = await getDoc(instructorRef);
              if (instructorSnap.exists()) {
-                 setInstructor({ id: instructorSnap.id, ...instructorSnap.data() } as Instructor);
+                 const iData = instructorSnap.data() as any;
+                 setInstructor({ 
+                     id: instructorSnap.id, 
+                     name: iData.name,
+                     roles: iData.roles || (iData.role ? [iData.role] : []),
+                     image: iData.image,
+                     shortBio: iData.shortBio || '',
+                     bio: iData.bio,
+                     certifications: iData.certifications || [],
+                     socials: iData.socials || []
+                 } as Instructor);
              }
           }
         }
@@ -241,7 +251,9 @@ const CourseDetails: React.FC = () => {
                   <img src={instructor.image} alt={instructor.name} className="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover shadow-md" />
                   <div>
                     <h3 className="text-xl md:text-2xl font-bold text-slate-800 mb-2">{instructor.name}</h3>
-                    <p className="text-secondary-600 font-medium mb-4">{instructor.role}</p>
+                    <p className="text-secondary-600 font-medium mb-4">
+                      {instructor.roles && instructor.roles.length > 0 ? instructor.roles[0] : ''}
+                    </p>
                     <p className="text-slate-600 leading-relaxed mb-6 text-sm md:text-base">
                       {instructor.bio}
                     </p>

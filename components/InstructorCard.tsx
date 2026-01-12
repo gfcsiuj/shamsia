@@ -1,5 +1,6 @@
+
 import React from 'react';
-import { Linkedin, Twitter, User } from 'lucide-react';
+import { User } from 'lucide-react';
 import { Instructor } from '../types';
 
 interface InstructorCardProps {
@@ -23,10 +24,12 @@ const InstructorCard: React.FC<InstructorCardProps> = ({ instructor, onClick }) 
       </div>
       
       <h3 className="text-xl font-bold text-slate-800 mb-1 group-hover:text-primary-600 transition-colors">{instructor.name}</h3>
-      <p className="text-secondary-600 text-sm font-medium mb-4">{instructor.role}</p>
+      <p className="text-secondary-600 text-sm font-medium mb-4">
+        {instructor.roles && instructor.roles.length > 0 ? instructor.roles[0] : ''}
+      </p>
       
       <p className="text-slate-500 text-sm mb-6 line-clamp-3 leading-relaxed">
-        {instructor.bio}
+        {instructor.shortBio || instructor.bio}
       </p>
       
       <div className="mt-auto w-full">

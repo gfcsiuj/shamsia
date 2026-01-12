@@ -1,13 +1,18 @@
+
+export interface SocialLink {
+  type: 'facebook' | 'instagram' | 'linkedin' | 'twitter' | 'website' | 'email' | 'phone' | 'youtube' | 'telegram';
+  value: string;
+}
+
 export interface Instructor {
   id: string;
   name: string;
-  role: string;
+  roles: string[]; // Changed from single string to array
   image: string;
-  bio: string;
-  socials?: {
-    twitter?: string;
-    linkedin?: string;
-  };
+  shortBio: string; // New field for card view
+  bio: string; // Full biography
+  certifications: string[]; // New field
+  socials: SocialLink[]; // Changed to dynamic array
 }
 
 export interface Course {
@@ -23,7 +28,7 @@ export interface Course {
   rating: number;
   studentsCount: number;
   description: string;
-  longDescription?: string; // New field for the detailed announcement text
+  longDescription?: string; 
   objectives: string[];
   targetAudience: string[];
   syllabus: { week: string; topic: string }[];
@@ -47,4 +52,14 @@ export interface Resource {
   date: string;
   url: string;
   description: string;
+}
+
+export interface SiteSettings {
+  heroTitle: string;
+  heroSubtitle: string;
+  primaryColor: string;
+  secondaryColor: string;
+  logoUrl: string;
+  contactPhone: string;
+  contactEmail: string;
 }
