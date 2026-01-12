@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Facebook, Instagram, Linkedin, MapPin, Phone, Mail, GraduationCap, Lock } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Menu, X, Facebook, Instagram, Linkedin, MapPin, Phone, Mail, GraduationCap } from 'lucide-react';
 import MobileBottomNav from './MobileBottomNav';
 import { useData } from '../context/DataContext';
 
@@ -11,10 +11,28 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const { siteConfig } = useData();
+  const lastPressTimeRef = useRef<number>(0);
 
-  // Hide standard layout elements on admin pages (optional, but good practice if not using nested routes)
-  // For this implementation, we will hide Header/Footer if path starts with /admin, relying on AdminLayout instead.
+  // Hidden Admin Access: Double press ArrowLeft within 500ms
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Check for Left Arrow key
+      if (e.key === 'ArrowLeft') {
+        const currentTime = Date.now();
+        if (currentTime - lastPressTimeRef.current < 500) {
+          navigate('/admin');
+        }
+        lastPressTimeRef.current = currentTime;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [navigate]);
+
+  // Hide standard layout elements on admin pages
   if (location.pathname.startsWith('/admin')) {
     return <>{children}</>;
   }
@@ -28,6 +46,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { name: 'المدربون', path: '/instructors' },
     { name: 'من نحن', path: '/about' },
     { name: 'اتصل بنا', path: '/contact' },
+    { name: 'لوحة الأدمن', path: '/admin' },
   ];
 
   return (
@@ -39,10 +58,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <span className="flex items-center gap-2"><Phone size={14} /> {siteConfig.contactPhone}</span>
             <span className="flex items-center gap-2"><Mail size={14} /> {siteConfig.contactEmail}</span>
           </div>
-          <div className="flex gap-4">
-             <a href="https://www.facebook.com/profile.php?id=61554748052998" target="_blank" rel="noopener noreferrer" className="hover:text-secondary-500 transition"><Facebook size={14} /></a>
-             <a href="https://www.instagram.com/shamsia.iq/" target="_blank" rel="noopener noreferrer" className="hover:text-secondary-500 transition"><Instagram size={14} /></a>
-             <a href="#" className="hover:text-secondary-500 transition"><Linkedin size={14} /></a>
+          <div className="flex items-center gap-4">
+             <div className="flex gap-4 border-l border-primary-700 pl-4 ml-1">
+                <a href="https://www.facebook.com/profile.php?id=61554748052998" target="_blank" rel="noopener noreferrer" className="hover:text-secondary-500 transition"><Facebook size={14} /></a>
+                <a href="https://www.instagram.com/shamsia.iq/" target="_blank" rel="noopener noreferrer" className="hover:text-secondary-500 transition"><Instagram size={14} /></a>
+                <a href="#" className="hover:text-secondary-500 transition"><Linkedin size={14} /></a>
+             </div>
           </div>
         </div>
       </div>
@@ -51,19 +72,22 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-slate-100">
         <div className="container mx-auto px-4 py-3">
           <div className="flex justify-between items-center">
-            {/* Logo */}
-            <Link to="/" className="flex items-center gap-2 md:gap-3">
-              <img src="https://k.top4top.io/p_3662fca071.png" alt="Shamsia Logo" className="h-10 md:h-12 w-auto" />
-              <span className="text-xl md:text-2xl font-bold text-primary-800">شمسية</span>
-            </Link>
+            
+            {/* Logo Area */}
+            <div className="flex items-center gap-4">
+              <Link to="/" className="flex items-center gap-2 md:gap-3">
+                <img src="https://k.top4top.io/p_3662fca071.png" alt="Shamsia Logo" className="h-10 md:h-12 w-auto" />
+                <span className="text-xl md:text-2xl font-bold text-primary-800">شمسية</span>
+              </Link>
+            </div>
 
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center gap-6 xl:gap-8">
+            <nav className="hidden lg:flex items-center gap-5 xl:gap-6">
               {navLinks.map((link) => (
                 <Link
                   key={link.path}
                   to={link.path}
-                  className={`font-medium transition-colors duration-200 text-base ${
+                  className={`font-medium transition-colors duration-200 text-base whitespace-nowrap ${
                     isActive(link.path)
                       ? 'text-primary-600 font-bold'
                       : 'text-slate-600 hover:text-primary-600'
@@ -152,6 +176,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 <li><Link to="/library" className="hover:text-secondary-400 transition">المكتبة</Link></li>
                 <li><Link to="/instructors" className="hover:text-secondary-400 transition">فريق المدربين</Link></li>
                 <li><Link to="/about" className="hover:text-secondary-400 transition">الاعتمادات</Link></li>
+                <li><Link to="/admin" className="hover:text-secondary-400 transition font-bold text-secondary-400">لوحة الأدمن</Link></li>
               </ul>
             </div>
 
@@ -188,12 +213,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           
           <div className="border-t border-primary-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-primary-200">
             <p className="text-center md:text-right">جميع الحقوق محفوظة © منصة شمسية {new Date().getFullYear()}</p>
-            <div className="flex items-center gap-4">
-               <Link to="/admin" className="flex items-center gap-1 text-xs opacity-50 hover:opacity-100 transition">
-                 <Lock size={12} />
-                 <span>دخول الأدمن</span>
-               </Link>
-            </div>
             <div className="flex gap-4">
               <a href="https://www.facebook.com/profile.php?id=61554748052998" target="_blank" rel="noopener noreferrer" className="bg-primary-800 p-2 rounded-full hover:bg-secondary-500 hover:text-white transition"><Facebook size={18}/></a>
               <a href="https://www.instagram.com/shamsia.iq/" target="_blank" rel="noopener noreferrer" className="bg-primary-800 p-2 rounded-full hover:bg-secondary-500 hover:text-white transition"><Instagram size={18}/></a>

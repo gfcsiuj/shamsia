@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, BookOpen, Library, Users, Info, Phone } from 'lucide-react';
+import { Home, BookOpen, Library, Users, Info, Phone, Shield } from 'lucide-react';
 
 const MobileBottomNav: React.FC = () => {
   const location = useLocation();
@@ -11,8 +11,8 @@ const MobileBottomNav: React.FC = () => {
     { name: 'الدورات', path: '/courses', icon: BookOpen },
     { name: 'المكتبة', path: '/library', icon: Library },
     { name: 'المدربون', path: '/instructors', icon: Users },
+    { name: 'الأدمن', path: '/admin', icon: Shield },
     { name: 'من نحن', path: '/about', icon: Info },
-    { name: 'اتصل بنا', path: '/contact', icon: Phone },
   ];
 
   return (
