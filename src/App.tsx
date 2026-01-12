@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
 import Home from './pages/Home';
 import Courses from './pages/Courses';
@@ -13,27 +13,17 @@ import Login from './pages/admin/Login';
 import Dashboard from './pages/admin/Dashboard';
 import InstructorsAdmin from './pages/admin/InstructorsAdmin';
 import CoursesAdmin from './pages/admin/CoursesAdmin';
-import Settings from './pages/admin/Settings';
 import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
-
-// Layout wrapper for public pages
-const MainLayout = () => {
-  return (
-    <Layout>
-      <Outlet />
-    </Layout>
-  );
-};
 
 const App: React.FC = () => {
   return (
     <AuthProvider>
       <ThemeProvider>
-        <Routes>
-          {/* Public Routes (Wrapped in MainLayout) */}
-          <Route element={<MainLayout />}>
+        <Layout>
+          <Routes>
+            {/* Public Routes */}
             <Route path="/" element={<Home />} />
             <Route path="/courses" element={<Courses />} />
             <Route path="/courses/:id" element={<CourseDetails />} />
@@ -43,48 +33,43 @@ const App: React.FC = () => {
             <Route path="/instructors" element={<Instructors />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
-          </Route>
-          
-          {/* Admin Routes (No Public Layout) */}
-          <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
-          <Route path="/admin/login" element={<Login />} />
-          
-          <Route 
-            path="/admin/dashboard" 
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/admin/instructors" 
-            element={
-              <ProtectedRoute>
-                <InstructorsAdmin />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/admin/courses" 
-            element={
-              <ProtectedRoute>
-                <CoursesAdmin />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/admin/settings" 
-            element={
-              <ProtectedRoute>
-                <Settings />
-              </ProtectedRoute>
-            } 
-          />
-
-          {/* Catch all - Redirect to home */}
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+            
+            {/* Admin Routes */}
+            <Route path="/admin/login" element={<Login />} />
+            <Route 
+              path="/admin/dashboard" 
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/admin/instructors" 
+              element={
+                <ProtectedRoute>
+                  <InstructorsAdmin />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/admin/courses" 
+              element={
+                <ProtectedRoute>
+                  <CoursesAdmin />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/admin/settings" 
+              element={
+                <ProtectedRoute>
+                  <Settings />
+                </ProtectedRoute>
+              } 
+            />
+          </Routes>
+        </Layout>
       </ThemeProvider>
     </AuthProvider>
   );
