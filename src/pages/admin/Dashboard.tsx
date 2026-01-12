@@ -38,7 +38,7 @@ const Dashboard: React.FC = () => {
           <Link to="/admin/library" className="flex items-center gap-3 px-4 py-3 hover:bg-primary-800 rounded-lg text-primary-100 transition">
             <Library size={20} />
             إدارة المكتبة
-          </Link>
+          </Link> 
           <Link to="/admin/settings" className="flex items-center gap-3 px-4 py-3 hover:bg-primary-800 rounded-lg text-primary-100 transition">
             <Settings size={20} />
             إعدادات الموقع
