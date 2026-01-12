@@ -241,60 +241,69 @@ const InstructorsAdmin: React.FC = () => {
           </div>
         )}
 
-        {/* Improved Modal */}
+        {/* High End Floating Modal */}
         {isEditing && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm transition-opacity">
-            <div className="bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden shadow-2xl flex flex-col animate-scale-in">
-              <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-white">
-                <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-                    {formData.id ? <Pencil size={20} className="text-primary-600"/> : <Plus size={20} className="text-primary-600"/>}
-                    {formData.id ? 'تعديل بيانات مدرب' : 'إضافة مدرب جديد'}
-                </h2>
-                <button onClick={() => setIsEditing(false)} className="text-slate-400 hover:text-slate-600 hover:bg-slate-100 p-2 rounded-full transition"><X size={20}/></button>
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 ia-modal-overlay">
+            <div className="ia-modal-content w-full max-w-4xl max-h-[90vh] rounded-2xl flex flex-col overflow-hidden">
+              
+              {/* Header */}
+              <div className="px-8 py-5 border-b border-slate-100 flex justify-between items-center bg-white shrink-0">
+                <div className="flex items-center gap-4">
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${formData.id ? 'bg-blue-50 text-blue-600' : 'bg-green-50 text-green-600'}`}>
+                        {formData.id ? <Pencil size={20} /> : <Plus size={24} />}
+                    </div>
+                    <div>
+                         <h2 className="text-xl font-bold text-slate-800">
+                            {formData.id ? 'تعديل بيانات مدرب' : 'إضافة مدرب جديد'}
+                        </h2>
+                        <p className="text-xs text-slate-500">قم بإدارة الملف الشخصي والمهني للمدرب</p>
+                    </div>
+                </div>
+                <button onClick={() => setIsEditing(false)} className="w-10 h-10 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400 transition"><X size={24}/></button>
               </div>
               
-              <div className="overflow-y-auto p-6 bg-slate-50/50 flex-1">
-                  <form id="instructorForm" onSubmit={handleSubmit} className="space-y-6">
+              <div className="overflow-y-auto p-8 bg-slate-50/50 flex-1">
+                  <form id="instructorForm" onSubmit={handleSubmit} className="space-y-8">
                     {/* Section 1: Basic Info */}
-                    <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
-                        <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4 border-b border-slate-50 pb-2 flex items-center gap-2">
-                            <User size={16} /> المعلومات الشخصية
+                    <div className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm">
+                        <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-6 border-b border-slate-50 pb-2 flex items-center gap-2">
+                            <User size={18} /> المعلومات الشخصية
                         </h3>
-                        <div className="flex flex-col md:flex-row gap-8">
-                            <div className="flex flex-col items-center gap-4">
-                                <div className="relative w-32 h-32 rounded-full overflow-hidden bg-slate-100 border-4 border-white shadow-md group cursor-pointer" onClick={() => document.getElementById('file-upload')?.click()}>
+                        <div className="flex flex-col md:flex-row gap-10">
+                            <div className="flex flex-col items-center gap-6">
+                                <div className="ia-avatar-wrapper group" onClick={() => document.getElementById('file-upload')?.click()}>
                                     {imageFile ? (
                                         <img src={URL.createObjectURL(imageFile)} alt="Preview" className="w-full h-full object-cover" />
                                     ) : formData.image ? (
                                         <img src={formData.image} alt="Current" className="w-full h-full object-cover" />
                                     ) : (
-                                        <div className="w-full h-full flex items-center justify-center text-slate-400 flex-col gap-2">
-                                            <Upload size={24}/>
-                                            <span className="text-[10px]">رفع صورة</span>
+                                        <div className="w-full h-full flex items-center justify-center text-slate-300 flex-col gap-2">
+                                            <Upload size={32}/>
+                                            <span className="text-[10px] font-bold">رفع صورة</span>
                                         </div>
                                     )}
-                                    <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300">
+                                    <div className="ia-avatar-overlay">
                                         <Pencil className="text-white" size={24} />
                                     </div>
                                 </div>
                                 <input id="file-upload" type="file" className="hidden" accept="image/*" onChange={(e) => e.target.files && setImageFile(e.target.files[0])} />
                                 
                                 <div className="w-full max-w-[200px]">
-                                     <label className="text-xs text-slate-500 mb-1 block">أو رابط خارجي</label>
+                                     <label className="text-xs font-bold text-slate-400 mb-1 block text-center">أو رابط خارجي للصورة</label>
                                      <div className="relative">
                                         <LinkIcon className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
                                         <input 
                                             type="text" 
                                             value={formData.image}
                                             onChange={(e) => setFormData({...formData, image: e.target.value})}
-                                            className="w-full pr-7 pl-2 py-1.5 text-xs rounded border border-slate-200 focus:border-primary-500 outline-none"
-                                            placeholder="https://..."
+                                            className="w-full pr-7 pl-2 py-2 text-xs rounded-lg border border-slate-200 focus:border-primary-500 outline-none text-center bg-slate-50 focus:bg-white transition"
+                                            placeholder="https://example.com/image.jpg"
                                         />
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="flex-1 space-y-4">
+                            <div className="flex-1 space-y-5">
                                 <div>
                                     <label className="ia-label">الاسم الكامل</label>
                                     <input 
@@ -302,30 +311,30 @@ const InstructorsAdmin: React.FC = () => {
                                         required
                                         value={formData.name}
                                         onChange={(e) => setFormData({...formData, name: e.target.value})}
-                                        className="ia-input"
+                                        className="ia-input text-lg font-semibold"
                                         placeholder="د. محمد علي"
                                     />
                                 </div>
                                 
-                                <div className="grid grid-cols-1 gap-4">
+                                <div className="grid grid-cols-1 gap-5">
                                     <div>
-                                        <label className="ia-label">نبذة مختصرة (تظهر في البطاقة)</label>
+                                        <label className="ia-label">نبذة مختصرة (للبطاقة التعريفية)</label>
                                         <textarea 
                                             rows={2}
                                             value={formData.shortBio}
                                             onChange={(e) => setFormData({...formData, shortBio: e.target.value})}
                                             className="ia-input resize-none"
-                                            placeholder="نبذة مختصرة جداً..."
+                                            placeholder="نبذة مختصرة جداً تظهر في بطاقة المدرب..."
                                         ></textarea>
                                     </div>
                                     <div>
                                         <label className="ia-label">السيرة الذاتية المفصلة</label>
                                         <textarea 
-                                            rows={4}
+                                            rows={5}
                                             value={formData.bio}
                                             onChange={(e) => setFormData({...formData, bio: e.target.value})}
-                                            className="ia-input resize-none"
-                                            placeholder="التفاصيل الكاملة، الخبرات، والمهارات..."
+                                            className="ia-input resize-none leading-relaxed"
+                                            placeholder="التفاصيل الكاملة، الخبرات، الشهادات، والمهارات..."
                                         ></textarea>
                                     </div>
                                 </div>
@@ -334,48 +343,48 @@ const InstructorsAdmin: React.FC = () => {
                     </div>
 
                     {/* Section 2: Roles & Certs */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm h-full">
-                            <div className="flex justify-between items-center mb-4 border-b border-slate-50 pb-2">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm h-full">
+                            <div className="flex justify-between items-center mb-6 border-b border-slate-50 pb-2">
                                 <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                                    <Briefcase size={16} /> المسميات الوظيفية
+                                    <Briefcase size={18} /> المسميات الوظيفية
                                 </h3>
-                                <button type="button" onClick={() => addArrayItem('roles')} className="text-primary-600 hover:bg-primary-50 p-1.5 rounded-lg transition"><Plus size={16}/></button>
+                                <button type="button" onClick={() => addArrayItem('roles')} className="text-primary-600 bg-primary-50 hover:bg-primary-100 p-2 rounded-lg transition"><Plus size={16}/></button>
                             </div>
-                            <div className="space-y-3 max-h-48 overflow-y-auto pr-1">
+                            <div className="space-y-3 max-h-60 overflow-y-auto pr-1">
                                 {formData.roles.map((role, i) => (
                                     <div key={i} className="flex gap-2">
                                         <input 
                                             type="text" 
-                                            className="ia-input py-2 text-sm" 
+                                            className="ia-input py-2.5 text-sm" 
                                             value={role} 
                                             onChange={e => handleArrayChange(i, e.target.value, 'roles')}
-                                            placeholder="مثال: مطور برمجيات"
+                                            placeholder="مثال: خبير أمن سيبراني"
                                         />
-                                        <button type="button" onClick={() => removeArrayItem(i, 'roles')} className="text-slate-400 hover:text-red-500 p-2 transition"><Minus size={18}/></button>
+                                        <button type="button" onClick={() => removeArrayItem(i, 'roles')} className="text-slate-300 hover:text-red-500 p-2 transition"><Minus size={18}/></button>
                                     </div>
                                 ))}
                             </div>
                         </div>
 
-                        <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm h-full">
-                            <div className="flex justify-between items-center mb-4 border-b border-slate-50 pb-2">
+                        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm h-full">
+                            <div className="flex justify-between items-center mb-6 border-b border-slate-50 pb-2">
                                 <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                                    <Award size={16} /> الشهادات والاعتمادات
+                                    <Award size={18} /> الشهادات والاعتمادات
                                 </h3>
-                                <button type="button" onClick={() => addArrayItem('certifications')} className="text-primary-600 hover:bg-primary-50 p-1.5 rounded-lg transition"><Plus size={16}/></button>
+                                <button type="button" onClick={() => addArrayItem('certifications')} className="text-primary-600 bg-primary-50 hover:bg-primary-100 p-2 rounded-lg transition"><Plus size={16}/></button>
                             </div>
-                            <div className="space-y-3 max-h-48 overflow-y-auto pr-1">
+                            <div className="space-y-3 max-h-60 overflow-y-auto pr-1">
                                 {formData.certifications.map((cert, i) => (
                                     <div key={i} className="flex gap-2">
                                         <input 
                                             type="text" 
-                                            className="ia-input py-2 text-sm" 
+                                            className="ia-input py-2.5 text-sm" 
                                             value={cert} 
                                             onChange={e => handleArrayChange(i, e.target.value, 'certifications')}
-                                            placeholder="مثال: PMP"
+                                            placeholder="مثال: PMP, CISSP"
                                         />
-                                        <button type="button" onClick={() => removeArrayItem(i, 'certifications')} className="text-slate-400 hover:text-red-500 p-2 transition"><Minus size={18}/></button>
+                                        <button type="button" onClick={() => removeArrayItem(i, 'certifications')} className="text-slate-300 hover:text-red-500 p-2 transition"><Minus size={18}/></button>
                                     </div>
                                 ))}
                             </div>
@@ -383,20 +392,20 @@ const InstructorsAdmin: React.FC = () => {
                     </div>
 
                     {/* Section 3: Socials */}
-                    <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
-                        <div className="flex justify-between items-center mb-4 border-b border-slate-50 pb-2">
+                    <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+                        <div className="flex justify-between items-center mb-6 border-b border-slate-50 pb-2">
                              <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                                <Share2 size={16} /> التواصل الاجتماعي
+                                <Share2 size={18} /> قنوات التواصل
                             </h3>
-                            <button type="button" onClick={addSocial} className="text-primary-600 hover:bg-primary-50 p-1.5 rounded-lg transition"><Plus size={16}/></button>
+                            <button type="button" onClick={addSocial} className="text-primary-600 bg-primary-50 hover:bg-primary-100 p-2 rounded-lg transition"><Plus size={16}/></button>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {formData.socials.map((social, i) => (
-                                <div key={i} className="flex gap-2 items-center bg-slate-50 p-2 rounded-lg border border-slate-200">
+                                <div key={i} className="ia-social-row">
                                     <select 
                                         value={social.type} 
                                         onChange={e => handleSocialChange(i, 'type', e.target.value)}
-                                        className="bg-white border border-slate-200 text-slate-700 text-sm rounded-md px-2 py-2 outline-none w-28"
+                                        className="ia-social-select"
                                     >
                                         <option value="facebook">فيسبوك</option>
                                         <option value="instagram">انستغرام</option>
@@ -407,19 +416,20 @@ const InstructorsAdmin: React.FC = () => {
                                         <option value="email">ايميل</option>
                                         <option value="phone">هاتف</option>
                                     </select>
+                                    <div className="w-px h-6 bg-slate-200 mx-2"></div>
                                     <input 
                                         type="text" 
-                                        className="flex-1 bg-transparent text-sm outline-none px-2" 
+                                        className="ia-social-input" 
                                         value={social.value}
                                         onChange={e => handleSocialChange(i, 'value', e.target.value)}
-                                        placeholder="الرابط أو المعرف..."
+                                        placeholder="اسم المستخدم أو الرابط..."
                                     />
-                                    <button type="button" onClick={() => removeSocial(i)} className="text-slate-400 hover:text-red-500 p-1 transition"><X size={16}/></button>
+                                    <button type="button" onClick={() => removeSocial(i)} className="text-slate-300 hover:text-red-500 p-1.5 transition"><X size={16}/></button>
                                 </div>
                             ))}
                             {formData.socials.length === 0 && (
-                                <div className="col-span-2 text-center py-4 text-slate-400 text-sm italic">
-                                    أضف قنوات تواصل للمدرب
+                                <div className="col-span-2 text-center py-8 text-slate-400 text-sm italic bg-slate-50 rounded-xl border border-dashed border-slate-200">
+                                    أضف طرق تواصل لتمكين الطلاب من متابعة المدرب
                                 </div>
                             )}
                         </div>
@@ -427,15 +437,16 @@ const InstructorsAdmin: React.FC = () => {
                   </form>
               </div>
 
-              <div className="px-6 py-4 border-t border-slate-100 bg-white flex justify-end gap-3">
-                    <button type="button" onClick={() => setIsEditing(false)} className="px-6 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 font-bold transition">إلغاء</button>
+              {/* Footer */}
+              <div className="px-8 py-5 border-t border-slate-100 bg-white flex justify-end gap-4 shrink-0 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-10">
+                    <button type="button" onClick={() => setIsEditing(false)} className="px-8 py-3 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 font-bold transition">إلغاء</button>
                     <button 
                         type="submit"
                         form="instructorForm"
                         disabled={saveLoading}
-                        className="px-8 py-2.5 rounded-xl bg-primary-600 text-white hover:bg-primary-700 font-bold transition flex items-center gap-2 disabled:opacity-70 shadow-lg shadow-primary-200"
+                        className="px-10 py-3 rounded-xl bg-primary-600 text-white hover:bg-primary-700 font-bold transition flex items-center gap-2 disabled:opacity-70 shadow-lg shadow-primary-200 transform hover:-translate-y-1"
                     >
-                        {saveLoading ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />}
+                        {saveLoading ? <Loader2 className="animate-spin" size={20} /> : <Save size={20} />}
                         حفظ البيانات
                     </button>
               </div>
