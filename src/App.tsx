@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Switch, Route } from 'react-router-dom';
 import Layout from './components/Layout';
 import Home from './pages/Home';
 import Courses from './pages/Courses';
@@ -10,40 +10,20 @@ import Contact from './pages/Contact';
 import Library from './pages/Library';
 import CourseRegister from './pages/CourseRegister';
 
-// Admin Imports
-import AdminLayout from './pages/admin/AdminLayout';
-import Dashboard from './pages/admin/Dashboard';
-import InstructorsManager from './pages/admin/InstructorsManager';
-import CoursesManager from './pages/admin/CoursesManager';
-import SiteCustomizer from './pages/admin/SiteCustomizer';
-
 const App: React.FC = () => {
   return (
     <Layout>
-      <Routes>
-        {/* Admin Routes */}
-        <Route path="/admin/*" element={
-          <AdminLayout>
-            <Routes>
-              <Route index element={<Dashboard />} />
-              <Route path="instructors" element={<InstructorsManager />} />
-              <Route path="courses" element={<CoursesManager />} />
-              <Route path="settings" element={<SiteCustomizer />} />
-            </Routes>
-          </AdminLayout>
-        } />
-
-        {/* Public Routes */}
-        <Route path="/" element={<Home />} />
-        <Route path="/courses" element={<Courses />} />
-        <Route path="/courses/:id/register" element={<CourseRegister />} />
-        <Route path="/courses/:id" element={<CourseDetails />} />
-        <Route path="/register" element={<CourseRegister />} />
-        <Route path="/library" element={<Library />} />
-        <Route path="/instructors" element={<Instructors />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/contact" element={<Contact />} />
-      </Routes>
+      <Switch>
+        <Route exact path="/" component={Home} />
+        <Route exact path="/courses" component={Courses} />
+        <Route exact path="/courses/:id/register" component={CourseRegister} />
+        <Route exact path="/courses/:id" component={CourseDetails} />
+        <Route exact path="/register" component={CourseRegister} />
+        <Route exact path="/library" component={Library} />
+        <Route exact path="/instructors" component={Instructors} />
+        <Route exact path="/about" component={About} />
+        <Route exact path="/contact" component={Contact} />
+      </Switch>
     </Layout>
   );
 };

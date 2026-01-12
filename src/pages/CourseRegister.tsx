@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import { CheckCircle, ArrowRight, BookOpen, ExternalLink, AlertCircle } from 'lucide-react';
-import { useData } from '../context/DataContext';
+import { COURSES } from '../constants';
 
-const CourseRegister: React.FC = () => {
-  const { id } = useParams<{ id?: string }>();
-  const { courses } = useData();
+interface RouteParams {
+  id?: string;
+}
+
+const CourseRegister: React.FC<RouteComponentProps<RouteParams>> = ({ match }) => {
+  const { id } = match.params;
   const [selectedCourseId, setSelectedCourseId] = useState<string>(id || '');
   const [formData, setFormData] = useState({
     name: '',
@@ -22,7 +25,7 @@ const CourseRegister: React.FC = () => {
     }
   }, [id]);
 
-  const selectedCourse = courses.find(c => c.id === selectedCourseId);
+  const selectedCourse = COURSES.find(c => c.id === selectedCourseId);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,7 +69,7 @@ const CourseRegister: React.FC = () => {
                                 className="flex-grow px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none transition cursor-pointer text-sm md:text-base"
                             >
                                 <option value="" disabled>-- اختر دورة --</option>
-                                {courses.map(course => (
+                                {COURSES.map(course => (
                                     <option key={course.id} value={course.id}>{course.title}</option>
                                 ))}
                             </select>
