@@ -7,26 +7,33 @@ export interface SocialLink {
 export interface Instructor {
   id: string;
   name: string;
-  roles: string[]; // Changed from single string to array
+  roles: string[];
   image: string;
-  shortBio: string; // New field for card view
-  bio: string; // Full biography
-  certifications: string[]; // New field
-  socials: SocialLink[]; // Changed to dynamic array
+  shortBio: string;
+  bio: string;
+  certifications: string[];
+  socials: SocialLink[];
+}
+
+export interface MediaItem {
+  url: string;
+  type: 'image' | 'video';
 }
 
 export interface Course {
   id: string;
   title: string;
-  category: 'Tech' | 'Human Development' | 'Cyber Security' | 'Admin Skills' | 'Student Skills';
-  level: 'مبتدئ' | 'متوسط' | 'متقدم' | 'دبلوم';
+  category: string; // Changed to string to allow flexibility
+  level: string; // Changed to string to allow custom levels
   price: number;
   oldPrice?: number;
-  image: string;
-  instructorId: string;
+  media: MediaItem[]; // Replaces single 'image' string
+  instructorIds: string[]; // Replaces single 'instructorId'
   duration: string;
   rating: number;
   studentsCount: number;
+  studentsCountMode: 'auto' | 'manual'; // New field
+  tags: string[]; // New field (e.g., 'شهادة معتمدة')
   description: string;
   longDescription?: string; 
   objectives: string[];

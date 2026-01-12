@@ -1,16 +1,17 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Calendar, Clock, Award, PlayCircle, CheckCircle, User, BarChart, Users, Medal, FileText, Loader2 } from 'lucide-react';
+import { Calendar, Clock, Award, PlayCircle, CheckCircle, User, BarChart, Users, Medal, FileText, Loader2, Tag } from 'lucide-react';
 import { db } from '../lib/firebase';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, collection, getDocs, query, where, documentId } from 'firebase/firestore';
 import { Course, Instructor } from '../types';
 
 const CourseDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [course, setCourse] = useState<Course | null>(null);
-  const [instructor, setInstructor] = useState<Instructor | null>(null);
+  const [instructors, setInstructors] = useState<Instructor[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'about' | 'syllabus' | 'instructor' | 'details'>('about');
+  const [activeTab, setActiveTab] = useState<'about' | 'syllabus' | 'instructors' | 'details'>('about');
 
   useEffect(() => {
     const fetchCourseData = async () => {
@@ -21,17 +22,30 @@ const CourseDetails: React.FC = () => {
         const courseSnap = await getDoc(courseRef);
 
         if (courseSnap.exists()) {
-          const courseData = { id: courseSnap.id, ...(courseSnap.data() as any) } as Course;
+          const data = courseSnap.data();
+          // Map data safely
+          const courseData = { 
+              id: courseSnap.id, 
+              ...data,
+              instructorIds: data.instructorIds || (data.instructorId ? [data.instructorId] : []),
+              media: data.media || (data.image ? [{ url: data.image, type: 'image' }] : []),
+              tags: data.tags || []
+          } as Course;
+          
           setCourse(courseData);
 
-          // Fetch Instructor
-          if (courseData.instructorId) {
-             const instructorRef = doc(db, 'instructors', courseData.instructorId);
-             const instructorSnap = await getDoc(instructorRef);
-             if (instructorSnap.exists()) {
-                 const iData = instructorSnap.data() as any;
-                 setInstructor({ 
-                     id: instructorSnap.id, 
+          // Fetch Instructors
+          if (courseData.instructorIds && courseData.instructorIds.length > 0) {
+              // Firestore 'in' query supports up to 10 items. For simplicity in this demo, fetching logic is basic.
+              // We'll fetch all matching IDs.
+              const instructorsRef = collection(db, 'instructors');
+              const q = query(instructorsRef, where(documentId(), 'in', courseData.instructorIds));
+              const instructorsSnap = await getDocs(q);
+              
+              const fetchedInstructors = instructorsSnap.docs.map(doc => {
+                  const iData = doc.data();
+                   return { 
+                     id: doc.id, 
                      name: iData.name,
                      roles: iData.roles || (iData.role ? [iData.role] : []),
                      image: iData.image,
@@ -39,8 +53,9 @@ const CourseDetails: React.FC = () => {
                      bio: iData.bio,
                      certifications: iData.certifications || [],
                      socials: iData.socials || []
-                 } as Instructor);
-             }
+                 } as Instructor;
+              });
+              setInstructors(fetchedInstructors);
           }
         }
       } catch (error) {
@@ -72,6 +87,8 @@ const CourseDetails: React.FC = () => {
     );
   }
 
+  const mainMedia = course.media && course.media.length > 0 ? course.media[0] : null;
+
   return (
     <div className="bg-slate-50 min-h-screen pb-24">
       {/* Header / Hero */}
@@ -79,9 +96,17 @@ const CourseDetails: React.FC = () => {
         <div className="container mx-auto px-4">
            <div className="flex flex-col lg:flex-row gap-8 items-start">
              <div className="lg:w-2/3 animate-fade-in-right">
-                <span className="inline-block bg-secondary-500 text-white text-xs font-bold px-3 py-1 rounded-full mb-4 animate-scale-in delay-100">
-                  {course.category}
-                </span>
+                <div className="flex flex-wrap gap-2 mb-4 animate-scale-in delay-100">
+                    <span className="bg-secondary-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+                    {course.category}
+                    </span>
+                    {course.tags && course.tags.map(tag => (
+                         <span key={tag} className="bg-white/20 backdrop-blur-sm text-white text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
+                             <Tag size={12} /> {tag}
+                         </span>
+                    ))}
+                </div>
+                
                 <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6 leading-tight animate-fade-in-up delay-200">{course.title}</h1>
                 <p className="text-primary-100 text-base md:text-lg mb-6 md:mb-8 leading-relaxed max-w-2xl animate-fade-in-up delay-300">
                   {course.description}
@@ -90,11 +115,16 @@ const CourseDetails: React.FC = () => {
                 <div className="flex flex-wrap gap-4 md:gap-6 text-sm md:text-base animate-fade-in-up delay-400">
                   <div className="flex items-center gap-2">
                     <User className="text-secondary-400" size={18} />
-                    <span>المدرب: {instructor?.name || 'غير محدد'}</span>
+                    <span>
+                        {instructors.length > 0 
+                            ? instructors.map(i => i.name.split(' ')[0]).join('، ') // Show first names comma separated
+                            : 'نخبة من المدربين'
+                        }
+                    </span>
                   </div>
                   <div className="flex items-center gap-2">
                     <BarChart className="text-secondary-400" size={18} />
-                    <span>المستوى: {course.level}</span>
+                    <span>{course.level}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Award className="text-secondary-400" size={18} />
@@ -111,12 +141,21 @@ const CourseDetails: React.FC = () => {
           
           {/* Main Content Column */}
           <div className="lg:w-2/3 animate-fade-in-up delay-500">
-            {/* Video Placeholder */}
-            <div className="bg-black rounded-xl overflow-hidden aspect-video shadow-lg mb-8 relative group cursor-pointer">
-              <img src={course.image} alt={course.title} className="w-full h-full object-cover opacity-60 group-hover:opacity-40 transition duration-500" />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <PlayCircle size={64} className="text-white drop-shadow-lg group-hover:scale-110 transition scale-90 md:scale-100 duration-300" />
-              </div>
+            {/* Media Placeholder */}
+            <div className="bg-black rounded-xl overflow-hidden aspect-video shadow-lg mb-8 relative group">
+              {mainMedia ? (
+                   mainMedia.type === 'video' ? (
+                        <div className="w-full h-full flex items-center justify-center bg-slate-900">
+                            {/* In a real app, embed actual video player here */}
+                            <PlayCircle size={64} className="text-white/80" />
+                            <span className="mt-4 text-white text-sm absolute bottom-4">فيديو توضيحي (محاكاة)</span>
+                        </div>
+                   ) : (
+                       <img src={mainMedia.url} alt={course.title} className="w-full h-full object-cover" />
+                   )
+              ) : (
+                  <div className="w-full h-full bg-slate-800 flex items-center justify-center text-slate-500">لا توجد وسائط</div>
+              )}
             </div>
 
             {/* Tabs Navigation */}
@@ -142,10 +181,10 @@ const CourseDetails: React.FC = () => {
                 المنهج الدراسي
               </button>
               <button 
-                onClick={() => setActiveTab('instructor')}
-                className={`flex-shrink-0 px-6 md:px-8 py-4 font-bold text-sm md:text-base whitespace-nowrap border-b-2 transition ${activeTab === 'instructor' ? 'border-primary-600 text-primary-600 bg-primary-50' : 'border-transparent text-slate-500 hover:text-slate-800'}`}
+                onClick={() => setActiveTab('instructors')}
+                className={`flex-shrink-0 px-6 md:px-8 py-4 font-bold text-sm md:text-base whitespace-nowrap border-b-2 transition ${activeTab === 'instructors' ? 'border-primary-600 text-primary-600 bg-primary-50' : 'border-transparent text-slate-500 hover:text-slate-800'}`}
               >
-                المدرب
+                المدربون
               </button>
             </div>
 
@@ -246,21 +285,29 @@ const CourseDetails: React.FC = () => {
                 </div>
               )}
 
-              {activeTab === 'instructor' && instructor && (
-                <div className="animate-fade-in flex flex-col md:flex-row gap-6 md:gap-8 items-center md:items-start text-center md:text-right">
-                  <img src={instructor.image} alt={instructor.name} className="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover shadow-md" />
-                  <div>
-                    <h3 className="text-xl md:text-2xl font-bold text-slate-800 mb-2">{instructor.name}</h3>
-                    <p className="text-secondary-600 font-medium mb-4">
-                      {instructor.roles && instructor.roles.length > 0 ? instructor.roles[0] : ''}
-                    </p>
-                    <p className="text-slate-600 leading-relaxed mb-6 text-sm md:text-base">
-                      {instructor.bio}
-                    </p>
-                    <Link to="/instructors" className="text-primary-600 font-bold hover:underline">
-                      عرض ملف المدرب الكامل
-                    </Link>
-                  </div>
+              {activeTab === 'instructors' && (
+                <div className="animate-fade-in space-y-8">
+                   <h3 className="text-xl md:text-2xl font-bold text-slate-800 mb-6">فريق التدريب</h3>
+                   {instructors.map(instructor => (
+                        <div key={instructor.id} className="flex flex-col md:flex-row gap-6 md:gap-8 items-center md:items-start text-center md:text-right border-b border-slate-100 pb-8 last:border-0">
+                            <img src={instructor.image} alt={instructor.name} className="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover shadow-md" />
+                            <div>
+                                <h3 className="text-xl md:text-2xl font-bold text-slate-800 mb-2">{instructor.name}</h3>
+                                <p className="text-secondary-600 font-medium mb-4">
+                                {instructor.roles && instructor.roles.length > 0 ? instructor.roles[0] : ''}
+                                </p>
+                                <p className="text-slate-600 leading-relaxed mb-6 text-sm md:text-base">
+                                {instructor.bio}
+                                </p>
+                                <Link to="/instructors" className="text-primary-600 font-bold hover:underline">
+                                عرض ملف المدرب
+                                </Link>
+                            </div>
+                        </div>
+                   ))}
+                   {instructors.length === 0 && (
+                       <p className="text-slate-500 italic">لم يتم تعيين مدربين لهذه الدورة بعد.</p>
+                   )}
                 </div>
               )}
             </div>

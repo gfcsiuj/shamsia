@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Clock, Users, Star, ArrowLeft } from 'lucide-react';
@@ -9,14 +10,19 @@ interface CourseCardProps {
 }
 
 const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
-  const instructor: Instructor | undefined = INSTRUCTORS.find(i => i.id === course.instructorId);
+  // Try to find the first instructor
+  const mainInstructorId = course.instructorIds && course.instructorIds.length > 0 ? course.instructorIds[0] : null;
+  const instructor: Instructor | undefined = mainInstructorId ? INSTRUCTORS.find(i => i.id === mainInstructorId) : undefined;
+  
+  // Handle media (use first image or placeholder)
+  const imageUrl = course.media && course.media.length > 0 ? course.media[0].url : 'https://via.placeholder.com/400x300';
 
   return (
     <div className="group bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col h-full">
       {/* Image Container */}
       <div className="relative h-48 overflow-hidden">
         <img 
-          src={course.image} 
+          src={imageUrl} 
           alt={course.title} 
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
         />
@@ -39,12 +45,12 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
           <span className={`text-xs px-2 py-1 rounded-md ${
             course.level === 'مبتدئ' ? 'bg-green-100 text-green-700' :
             course.level === 'متوسط' ? 'bg-yellow-100 text-yellow-700' :
-            'bg-red-100 text-red-700'
+            course.level === 'متقدم' ? 'bg-red-100 text-red-700' : 'bg-primary-100 text-primary-700'
           }`}>
             {course.level}
           </span>
           <div className="text-xs text-slate-500 flex items-center gap-1">
-             <span className="truncate max-w-[100px]">{instructor?.name}</span>
+             <span className="truncate max-w-[100px]">{instructor?.name || 'عدة مدربين'}</span>
              {instructor?.image && <img src={instructor.image} alt="" className="w-6 h-6 rounded-full border border-slate-200" />}
           </div>
         </div>
@@ -54,21 +60,27 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
             {course.title}
           </h3>
         </Link>
+        
+        {course.description && (
+            <p className="text-sm text-slate-500 line-clamp-2 mb-4">
+                {course.description}
+            </p>
+        )}
 
         {/* Meta Info */}
-        <div className="flex items-center gap-4 text-slate-500 text-sm mb-4">
+        <div className="flex items-center gap-4 text-slate-500 text-sm mb-4 mt-auto">
           <div className="flex items-center gap-1">
             <Clock size={16} />
             <span>{course.duration}</span>
           </div>
           <div className="flex items-center gap-1">
              <Users size={16} />
-             <span>{course.studentsCount} طالب</span>
+             <span>{course.studentsCount}</span>
           </div>
         </div>
 
         {/* Footer: Price & Action */}
-        <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between">
+        <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
           <div className="flex flex-col">
             {course.oldPrice && (
               <span className="text-xs text-slate-400 line-through">

@@ -35,7 +35,12 @@ const Instructors: React.FC = () => {
         });
 
         setInstructors(instData);
-        setCourses(coursesSnap.docs.map(doc => ({ id: doc.id, ...(doc.data() as any) } as Course)));
+        setCourses(coursesSnap.docs.map(doc => ({ 
+          id: doc.id, 
+          ...doc.data(),
+          media: doc.data().media || (doc.data().image ? [{ url: doc.data().image, type: 'image' }] : []),
+          instructorIds: doc.data().instructorIds || (doc.data().instructorId ? [doc.data().instructorId] : [])
+        } as Course)));
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -48,7 +53,7 @@ const Instructors: React.FC = () => {
 
   // Filter courses for the selected instructor
   const instructorCourses = selectedInstructor 
-    ? courses.filter(c => c.instructorId === selectedInstructor.id)
+    ? courses.filter(c => c.instructorIds?.includes(selectedInstructor.id))
     : [];
 
   const getSocialIcon = (type: string) => {
@@ -203,7 +208,11 @@ const Instructors: React.FC = () => {
                           key={course.id}
                           className="flex gap-3 p-3 rounded-xl border border-slate-100 hover:border-primary-200 hover:bg-primary-50 transition group"
                         >
-                          <img src={course.image} alt="" className="w-16 h-16 rounded-lg object-cover" />
+                          <img 
+                            src={course.media && course.media.length > 0 ? course.media[0].url : 'https://via.placeholder.com/150'} 
+                            alt="" 
+                            className="w-16 h-16 rounded-lg object-cover" 
+                          />
                           <div>
                             <h4 className="font-bold text-slate-800 text-sm mb-1 group-hover:text-primary-700 line-clamp-2">{course.title}</h4>
                             <span className="text-xs text-slate-500">{course.level}</span>
