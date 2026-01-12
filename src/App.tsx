@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
@@ -13,6 +14,7 @@ import Login from './pages/admin/Login';
 import Dashboard from './pages/admin/Dashboard';
 import InstructorsAdmin from './pages/admin/InstructorsAdmin';
 import CoursesAdmin from './pages/admin/CoursesAdmin';
+import LibraryAdmin from './pages/admin/LibraryAdmin';
 import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
@@ -57,6 +59,14 @@ const App: React.FC = () => {
               element={
                 <ProtectedRoute>
                   <CoursesAdmin />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/admin/library" 
+              element={
+                <ProtectedRoute>
+                  <LibraryAdmin />
                 </ProtectedRoute>
               } 
             />

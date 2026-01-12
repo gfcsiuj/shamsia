@@ -1,7 +1,8 @@
+
 import React from 'react';
 import { auth } from '../../lib/firebase';
 import { useNavigate, Link } from 'react-router-dom';
-import { LogOut, Users, BookOpen, Settings, LayoutDashboard, ExternalLink } from 'lucide-react';
+import { LogOut, Users, BookOpen, Settings, LayoutDashboard, ExternalLink, Library } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -33,6 +34,10 @@ const Dashboard: React.FC = () => {
           <Link to="/admin/instructors" className="flex items-center gap-3 px-4 py-3 hover:bg-primary-800 rounded-lg text-primary-100 transition">
             <Users size={20} />
             إدارة المدربين
+          </Link>
+          <Link to="/admin/library" className="flex items-center gap-3 px-4 py-3 hover:bg-primary-800 rounded-lg text-primary-100 transition">
+            <Library size={20} />
+            إدارة المكتبة
           </Link>
           <Link to="/admin/settings" className="flex items-center gap-3 px-4 py-3 hover:bg-primary-800 rounded-lg text-primary-100 transition">
             <Settings size={20} />
@@ -66,7 +71,7 @@ const Dashboard: React.FC = () => {
           <p className="text-slate-500">إليك نظرة عامة على المنصة</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8">
           <Link to="/admin/courses" className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition group">
             <div className="flex items-center justify-between mb-4">
               <div className="bg-secondary-100 p-3 rounded-lg text-secondary-600 group-hover:bg-secondary-500 group-hover:text-white transition">
@@ -85,6 +90,16 @@ const Dashboard: React.FC = () => {
             </div>
             <div className="text-slate-500 text-sm">إدارة</div>
             <div className="text-xl font-bold text-slate-800">المدربين</div>
+          </Link>
+
+          <Link to="/admin/library" className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition group">
+            <div className="flex items-center justify-between mb-4">
+              <div className="bg-purple-100 p-3 rounded-lg text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition">
+                <Library size={24} />
+              </div>
+            </div>
+            <div className="text-slate-500 text-sm">إدارة</div>
+            <div className="text-xl font-bold text-slate-800">المكتبة والمصادر</div>
           </Link>
 
           <Link to="/admin/settings" className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition group">
