@@ -126,7 +126,7 @@ textarea.la-input {
 /* --- Scrollbar --- */
 .la-scrollable::-webkit-scrollbar {
     width: 6px;
-}
+} 
 .la-scrollable::-webkit-scrollbar-track {
     background: transparent;
 }
