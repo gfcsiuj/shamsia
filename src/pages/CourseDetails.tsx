@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { Calendar, Clock, Award, PlayCircle, CheckCircle, User, BarChart, Users, Medal, FileText } from 'lucide-react';
-import { COURSES, INSTRUCTORS } from '../constants';
+import { useData } from '../context/DataContext';
 
 const CourseDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const course = COURSES.find(c => c.id === id);
-  const instructor = INSTRUCTORS.find(i => i.id === course?.instructorId);
+  const { courses, instructors } = useData();
+  
+  const course = courses.find(c => c.id === id);
+  const instructor = instructors.find(i => i.id === course?.instructorId);
   const [activeTab, setActiveTab] = useState<'about' | 'syllabus' | 'instructor' | 'details'>('about');
 
   if (!course) {

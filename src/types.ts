@@ -7,6 +7,8 @@ export interface Instructor {
   socials?: {
     twitter?: string;
     linkedin?: string;
+    email?: string;
+    phone?: string;
   };
 }
 
@@ -23,7 +25,7 @@ export interface Course {
   rating: number;
   studentsCount: number;
   description: string;
-  longDescription?: string; // New field for the detailed announcement text
+  longDescription?: string;
   objectives: string[];
   targetAudience: string[];
   syllabus: { week: string; topic: string }[];
@@ -47,4 +49,13 @@ export interface Resource {
   date: string;
   url: string;
   description: string;
+}
+
+export interface SiteConfig {
+  heroTitle: string;
+  heroSubtitle: string;
+  primaryColor: string;
+  secondaryColor: string;
+  contactPhone: string;
+  contactEmail: string;
 }
