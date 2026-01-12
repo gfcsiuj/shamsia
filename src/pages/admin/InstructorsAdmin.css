@@ -1,0 +1,26 @@
+
+:where(.ia-label) {
+  display: block;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 700;
+  color: rgb(51 65 85); /* slate-700 */
+  margin-bottom: 0.5rem;
+}
+
+:where(.ia-input) {
+  width: 100%;
+  padding: 0.625rem 1rem;
+  border-radius: 0.75rem;
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgb(226 232 240); /* slate-200 */
+  background-color: white;
+  outline: none;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ia-input:focus {
+  border-color: rgb(var(--color-primary-500));
+  box-shadow: 0 0 0 2px rgb(var(--color-primary-100));
+}

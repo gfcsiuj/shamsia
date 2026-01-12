@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Calendar, Clock, Award, PlayCircle, CheckCircle, User, BarChart, Users, Medal, FileText } from 'lucide-react';
@@ -6,7 +7,8 @@ import { COURSES, INSTRUCTORS } from '../constants';
 const CourseDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const course = COURSES.find(c => c.id === id);
-  const instructor = INSTRUCTORS.find(i => i.id === course?.instructorId);
+  const instructorId = course?.instructorIds?.[0];
+  const instructor = INSTRUCTORS.find(i => i.id === instructorId);
   const [activeTab, setActiveTab] = useState<'about' | 'syllabus' | 'instructor' | 'details'>('about');
 
   if (!course) {
@@ -19,6 +21,10 @@ const CourseDetails: React.FC = () => {
       </div>
     );
   }
+
+  const mediaItem = course.media?.[0];
+  const mediaUrl = mediaItem?.url || 'https://via.placeholder.com/800x450';
+  const isVideo = mediaItem?.type === 'video';
 
   return (
     <div className="bg-slate-50 min-h-screen pb-24">
@@ -38,7 +44,7 @@ const CourseDetails: React.FC = () => {
                 <div className="flex flex-wrap gap-4 md:gap-6 text-sm md:text-base animate-fade-in-up delay-400">
                   <div className="flex items-center gap-2">
                     <User className="text-secondary-400" size={18} />
-                    <span>المدرب: {instructor?.name}</span>
+                    <span>المدرب: {instructor?.name || 'غير محدد'}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <BarChart className="text-secondary-400" size={18} />
@@ -61,10 +67,13 @@ const CourseDetails: React.FC = () => {
           <div className="lg:w-2/3 animate-fade-in-up delay-500">
             {/* Video Placeholder */}
             <div className="bg-black rounded-xl overflow-hidden aspect-video shadow-lg mb-8 relative group cursor-pointer">
-              <img src={course.image} alt={course.title} className="w-full h-full object-cover opacity-60 group-hover:opacity-40 transition duration-500" />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <PlayCircle size={64} className="text-white drop-shadow-lg group-hover:scale-110 transition scale-90 md:scale-100 duration-300" />
-              </div>
+              {isVideo ? (
+                 <div className="w-full h-full bg-slate-900 flex items-center justify-center text-white">
+                    <PlayCircle size={64} className="opacity-80" />
+                 </div>
+              ) : (
+                 <img src={mediaUrl} alt={course.title} className="w-full h-full object-cover" />
+              )}
             </div>
 
             {/* Tabs Navigation */}
@@ -193,7 +202,7 @@ const CourseDetails: React.FC = () => {
                   <img src={instructor.image} alt={instructor.name} className="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover shadow-md" />
                   <div>
                     <h3 className="text-xl md:text-2xl font-bold text-slate-800 mb-2">{instructor.name}</h3>
-                    <p className="text-secondary-600 font-medium mb-4">{instructor.role}</p>
+                    <p className="text-secondary-600 font-medium mb-4">{instructor.roles?.[0]}</p>
                     <p className="text-slate-600 leading-relaxed mb-6 text-sm md:text-base">
                       {instructor.bio}
                     </p>

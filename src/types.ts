@@ -1,27 +1,39 @@
+
+export interface SocialLink {
+  type: 'facebook' | 'instagram' | 'linkedin' | 'twitter' | 'website' | 'email' | 'phone' | 'youtube' | 'telegram';
+  value: string;
+}
+
 export interface Instructor {
   id: string;
   name: string;
-  role: string;
+  roles: string[];
   image: string;
+  shortBio: string;
   bio: string;
-  socials?: {
-    twitter?: string;
-    linkedin?: string;
-  };
+  certifications: string[];
+  socials: SocialLink[];
+}
+
+export interface MediaItem {
+  url: string;
+  type: 'image' | 'video';
 }
 
 export interface Course {
   id: string;
   title: string;
-  category: 'Tech' | 'Human Development' | 'Cyber Security' | 'Admin Skills' | 'Student Skills';
-  level: 'مبتدئ' | 'متوسط' | 'متقدم' | 'دبلوم';
+  category: string;
+  level: string;
   price: number;
   oldPrice?: number;
-  image: string;
-  instructorId: string;
+  media: MediaItem[];
+  instructorIds: string[];
   duration: string;
   rating: number;
   studentsCount: number;
+  studentsCountMode: 'auto' | 'manual';
+  tags: string[];
   description: string;
   longDescription?: string; 
   objectives: string[];
