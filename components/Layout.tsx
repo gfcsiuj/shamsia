@@ -1,13 +1,9 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, Outlet } from 'react-router-dom';
 import { Menu, X, Facebook, Instagram, Linkedin, MapPin, Phone, Mail, GraduationCap } from 'lucide-react';
 import MobileBottomNav from './MobileBottomNav';
 
-interface LayoutProps {
-  children: React.ReactNode;
-}
-
-const Layout: React.FC<LayoutProps> = ({ children }) => {
+const Layout: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
 
@@ -114,7 +110,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
       {/* Main Content */}
       <main className="flex-grow pb-16 lg:pb-0">
-        {children}
+        <Outlet />
       </main>
 
       {/* Mobile Bottom Navigation */}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
 import Home from './pages/Home';
 import Courses from './pages/Courses';
@@ -19,9 +19,9 @@ import { AuthProvider } from './context/AuthContext';
 const App: React.FC = () => {
   return (
     <AuthProvider>
-      <Layout>
-        <Routes>
-          {/* Public Routes */}
+      <Routes>
+        {/* Public Routes with Layout */}
+        <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
           <Route path="/courses" element={<Courses />} />
           <Route path="/courses/:id" element={<CourseDetails />} />
@@ -31,35 +31,40 @@ const App: React.FC = () => {
           <Route path="/instructors" element={<Instructors />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
-          
-          {/* Admin Routes */}
-          <Route path="/admin/login" element={<Login />} />
-          <Route 
-            path="/admin/dashboard" 
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/admin/instructors" 
-            element={
-              <ProtectedRoute>
-                <InstructorsAdmin />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/admin/courses" 
-            element={
-              <ProtectedRoute>
-                <CoursesAdmin />
-              </ProtectedRoute>
-            } 
-          />
-        </Routes>
-      </Layout>
+        </Route>
+
+        {/* Admin Routes without Layout */}
+        <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
+        <Route path="/admin/login" element={<Login />} />
+        
+        <Route 
+          path="/admin/dashboard" 
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/admin/instructors" 
+          element={
+            <ProtectedRoute>
+              <InstructorsAdmin />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/admin/courses" 
+          element={
+            <ProtectedRoute>
+              <CoursesAdmin />
+            </ProtectedRoute>
+          } 
+        />
+        
+        {/* 404 Redirect */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
     </AuthProvider>
   );
 };
