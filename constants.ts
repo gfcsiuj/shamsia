@@ -1,5 +1,4 @@
-
-import { Course, Instructor, Testimonial, Resource } from './types';
+import { Course, Instructor, Testimonial } from './types';
 
 export const INSTRUCTORS: Instructor[] = [
   {
@@ -119,25 +118,4 @@ export const TESTIMONIALS: Testimonial[] = [
     content: 'حصلت على شهادة المستوى الأول وبدأت أفهم كيف أحمي بياناتي وبيانات شركتي. شكراً شمسية.',
     image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200',
   },
-];
-
-export const RESOURCES: Resource[] = [
-  {
-    id: 'r-1',
-    title: 'دليل الأمن السيبراني للمبتدئين',
-    type: 'pdf',
-    category: 'Cyber Security',
-    date: '2024-01-15',
-    url: '#',
-    description: 'كتيب شامل يحتوي على أهم المصطلحات والمفاهيم في عالم أمن المعلومات.',
-  },
-  {
-    id: 'r-2',
-    title: 'كيف تبدأ مسارك في الهاكر الأخلاقي؟',
-    type: 'article',
-    category: 'Tech',
-    date: '2024-02-01',
-    url: '#',
-    description: 'مقال تفصيلي يشرح خارطة الطريق لتعلم الاختراق الأخلاقي والشهادات المطلوبة.',
-  }
 ];
