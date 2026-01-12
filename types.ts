@@ -48,3 +48,13 @@ export interface Resource {
   url: string;
   description: string;
 }
+
+export interface SiteSettings {
+  heroTitle: string;
+  heroSubtitle: string;
+  primaryColor: string;
+  secondaryColor: string;
+  logoUrl: string;
+  contactPhone: string;
+  contactEmail: string;
+}

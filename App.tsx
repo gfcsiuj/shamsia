@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom'; // أضفنا Navigate
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
 import Home from './pages/Home';
 import Courses from './pages/Courses';
@@ -18,7 +18,6 @@ import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 
-// مكون بسيط يغلف الصفحات العامة بالـ Layout الأساسي
 const PublicLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return <Layout>{children}</Layout>;
 };
@@ -28,10 +27,7 @@ const App: React.FC = () => {
     <AuthProvider>
       <ThemeProvider>
           <Routes>
-            {/* -------------------------------------------------
-              المسارات العامة (تظهر مع الهيدر والفوتر)
-              -------------------------------------------------
-            */}
+            {/* Public Routes */}
             <Route path="/" element={<PublicLayout><Home /></PublicLayout>} />
             <Route path="/courses" element={<PublicLayout><Courses /></PublicLayout>} />
             <Route path="/courses/:id" element={<PublicLayout><CourseDetails /></PublicLayout>} />
@@ -42,14 +38,8 @@ const App: React.FC = () => {
             <Route path="/about" element={<PublicLayout><About /></PublicLayout>} />
             <Route path="/contact" element={<PublicLayout><Contact /></PublicLayout>} />
             
-            {/* -------------------------------------------------
-              مسارات الآدمن (بدون الهيدر والفوتر العام)
-              -------------------------------------------------
-            */}
-            
-            {/* هذا السطر الجديد هو الحل: يحول /admin إلى /admin/dashboard */}
+            {/* Admin Routes */}
             <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
-
             <Route path="/admin/login" element={<Login />} />
             
             <Route 
