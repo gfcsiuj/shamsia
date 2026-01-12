@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
-import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Facebook, Instagram, Linkedin, MapPin, Phone, Mail, GraduationCap } from 'lucide-react';
 import MobileBottomNav from './MobileBottomNav';
 
-interface LayoutProps extends RouteComponentProps {
+interface LayoutProps {
   children: React.ReactNode;
 }
 
-const Layout: React.FC<LayoutProps> = ({ children, location }) => {
+const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const location = useLocation();
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -191,4 +192,4 @@ const Layout: React.FC<LayoutProps> = ({ children, location }) => {
   );
 };
 
-export default withRouter(Layout);
+export default Layout;

@@ -1,14 +1,10 @@
 import React, { useState } from 'react';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { Calendar, Clock, Award, PlayCircle, CheckCircle, User, BarChart, Users, Medal, FileText } from 'lucide-react';
 import { COURSES, INSTRUCTORS } from '../constants';
 
-interface RouteParams {
-  id: string;
-}
-
-const CourseDetails: React.FC<RouteComponentProps<RouteParams>> = ({ match }) => {
-  const { id } = match.params;
+const CourseDetails: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
   const course = COURSES.find(c => c.id === id);
   const instructor = INSTRUCTORS.find(i => i.id === course?.instructorId);
   const [activeTab, setActiveTab] = useState<'about' | 'syllabus' | 'instructor' | 'details'>('about');

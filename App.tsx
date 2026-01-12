@@ -9,22 +9,40 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import Library from './pages/Library';
 import CourseRegister from './pages/CourseRegister';
+import Login from './pages/admin/Login';
+import Dashboard from './pages/admin/Dashboard';
+import ProtectedRoute from './components/ProtectedRoute';
+import { AuthProvider } from './context/AuthContext';
 
 const App: React.FC = () => {
   return (
-    <Layout>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/courses" element={<Courses />} />
-        <Route path="/courses/:id" element={<CourseDetails />} />
-        <Route path="/courses/:id/register" element={<CourseRegister />} />
-        <Route path="/register" element={<CourseRegister />} />
-        <Route path="/library" element={<Library />} />
-        <Route path="/instructors" element={<Instructors />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/contact" element={<Contact />} />
-      </Routes>
-    </Layout>
+    <AuthProvider>
+      <Layout>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<Home />} />
+          <Route path="/courses" element={<Courses />} />
+          <Route path="/courses/:id" element={<CourseDetails />} />
+          <Route path="/courses/:id/register" element={<CourseRegister />} />
+          <Route path="/register" element={<CourseRegister />} />
+          <Route path="/library" element={<Library />} />
+          <Route path="/instructors" element={<Instructors />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          
+          {/* Admin Routes */}
+          <Route path="/admin/login" element={<Login />} />
+          <Route 
+            path="/admin/dashboard" 
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            } 
+          />
+        </Routes>
+      </Layout>
+    </AuthProvider>
   );
 };
 

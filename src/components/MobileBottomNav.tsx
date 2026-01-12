@@ -1,8 +1,9 @@
 import React from 'react';
-import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Home, BookOpen, Library, Users, Info, Phone } from 'lucide-react';
 
-const MobileBottomNav: React.FC<RouteComponentProps> = ({ location }) => {
+const MobileBottomNav: React.FC = () => {
+  const location = useLocation();
   const isActive = (path: string) => location.pathname === path;
 
   const navItems = [
@@ -40,4 +41,4 @@ const MobileBottomNav: React.FC<RouteComponentProps> = ({ location }) => {
   );
 };
 
-export default withRouter(MobileBottomNav);
+export default MobileBottomNav;

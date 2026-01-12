@@ -1,14 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { CheckCircle, ArrowRight, BookOpen, ExternalLink, AlertCircle } from 'lucide-react';
 import { COURSES } from '../constants';
 
-interface RouteParams {
-  id?: string;
-}
-
-const CourseRegister: React.FC<RouteComponentProps<RouteParams>> = ({ match }) => {
-  const { id } = match.params;
+const CourseRegister: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
   const [selectedCourseId, setSelectedCourseId] = useState<string>(id || '');
   const [formData, setFormData] = useState({
     name: '',
