@@ -11,6 +11,8 @@ import Library from './pages/Library';
 import CourseRegister from './pages/CourseRegister';
 import Login from './pages/admin/Login';
 import Dashboard from './pages/admin/Dashboard';
+import InstructorsAdmin from './pages/admin/InstructorsAdmin';
+import CoursesAdmin from './pages/admin/CoursesAdmin';
 import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
 
@@ -37,6 +39,22 @@ const App: React.FC = () => {
             element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/admin/instructors" 
+            element={
+              <ProtectedRoute>
+                <InstructorsAdmin />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/admin/courses" 
+            element={
+              <ProtectedRoute>
+                <CoursesAdmin />
               </ProtectedRoute>
             } 
           />

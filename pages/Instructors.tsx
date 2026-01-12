@@ -1,16 +1,40 @@
-import React, { useState } from 'react';
-import { X, Award, BookOpen, Mail, Phone, ExternalLink } from 'lucide-react';
-import { INSTRUCTORS, COURSES } from '../constants';
+import React, { useState, useEffect } from 'react';
+import { X, Award, BookOpen, Mail, Phone, ExternalLink, Loader2 } from 'lucide-react';
+import { db } from '../lib/firebase';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import InstructorCard from '../components/InstructorCard';
-import { Instructor } from '../types';
+import { Instructor, Course } from '../types';
 import { Link } from 'react-router-dom';
 
 const Instructors: React.FC = () => {
+  const [instructors, setInstructors] = useState<Instructor[]>([]);
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedInstructor, setSelectedInstructor] = useState<Instructor | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [instructorsSnap, coursesSnap] = await Promise.all([
+          getDocs(collection(db, 'instructors')),
+          getDocs(collection(db, 'courses'))
+        ]);
+
+        setInstructors(instructorsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Instructor)));
+        setCourses(coursesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Course)));
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   // Filter courses for the selected instructor
   const instructorCourses = selectedInstructor 
-    ? COURSES.filter(c => c.instructorId === selectedInstructor.id)
+    ? courses.filter(c => c.instructorId === selectedInstructor.id)
     : [];
 
   return (
@@ -26,16 +50,20 @@ const Instructors: React.FC = () => {
       </div>
 
       <div className="container mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {INSTRUCTORS.map((instructor, index) => (
-            <div key={instructor.id} className={`delay-${index * 100}`}>
-              <InstructorCard 
-                instructor={instructor} 
-                onClick={() => setSelectedInstructor(instructor)}
-              />
+        {loading ? (
+             <div className="flex justify-center"><Loader2 className="animate-spin text-primary-600" size={40} /></div>
+        ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {instructors.map((instructor, index) => (
+                <div key={instructor.id} className={`delay-${index * 100}`}>
+                <InstructorCard 
+                    instructor={instructor} 
+                    onClick={() => setSelectedInstructor(instructor)}
+                />
+                </div>
+            ))}
             </div>
-          ))}
-        </div>
+        )}
 
         {/* Join as Instructor */}
         <div className="mt-20 bg-primary-800 rounded-2xl p-8 md:p-12 text-center text-white relative overflow-hidden animate-fade-in-up delay-300 shadow-xl">
@@ -113,10 +141,8 @@ const Instructors: React.FC = () => {
                     <Award className="text-secondary-500" />
                     نبذة شخصية
                   </h3>
-                  <p className="text-slate-600 leading-relaxed text-lg">
+                  <p className="text-slate-600 leading-relaxed text-lg whitespace-pre-line">
                     {selectedInstructor.bio}
-                    <br /><br />
-                    يمتلك خبرة واسعة في مجال التدريب والتطوير، وقاد العديد من المشاريع الناجحة في كبرى الشركات. يتميز بأسلوبه التفاعلي في التدريب وقدرته على تبسيط المفاهيم المعقدة.
                   </p>
                 </div>
 

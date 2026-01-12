@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Facebook, Instagram, Linkedin, MapPin, Phone, Mail, GraduationCap } from 'lucide-react';
 import MobileBottomNav from './MobileBottomNav';
+import { useTheme } from '../context/ThemeContext';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -10,6 +11,7 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const { settings } = useTheme();
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -28,8 +30,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <div className="bg-primary-900 text-white py-2 text-sm hidden lg:block">
         <div className="container mx-auto px-4 flex justify-between items-center">
           <div className="flex items-center gap-6">
-            <span className="flex items-center gap-2"><Phone size={14} /> 0773 220 0003</span>
-            <span className="flex items-center gap-2"><Mail size={14} /> info@shamsia.edu</span>
+            <span className="flex items-center gap-2"><Phone size={14} /> {settings.contactPhone}</span>
+            <span className="flex items-center gap-2"><Mail size={14} /> {settings.contactEmail}</span>
           </div>
           <div className="flex gap-4">
              <a href="https://www.facebook.com/profile.php?id=61554748052998" target="_blank" rel="noopener noreferrer" className="hover:text-secondary-500 transition"><Facebook size={14} /></a>
@@ -45,7 +47,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           <div className="flex justify-between items-center">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2 md:gap-3">
-              <img src="https://k.top4top.io/p_3662fca071.png" alt="Shamsia Logo" className="h-10 md:h-12 w-auto" />
+              {settings.logoUrl ? (
+                <img src={settings.logoUrl} alt="Shamsia Logo" className="h-10 md:h-12 w-auto" />
+              ) : (
+                <img src="https://k.top4top.io/p_3662fca071.png" alt="Shamsia Logo" className="h-10 md:h-12 w-auto" />
+              )}
               <span className="text-xl md:text-2xl font-bold text-primary-800">شمسية</span>
             </Link>
 
@@ -168,11 +174,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 </li>
                 <li className="flex items-center gap-3">
                   <Phone className="text-secondary-500 flex-shrink-0" size={18} />
-                  <span className="ltr">0773 220 0003</span>
+                  <span className="ltr">{settings.contactPhone}</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <Mail className="text-secondary-500 flex-shrink-0" size={18} />
-                  <span className="break-all">info@shamsia.edu</span>
+                  <span className="break-all">{settings.contactEmail}</span>
                 </li>
               </ul>
             </div>

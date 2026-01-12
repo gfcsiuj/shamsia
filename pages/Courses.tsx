@@ -1,17 +1,37 @@
-import React, { useState } from 'react';
-import { Filter, Search } from 'lucide-react';
-import { COURSES } from '../constants';
+import React, { useState, useEffect } from 'react';
+import { Filter, Search, Loader2 } from 'lucide-react';
+import { db } from '../lib/firebase';
+import { collection, getDocs } from 'firebase/firestore';
 import CourseCard from '../components/CourseCard';
 import { Course } from '../types';
 
 const Courses: React.FC = () => {
   const categories = ['All', 'Tech', 'Human Development', 'Cyber Security', 'Admin Skills', 'Student Skills'];
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const filteredCourses = COURSES.filter(course => {
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, 'courses'));
+        const data = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Course));
+        setCourses(data);
+      } catch (error) {
+        console.error("Error fetching courses:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCourses();
+  }, []);
+
+  const filteredCourses = courses.filter(course => {
     const matchesCategory = selectedCategory === 'All' || course.category === selectedCategory;
-    const matchesSearch = course.title.includes(searchQuery) || course.description.includes(searchQuery);
+    const matchesSearch = course.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          course.description.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
@@ -64,7 +84,11 @@ const Courses: React.FC = () => {
         </div>
 
         {/* Results */}
-        {filteredCourses.length > 0 ? (
+        {loading ? (
+           <div className="flex justify-center py-20">
+              <Loader2 className="animate-spin text-primary-600" size={40} />
+           </div>
+        ) : filteredCourses.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredCourses.map((course, index) => (
               <div key={course.id} className={`animate-fade-in-up delay-${(index % 5) * 100 + 300}`}>

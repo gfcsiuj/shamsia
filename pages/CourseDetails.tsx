@@ -1,13 +1,55 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Calendar, Clock, Award, PlayCircle, CheckCircle, User, BarChart, Users, Medal, FileText } from 'lucide-react';
-import { COURSES, INSTRUCTORS } from '../constants';
+import { Calendar, Clock, Award, PlayCircle, CheckCircle, User, BarChart, Users, Medal, FileText, Loader2 } from 'lucide-react';
+import { db } from '../lib/firebase';
+import { doc, getDoc } from 'firebase/firestore';
+import { Course, Instructor } from '../types';
 
 const CourseDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const course = COURSES.find(c => c.id === id);
-  const instructor = INSTRUCTORS.find(i => i.id === course?.instructorId);
+  const [course, setCourse] = useState<Course | null>(null);
+  const [instructor, setInstructor] = useState<Instructor | null>(null);
+  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'about' | 'syllabus' | 'instructor' | 'details'>('about');
+
+  useEffect(() => {
+    const fetchCourseData = async () => {
+      if (!id) return;
+      
+      try {
+        const courseRef = doc(db, 'courses', id);
+        const courseSnap = await getDoc(courseRef);
+
+        if (courseSnap.exists()) {
+          const courseData = { id: courseSnap.id, ...courseSnap.data() } as Course;
+          setCourse(courseData);
+
+          // Fetch Instructor
+          if (courseData.instructorId) {
+             const instructorRef = doc(db, 'instructors', courseData.instructorId);
+             const instructorSnap = await getDoc(instructorRef);
+             if (instructorSnap.exists()) {
+                 setInstructor({ id: instructorSnap.id, ...instructorSnap.data() } as Instructor);
+             }
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching course details:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCourseData();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <Loader2 className="animate-spin text-primary-600" size={40} />
+      </div>
+    );
+  }
 
   if (!course) {
     return (
@@ -38,7 +80,7 @@ const CourseDetails: React.FC = () => {
                 <div className="flex flex-wrap gap-4 md:gap-6 text-sm md:text-base animate-fade-in-up delay-400">
                   <div className="flex items-center gap-2">
                     <User className="text-secondary-400" size={18} />
-                    <span>المدرب: {instructor?.name}</span>
+                    <span>المدرب: {instructor?.name || 'غير محدد'}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <BarChart className="text-secondary-400" size={18} />
@@ -104,12 +146,14 @@ const CourseDetails: React.FC = () => {
                   <div>
                     <h3 className="text-xl md:text-2xl font-bold text-slate-800 mb-4">ماذا ستتعلم؟</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {course.objectives.map((obj, i) => (
+                      {course.objectives && course.objectives.length > 0 ? course.objectives.map((obj, i) => (
                         <div key={i} className="flex items-start gap-3">
                           <CheckCircle className="text-secondary-500 flex-shrink-0 mt-1" size={20} />
                           <span className="text-slate-600 text-sm md:text-base">{obj}</span>
                         </div>
-                      ))}
+                      )) : (
+                          <p className="text-slate-500 text-sm">سيتم إضافة الأهداف قريباً.</p>
+                      )}
                     </div>
                   </div>
 
@@ -139,12 +183,14 @@ const CourseDetails: React.FC = () => {
                     </h3>
                     <p className="text-sm text-slate-500 mb-4">هذه الدورة مصممة خصيصاً لـ:</p>
                     <ul className="grid grid-cols-1 gap-3">
-                      {course.targetAudience.map((target, i) => (
+                      {course.targetAudience && course.targetAudience.length > 0 ? course.targetAudience.map((target, i) => (
                         <li key={i} className="flex items-center gap-2 text-slate-700 font-medium text-sm md:text-base">
                           <div className="w-2 h-2 rounded-full bg-secondary-500"></div>
                           {target}
                         </li>
-                      ))}
+                      )) : (
+                         <li className="text-slate-500 text-sm">للجميع</li>
+                      )}
                     </ul>
                   </div>
 
@@ -172,7 +218,7 @@ const CourseDetails: React.FC = () => {
               {activeTab === 'syllabus' && (
                 <div className="animate-fade-in space-y-4">
                   <h3 className="text-xl md:text-2xl font-bold text-slate-800 mb-6">محتوى الدورة</h3>
-                  {course.syllabus.map((week, i) => (
+                  {course.syllabus && course.syllabus.length > 0 ? course.syllabus.map((week, i) => (
                     <div key={i} className={`border border-slate-100 rounded-lg p-4 hover:border-primary-200 transition bg-slate-50 hover:bg-white animate-fade-in-up delay-${i * 100}`}>
                       <div className="flex items-center gap-4">
                         <div className="bg-primary-100 text-primary-700 w-10 h-10 md:w-12 md:h-12 rounded-lg flex items-center justify-center font-bold text-base md:text-lg flex-shrink-0">
@@ -184,7 +230,9 @@ const CourseDetails: React.FC = () => {
                         </div>
                       </div>
                     </div>
-                  ))}
+                  )) : (
+                    <p className="text-slate-500">سيتم إضافة المنهج قريباً.</p>
+                  )}
                 </div>
               )}
 
