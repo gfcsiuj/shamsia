@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
 import Home from './pages/Home';
 import Courses from './pages/Courses';
@@ -16,32 +16,27 @@ import CoursesAdmin from './pages/admin/CoursesAdmin';
 import Settings from './pages/admin/Settings';
 import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
-import { ThemeProvider } from './context/ThemeContext';
-
-const PublicLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  return <Layout>{children}</Layout>;
-};
+import { ThemeProvider } from './context/ThemeContext'; // تأكد أن هذا السطر موجود إذا كنت تستخدم ThemeProvider
 
 const App: React.FC = () => {
   return (
     <AuthProvider>
       <ThemeProvider>
+        <Layout>
           <Routes>
             {/* Public Routes */}
-            <Route path="/" element={<PublicLayout><Home /></PublicLayout>} />
-            <Route path="/courses" element={<PublicLayout><Courses /></PublicLayout>} />
-            <Route path="/courses/:id" element={<PublicLayout><CourseDetails /></PublicLayout>} />
-            <Route path="/courses/:id/register" element={<PublicLayout><CourseRegister /></PublicLayout>} />
-            <Route path="/register" element={<PublicLayout><CourseRegister /></PublicLayout>} />
-            <Route path="/library" element={<PublicLayout><Library /></PublicLayout>} />
-            <Route path="/instructors" element={<PublicLayout><Instructors /></PublicLayout>} />
-            <Route path="/about" element={<PublicLayout><About /></PublicLayout>} />
-            <Route path="/contact" element={<PublicLayout><Contact /></PublicLayout>} />
+            <Route path="/" element={<Home />} />
+            <Route path="/courses" element={<Courses />} />
+            <Route path="/courses/:id" element={<CourseDetails />} />
+            <Route path="/courses/:id/register" element={<CourseRegister />} />
+            <Route path="/register" element={<CourseRegister />} />
+            <Route path="/library" element={<Library />} />
+            <Route path="/instructors" element={<Instructors />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
             
             {/* Admin Routes */}
-            <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
             <Route path="/admin/login" element={<Login />} />
-            
             <Route 
               path="/admin/dashboard" 
               element={
@@ -66,7 +61,7 @@ const App: React.FC = () => {
                 </ProtectedRoute>
               } 
             />
-            <Route 
+             <Route 
               path="/admin/settings" 
               element={
                 <ProtectedRoute>
@@ -75,6 +70,7 @@ const App: React.FC = () => {
               } 
             />
           </Routes>
+        </Layout>
       </ThemeProvider>
     </AuthProvider>
   );
