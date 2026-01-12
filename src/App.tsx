@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
 import Home from './pages/Home';
 import Courses from './pages/Courses';
@@ -38,6 +38,8 @@ const App: React.FC = () => {
             
             {/* Admin Routes */}
             <Route path="/admin/login" element={<Login />} />
+            <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
+            
             <Route 
               path="/admin/dashboard" 
               element={
@@ -70,6 +72,9 @@ const App: React.FC = () => {
                 </ProtectedRoute>
               } 
             />
+            
+            {/* 404 Redirect */}
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Layout>
       </ThemeProvider>
