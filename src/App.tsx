@@ -8,7 +8,7 @@ import CourseDetails from './pages/CourseDetails';
 import Instructors from './pages/Instructors';
 import About from './pages/About';
 import Contact from './pages/Contact';
-import Library from './pages/Library';
+import Library from './pages/admin/Library';
 import CourseRegister from './pages/CourseRegister';
 import Login from './pages/admin/Login';
 import Dashboard from './pages/admin/Dashboard';
