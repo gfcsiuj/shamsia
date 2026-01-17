@@ -8,16 +8,43 @@ interface ThemeContextType {
 }
 
 const defaultSettings: SiteSettings = {
+  // General
+  siteName: 'شمسية',
+  siteDescription: 'منصة تعليمية رائدة',
+  logoUrl: 'https://k.top4top.io/p_3662fca071.png',
+  
+  // Hero
   heroTitle: 'طريقك الأمثل لتحقيق الوظيفة الدائمية',
   heroSubtitle: 'منصة شمسية الألكترونية منصة تعمل بأيادٍ عراقية وعربية، هدفها تحقيق مفهوم التنمية المستدامة (SDG).',
+  heroTitleSize: 48, // px (approx 3rem/4xl)
+  heroSubtitleSize: 18, // px
+  heroTitleColor: '#ffffff',
+  heroSubtitleColor: '#f1f5f9',
+  
+  // Colors
   primaryColor: '#10b981', // Emerald 500
   secondaryColor: '#f59e0b', // Amber 500
-  logoUrl: 'https://k.top4top.io/p_3662fca071.png',
+  backgroundColor: '#f8fafc',
+  textColor: '#1e293b',
+  
+  // Contact
   contactPhone: '0773 220 0003',
-  contactEmail: 'info@shamsia.edu'
+  contactEmail: 'info@shamsia.edu',
+  contactAddress: 'العراق، بغداد',
+  
+  // Footer
+  footerText: 'جميع الحقوق محفوظة © منصة شمسية',
+  footerBgColor: '#064e3b', // primary-900 equivalent
+  footerTextColor: '#ffffff',
+
+  // System
+  enableRegistration: true,
+  maintenanceMode: false,
+  maintenanceMessage: 'نحن نعمل حالياً على تحسين تجربتكم. سنعود قريباً!'
 };
 
-const ThemeContext = createContext<ThemeContextType>({
+// Exporting Context to use it in Settings Preview
+export const ThemeContext = createContext<ThemeContextType>({
   settings: defaultSettings,
   loading: true,
 });
@@ -71,10 +98,10 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   useEffect(() => {
     // Apply colors to root CSS variables
     const root = document.documentElement;
-    const primary = settings.primaryColor;
-    const secondary = settings.secondaryColor;
+    const primary = settings.primaryColor || '#10b981';
+    const secondary = settings.secondaryColor || '#f59e0b';
 
-    // Generate a simple palette
+    // Tailwind Color Palette Generation
     root.style.setProperty('--color-primary-50', hexToRgb(adjustColor(primary, 90)));
     root.style.setProperty('--color-primary-100', hexToRgb(adjustColor(primary, 70)));
     root.style.setProperty('--color-primary-200', hexToRgb(adjustColor(primary, 50)));
@@ -89,6 +116,20 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     root.style.setProperty('--color-secondary-400', hexToRgb(adjustColor(secondary, 20)));
     root.style.setProperty('--color-secondary-500', hexToRgb(secondary));
     root.style.setProperty('--color-secondary-600', hexToRgb(adjustColor(secondary, -20)));
+
+    // Custom Typography & Colors
+    if (settings.heroTitleSize) {
+        root.style.setProperty('--hero-title-size', `${settings.heroTitleSize}px`);
+    }
+    if (settings.heroSubtitleSize) {
+        root.style.setProperty('--hero-subtitle-size', `${settings.heroSubtitleSize}px`);
+    }
+    if (settings.heroTitleColor) {
+        root.style.setProperty('--hero-title-color', settings.heroTitleColor);
+    }
+    if (settings.footerBgColor) {
+        root.style.setProperty('--footer-bg', settings.footerBgColor);
+    }
 
   }, [settings]);
 

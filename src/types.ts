@@ -62,11 +62,47 @@ export interface Resource {
 }
 
 export interface SiteSettings {
+  // General
+  siteName: string;
+  siteDescription: string;
+  logoUrl: string;
+  faviconUrl?: string;
+
+  // Hero Section Customization
   heroTitle: string;
   heroSubtitle: string;
+  heroTitleColor?: string;
+  heroTitleSize?: number; // in px
+  heroSubtitleColor?: string;
+  heroSubtitleSize?: number; // in px
+  heroOverlayOpacity?: number; // 0-100
+
+  // Theme & Colors
   primaryColor: string;
   secondaryColor: string;
-  logoUrl: string;
+  backgroundColor?: string;
+  surfaceColor?: string;
+  textColor?: string;
+  
+  // Contact
   contactPhone: string;
   contactEmail: string;
+  contactAddress?: string;
+  
+  // Social Media
+  facebookUrl?: string;
+  instagramUrl?: string;
+  linkedinUrl?: string;
+  twitterUrl?: string;
+  youtubeUrl?: string;
+
+  // Footer
+  footerText?: string;
+  footerBgColor?: string;
+  footerTextColor?: string;
+
+  // System
+  enableRegistration: boolean;
+  maintenanceMode: boolean;
+  maintenanceMessage?: string;
 }
