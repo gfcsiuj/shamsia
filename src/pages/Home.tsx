@@ -235,7 +235,7 @@ const Home: React.FC = () => {
                 <p className="text-base md:text-lg leading-relaxed italic opacity-90">"{testimonial.content}"</p>
               </div>
             ))}
-          </div>
+          </div> 
         </div>
       </section>
 
