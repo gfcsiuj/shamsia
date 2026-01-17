@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, BookOpen, Users, Award, CheckCircle } from 'lucide-react';
-import { COURSES, TESTIMONIALS } from '../constants';
+import { ArrowLeft, BookOpen, Users, Award, CheckCircle, Loader2 } from 'lucide-react';
+import { TESTIMONIALS } from '../constants';
 import CourseCard from '../components/CourseCard';
 import { useTheme } from '../context/ThemeContext';
+import { db } from '../lib/firebase';
+import { collection, query, limit, getDocs } from 'firebase/firestore';
+import { Course } from '../types';
 
 // Simple CountUp Component for animation
 const CountUp = ({ end, duration = 2000, suffix = '' }: { end: number, duration?: number, suffix?: string }) => {
@@ -38,8 +41,36 @@ const CountUp = ({ end, duration = 2000, suffix = '' }: { end: number, duration?
 };
 
 const Home: React.FC = () => {
-  const featuredCourses = COURSES.slice(0, 3);
   const { settings } = useTheme();
+  const [featuredCourses, setFeaturedCourses] = useState<Course[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const q = query(collection(db, 'courses'), limit(3));
+        const querySnapshot = await getDocs(q);
+        const data = querySnapshot.docs.map(doc => {
+            const courseData = doc.data();
+            return { 
+                id: doc.id, 
+                ...courseData,
+                instructorIds: courseData.instructorIds || (courseData.instructorId ? [courseData.instructorId] : []),
+                media: courseData.media || (courseData.image ? [{ url: courseData.image, type: 'image' }] : []),
+                tags: courseData.tags || [],
+                studentsCountMode: courseData.studentsCountMode || 'auto'
+            } as Course;
+        });
+        setFeaturedCourses(data);
+      } catch (error) {
+        console.error("Error fetching courses:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCourses();
+  }, []);
 
   return (
     <div className="animate-fade-in">
@@ -151,13 +182,25 @@ const Home: React.FC = () => {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {featuredCourses.map((course, idx) => (
-              <div key={course.id} className={`animate-fade-in-up delay-${idx * 100}`}>
-                 <CourseCard course={course} />
-              </div>
-            ))}
-          </div>
+          {loading ? (
+             <div className="flex justify-center py-12">
+                <Loader2 className="animate-spin text-primary-600" size={40} />
+             </div>
+          ) : (
+             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+               {featuredCourses.length > 0 ? (
+                   featuredCourses.map((course, idx) => (
+                      <div key={course.id} className={`animate-fade-in-up delay-${idx * 100}`}>
+                         <CourseCard course={course} />
+                      </div>
+                   ))
+               ) : (
+                   <div className="col-span-full text-center py-10 text-slate-500 bg-slate-50 rounded-xl">
+                       لا توجد دورات متاحة حالياً.
+                   </div>
+               )}
+             </div>
+          )}
           
           <div className="mt-8 text-center md:hidden">
             <Link to="/courses" className="inline-block px-6 py-3 border-2 border-primary-600 text-primary-600 font-bold rounded-lg hover:bg-primary-50 text-sm">
