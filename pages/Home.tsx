@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, BookOpen, Users, Award, CheckCircle, Loader2 } from 'lucide-react';
@@ -150,7 +151,7 @@ const Home: React.FC = () => {
               { icon: Award, title: "شهادات معتمدة", desc: "احصل على شهادات إتمام موثقة تعزز سيرتك الذاتية وتفتح لك آفاقاً جديدة." }
             ].map((feature, idx) => (
               <div key={idx} className={`bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition duration-300 text-center animate-fade-in-up delay-${idx * 100}`}>
-                <div className="w-14 h-14 md:w-16 md:h-16 bg-primary-50 rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6 text-primary-600 group-hover:bg-primary-600 group-hover:text-white transition-colors">
+                <div className="w-14 h-14 md:w-16 md:h-16 bg-accent-500 rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6 text-white group-hover:bg-primary-600 group-hover:text-white transition-colors">
                   <feature.icon size={28} className="md:w-8 md:h-8" />
                 </div>
                 <h3 className="text-lg md:text-xl font-bold text-slate-800 mb-2 md:mb-3">{feature.title}</h3>

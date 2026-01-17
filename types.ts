@@ -80,6 +80,7 @@ export interface SiteSettings {
   // Theme & Colors
   primaryColor: string;
   secondaryColor: string;
+  accentColor?: string; // New Accent Color
   backgroundColor?: string;
   surfaceColor?: string;
   textColor?: string;
