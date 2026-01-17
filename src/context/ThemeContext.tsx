@@ -25,7 +25,7 @@ const defaultSettings: SiteSettings = {
   // Colors
   primaryColor: '#10b981', // Emerald 500
   secondaryColor: '#f59e0b', // Amber 500
-  accentColor: '#f29c0b',   // Orange Accent
+  accentColor: '#f29c0b',   // Orange Accent (The requested color)
   backgroundColor: '#f8fafc',
   textColor: '#1e293b',
   
@@ -101,7 +101,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const root = document.documentElement;
     const primary = settings.primaryColor || '#10b981';
     const secondary = settings.secondaryColor || '#f59e0b';
-    const accent = settings.accentColor || '#f29c0b'; 
+    const accent = settings.accentColor || '#f29c0b'; // Default to the requested Orange
 
     // Primary Palette
     root.style.setProperty('--color-primary-50', hexToRgb(adjustColor(primary, 90)));
