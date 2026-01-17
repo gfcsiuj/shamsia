@@ -1,27 +1,38 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useVisualEdit } from '../context/VisualEditContext';
-import { X, Save, Move, Type, Palette, Layout, MousePointer2, Check, Loader2 } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { 
+  X, Save, Move, Type, Palette, Layout, MousePointer2, Check, Loader2, 
+  ChevronRight, ChevronDown, Maximize2, Layers, AlignLeft, AlignCenter, AlignRight
+} from 'lucide-react';
 
-// Helper to generate unique selector - Improved robustness
+// --- Helper: Robust Selector Generator ---
 const getUniqueSelector = (el: HTMLElement): string => {
-  // If element has ID, use it (highest specificity)
+  // 1. ID Strategy (Best)
   if (el.id) return `#${el.id}`;
   
+  // 2. Path Strategy
   let path = [];
   let current = el;
   
-  // Traverse up to body
   while (current.parentElement) {
     let tag = current.tagName.toLowerCase();
-    
-    // Stop at body to keep selector clean
     if (tag === 'body') break;
 
     const parent = current.parentElement;
     const siblings = Array.from(parent.children);
     
-    // Calculate nth-of-type index
+    // Check if element has unique classes within siblings
+    /* (Disabled to prevent selecting Tailwind utility classes which might change)
+    if (current.className && typeof current.className === 'string' && current.className.trim() !== '') {
+        const classes = current.className.split(' ').filter(c => !c.startsWith('hover:') && !c.includes('visual-editor'));
+        if (classes.length > 0) {
+             // Logic to check uniqueness could go here, but nth-of-type is safer for structure
+        }
+    }
+    */
+
     let index = 1;
     for (let i = 0; i < siblings.length; i++) {
         const sibling = siblings[i];
@@ -38,21 +49,53 @@ const getUniqueSelector = (el: HTMLElement): string => {
   return 'body > ' + path.join(' > ');
 };
 
+// --- Sub-components for Panel Sections ---
+const Section = ({ title, icon: Icon, children, isOpen, onToggle }: any) => (
+    <div className="border-b border-slate-100 last:border-0">
+        <button 
+            onClick={onToggle}
+            className="w-full flex items-center justify-between p-3 bg-white hover:bg-slate-50 transition text-slate-700 font-bold text-xs"
+        >
+            <div className="flex items-center gap-2">
+                <Icon size={14} className="text-secondary-500" />
+                {title}
+            </div>
+            {isOpen ? <ChevronDown size={14}/> : <ChevronRight size={14}/>}
+        </button>
+        {isOpen && <div className="p-3 bg-slate-50/50 space-y-3">{children}</div>}
+    </div>
+);
+
 const VisualEditor: React.FC = () => {
   const { isEditing, saveOverride, saveAllChanges } = useVisualEdit();
+  const navigate = useNavigate();
+  const location = useLocation();
+  
   const [hoveredEl, setHoveredEl] = useState<HTMLElement | null>(null);
   const [selectedEl, setSelectedEl] = useState<HTMLElement | null>(null);
   const [selector, setSelector] = useState('');
-  
   const [isSaving, setIsSaving] = useState(false);
   
-  // Editor State
+  // Editor Panel State
   const [textContent, setTextContent] = useState('');
   const [styles, setStyles] = useState<Record<string, string>>({});
   
-  // UI State
-  const [toolbarPos, setToolbarPos] = useState({ x: 20, y: 20 });
-  const isDraggingRef = useRef(false);
+  // Accordion State
+  const [openSection, setOpenSection] = useState<string>('text');
+
+  // Navigation Links
+  const navLinks = [
+      { name: 'الرئيسية', path: '/' },
+      { name: 'الدورات', path: '/courses' },
+      { name: 'المدربون', path: '/instructors' },
+      { name: 'المكتبة', path: '/library' },
+      { name: 'من نحن', path: '/about' },
+      { name: 'اتصل بنا', path: '/contact' },
+  ];
+
+  const handleNavigate = (path: string) => {
+      navigate(`${path}?visualEdit=true`);
+  };
 
   useEffect(() => {
     if (!isEditing) return;
@@ -60,7 +103,7 @@ const VisualEditor: React.FC = () => {
     const handleMouseOver = (e: MouseEvent) => {
       e.stopPropagation();
       const target = e.target as HTMLElement;
-      // Don't select the editor itself
+      // Don't select editor UI
       if (target.closest('.visual-editor-ui')) return;
       setHoveredEl(target);
     };
@@ -68,8 +111,11 @@ const VisualEditor: React.FC = () => {
     const handleClick = (e: MouseEvent) => {
       if (!isEditing) return;
       const target = e.target as HTMLElement;
+      
+      // Allow interaction with Editor UI
       if (target.closest('.visual-editor-ui')) return;
       
+      // Prevent default navigation/action on the page
       e.preventDefault();
       e.stopPropagation();
       
@@ -79,13 +125,13 @@ const VisualEditor: React.FC = () => {
       
       // Init inputs
       setTextContent(target.innerText);
-      
-      // Reset local styles map for editor inputs
+      // We don't load all computed styles into state to avoid clutter, 
+      // we only set what the user explicitly changes in this session.
       setStyles({});
     };
 
     document.addEventListener('mouseover', handleMouseOver);
-    document.addEventListener('click', handleClick, true); // Capture phase
+    document.addEventListener('click', handleClick, true); 
 
     return () => {
       document.removeEventListener('mouseover', handleMouseOver);
@@ -96,23 +142,20 @@ const VisualEditor: React.FC = () => {
   const handleApply = () => {
     if (!selector || !selectedEl) return;
     
-    // 1. Remove Inline Styles used for Preview
-    // This is crucial: if we don't remove them, we don't know if the global CSS worked.
+    // Remove temporary inline styles used for preview
     Object.keys(styles).forEach(key => {
         selectedEl.style.removeProperty(key);
     });
     
-    // Clean empty styles
     const cleanStyles: Record<string, string> = {};
     Object.entries(styles).forEach(([k, v]) => {
         if (v) cleanStyles[k] = v;
     });
 
-    // 2. Save Override to Context (which writes the <style> tag)
     saveOverride({
         selector,
         styles: cleanStyles,
-        text: textContent !== selectedEl.innerText ? textContent : undefined
+        text: (textContent !== selectedEl.innerText && selectedEl.children.length === 0) ? textContent : undefined
     });
     
     setSelectedEl(null);
@@ -122,17 +165,22 @@ const VisualEditor: React.FC = () => {
       setIsSaving(true);
       try {
           await saveAllChanges();
-          alert('تم حفظ كافة التغييرات ونشرها على الموقع بنجاح!');
+          alert('تم حفظ التغييرات بنجاح ونشرها على الموقع!');
       } catch (error) {
-          alert('حدث خطأ أثناء الحفظ.');
+          alert('حدث خطأ أثناء الحفظ. يرجى المحاولة مرة أخرى.');
       } finally {
           setIsSaving(false);
       }
   };
 
+  const handleExit = () => {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('visualEdit');
+      window.location.href = url.toString();
+  };
+
   const updateStyle = (key: string, value: string) => {
     setStyles(prev => ({ ...prev, [key]: value }));
-    // Live Preview
     if (selectedEl) {
         selectedEl.style.setProperty(key, value, 'important');
     }
@@ -142,112 +190,193 @@ const VisualEditor: React.FC = () => {
 
   return (
     <>
-      {/* Hover Highlight */}
+      {/* 1. Global Overlay UI */}
+      
+      {/* Hover Box */}
       {hoveredEl && !selectedEl && (
         <div 
-            className="fixed pointer-events-none z-[9998] border-2 border-blue-400 bg-blue-400/10 transition-all duration-75 ease-out"
+            className="fixed pointer-events-none z-[9998] border-2 border-dashed border-secondary-400 transition-all duration-75 ease-out rounded-sm bg-secondary-400/10"
             style={{
                 top: hoveredEl.getBoundingClientRect().top,
                 left: hoveredEl.getBoundingClientRect().left,
                 width: hoveredEl.getBoundingClientRect().width,
                 height: hoveredEl.getBoundingClientRect().height,
-                borderRadius: window.getComputedStyle(hoveredEl).borderRadius
             }}
         >
-            <div className="absolute -top-6 left-0 bg-blue-500 text-white text-[10px] px-1 rounded font-mono">
+            <span className="absolute -top-6 left-0 bg-secondary-500 text-white text-[10px] px-2 py-0.5 rounded-t font-mono">
                 {hoveredEl.tagName.toLowerCase()}
-            </div>
+            </span>
         </div>
       )}
 
-      {/* Selection Highlight */}
+      {/* Selection Box */}
       {selectedEl && (
         <div 
-            className="fixed pointer-events-none z-[9998] border-2 border-secondary-500 shadow-[0_0_0_100vw_rgba(0,0,0,0.5)]"
+            className="fixed pointer-events-none z-[9998] border-2 border-primary-500 shadow-[0_0_0_100vw_rgba(0,0,0,0.6)]"
             style={{
                 top: selectedEl.getBoundingClientRect().top,
                 left: selectedEl.getBoundingClientRect().left,
                 width: selectedEl.getBoundingClientRect().width,
                 height: selectedEl.getBoundingClientRect().height,
-                borderRadius: window.getComputedStyle(selectedEl).borderRadius
             }}
         ></div>
       )}
 
-      {/* Main Toolbar */}
-      <div className="fixed top-0 left-0 right-0 h-14 bg-slate-900 text-white z-[10000] flex items-center justify-between px-4 shadow-xl visual-editor-ui">
-          <div className="flex items-center gap-3">
-              <div className="bg-secondary-500 p-1.5 rounded-lg">
-                  <MousePointer2 size={18} className="text-white animate-pulse" />
+      {/* 2. Top Toolbar (The "Tabs above next to save") */}
+      <div className="fixed top-0 left-0 right-0 h-16 bg-slate-900 text-white z-[10000] flex items-center justify-between px-4 shadow-2xl visual-editor-ui border-b border-slate-700">
+          
+          <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700">
+                  <MousePointer2 size={16} className="text-secondary-400 animate-pulse" />
+                  <span className="font-bold text-sm">وضع التخصيص الحر</span>
               </div>
-              <span className="font-bold text-sm hidden sm:inline">وضع التخصيص الحر</span>
-              <span className="text-xs bg-slate-800 px-2 py-1 rounded text-slate-400 border border-slate-700 hidden sm:inline">
-                  اضغط على أي عنصر لتعديله
-              </span>
+              
+              {/* Navigation Tabs in Toolbar */}
+              <div className="hidden md:flex bg-slate-800 rounded-lg p-1 border border-slate-700">
+                  {navLinks.map(link => (
+                      <button
+                        key={link.path}
+                        onClick={() => handleNavigate(link.path)}
+                        className={`px-3 py-1.5 rounded-md text-xs font-bold transition ${
+                            location.pathname === link.path 
+                            ? 'bg-secondary-500 text-white shadow-sm' 
+                            : 'text-slate-400 hover:text-white hover:bg-slate-700'
+                        }`}
+                      >
+                          {link.name}
+                      </button>
+                  ))}
+              </div>
           </div>
+
           <div className="flex items-center gap-3">
               <button 
                 onClick={handleGlobalSave}
                 disabled={isSaving}
-                className="bg-green-600 hover:bg-green-700 text-white px-4 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2 disabled:opacity-50"
+                className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg text-xs font-bold transition flex items-center gap-2 disabled:opacity-50 shadow-lg shadow-green-900/20"
               >
-                  {isSaving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
+                  {isSaving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
                   حفظ التغييرات
               </button>
               <button 
-                onClick={() => {
-                    const url = new URL(window.location.href);
-                    url.searchParams.delete('visualEdit');
-                    window.location.href = url.toString();
-                }}
-                className="bg-red-500 hover:bg-red-600 text-white px-4 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2"
+                onClick={handleExit}
+                className="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-lg text-xs font-bold transition flex items-center gap-2 shadow-lg shadow-red-900/20"
               >
-                  <X size={14} />
+                  <X size={16} />
                   خروج
               </button>
           </div>
       </div>
 
-      {/* Floating Editor Panel */}
+      {/* 3. Editor Panel */}
       {selectedEl && (
           <div 
-            className="fixed z-[10001] bg-white rounded-xl shadow-2xl border border-slate-200 w-80 visual-editor-ui overflow-hidden animate-pop-in"
+            className="fixed z-[10001] bg-white rounded-xl shadow-2xl border border-slate-200 w-80 visual-editor-ui overflow-hidden animate-slide-in-left flex flex-col"
             style={{ 
                 top: 80, 
-                left: 20, // Keep it fixed for simplicity, or implement drag
+                left: 20,
+                maxHeight: 'calc(100vh - 100px)'
             }}
           >
-              <div className="bg-slate-50 border-b border-slate-200 p-3 flex justify-between items-center cursor-move">
+              {/* Panel Header */}
+              <div className="bg-slate-50 border-b border-slate-200 p-3 flex justify-between items-center cursor-move shrink-0">
                   <div className="flex items-center gap-2">
-                      <Layout size={14} className="text-slate-400" />
-                      <span className="text-xs font-bold text-slate-600 truncate max-w-[150px]">{selector}</span>
+                      <Layout size={14} className="text-primary-600" />
+                      <span className="text-xs font-bold text-slate-600 truncate max-w-[180px]" dir="ltr">{selector}</span>
                   </div>
                   <button onClick={() => setSelectedEl(null)} className="text-slate-400 hover:text-red-500"><X size={16}/></button>
               </div>
 
-              <div className="p-4 space-y-4 max-h-[70vh] overflow-y-auto">
+              {/* Panel Body (Scrollable) */}
+              <div className="overflow-y-auto flex-1 custom-scrollbar">
                   
-                  {/* Text Edit */}
-                  <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
-                          <Type size={12} /> المحتوى النصي
-                      </label>
-                      <textarea 
-                        className="w-full text-sm p-2 border border-slate-200 rounded-lg focus:border-secondary-500 outline-none text-slate-700"
-                        rows={3}
-                        value={textContent}
-                        onChange={e => setTextContent(e.target.value)}
-                      ></textarea>
-                  </div>
+                  {/* Text Edit (Only for text nodes) */}
+                  {selectedEl.children.length === 0 && !['IMG', 'INPUT', 'HR', 'BR'].includes(selectedEl.tagName) && (
+                      <Section title="المحتوى النصي" icon={Type} isOpen={openSection === 'text'} onToggle={() => setOpenSection(openSection === 'text' ? '' : 'text')}>
+                          <textarea 
+                            className="w-full text-sm p-2 border border-slate-200 rounded-lg focus:border-secondary-500 outline-none text-slate-700 min-h-[80px]"
+                            value={textContent}
+                            onChange={e => setTextContent(e.target.value)}
+                          ></textarea>
+                      </Section>
+                  )}
 
-                  {/* Colors */}
-                  <div className="space-y-2 pt-2 border-t border-slate-100">
-                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
-                          <Palette size={12} /> الألوان
-                      </label>
-                      <div className="grid grid-cols-2 gap-2">
+                  {/* Layout & Dimensions */}
+                  <Section title="الأبعاد والمسافات" icon={Maximize2} isOpen={openSection === 'layout'} onToggle={() => setOpenSection(openSection === 'layout' ? '' : 'layout')}>
+                      <div className="space-y-3">
+                          <div className="grid grid-cols-2 gap-2">
+                              <div>
+                                  <label className="text-[10px] text-slate-500 block mb-1">Width</label>
+                                  <input type="text" className="w-full text-xs p-1.5 border rounded" placeholder="auto" onChange={e => updateStyle('width', e.target.value)} />
+                              </div>
+                              <div>
+                                  <label className="text-[10px] text-slate-500 block mb-1">Height</label>
+                                  <input type="text" className="w-full text-xs p-1.5 border rounded" placeholder="auto" onChange={e => updateStyle('height', e.target.value)} />
+                              </div>
+                          </div>
+                          
+                          {/* Margin / Padding Simple Controls */}
                           <div>
-                              <span className="text-xs block text-slate-500 mb-1">لون النص</span>
+                              <label className="text-[10px] text-slate-500 block mb-1">Padding (Internal)</label>
+                              <div className="flex gap-1">
+                                  <input type="number" className="w-full text-xs p-1 border rounded" placeholder="All" onChange={e => updateStyle('padding', `${e.target.value}px`)} />
+                              </div>
+                          </div>
+                          <div>
+                              <label className="text-[10px] text-slate-500 block mb-1">Margin (External)</label>
+                              <div className="flex gap-1">
+                                  <input type="number" className="w-full text-xs p-1 border rounded" placeholder="All" onChange={e => updateStyle('margin', `${e.target.value}px`)} />
+                              </div>
+                          </div>
+                          
+                          <div>
+                              <label className="text-[10px] text-slate-500 block mb-1">Display</label>
+                              <select className="w-full text-xs p-1.5 border rounded" onChange={e => updateStyle('display', e.target.value)}>
+                                  <option value="">Default</option>
+                                  <option value="block">Block</option>
+                                  <option value="flex">Flex</option>
+                                  <option value="grid">Grid</option>
+                                  <option value="none" className="text-red-500">None (Hide)</option>
+                              </select>
+                          </div>
+                      </div>
+                  </Section>
+
+                  {/* Typography */}
+                  <Section title="الخطوط والنصوص" icon={AlignLeft} isOpen={openSection === 'typography'} onToggle={() => setOpenSection(openSection === 'typography' ? '' : 'typography')}>
+                      <div className="space-y-3">
+                          <div className="grid grid-cols-2 gap-2">
+                              <div>
+                                  <label className="text-[10px] text-slate-500 block mb-1">Size (px)</label>
+                                  <input type="number" className="w-full text-xs p-1.5 border rounded" onChange={e => updateStyle('font-size', `${e.target.value}px`)} />
+                              </div>
+                              <div>
+                                  <label className="text-[10px] text-slate-500 block mb-1">Weight</label>
+                                  <select className="w-full text-xs p-1.5 border rounded" onChange={e => updateStyle('font-weight', e.target.value)}>
+                                      <option value="">Default</option>
+                                      <option value="400">Normal</option>
+                                      <option value="600">Semi Bold</option>
+                                      <option value="700">Bold</option>
+                                      <option value="900">Black</option>
+                                  </select>
+                              </div>
+                          </div>
+                          <div>
+                              <label className="text-[10px] text-slate-500 block mb-1">Alignment</label>
+                              <div className="flex bg-slate-200 rounded p-0.5">
+                                  <button onClick={() => updateStyle('text-align', 'right')} className="flex-1 hover:bg-white rounded py-1 flex justify-center"><AlignRight size={14}/></button>
+                                  <button onClick={() => updateStyle('text-align', 'center')} className="flex-1 hover:bg-white rounded py-1 flex justify-center"><AlignCenter size={14}/></button>
+                                  <button onClick={() => updateStyle('text-align', 'left')} className="flex-1 hover:bg-white rounded py-1 flex justify-center"><AlignLeft size={14}/></button>
+                              </div>
+                          </div>
+                      </div>
+                  </Section>
+
+                  {/* Colors & Backgrounds */}
+                  <Section title="الألوان والخلفية" icon={Palette} isOpen={openSection === 'colors'} onToggle={() => setOpenSection(openSection === 'colors' ? '' : 'colors')}>
+                      <div className="grid grid-cols-2 gap-3">
+                          <div>
+                              <span className="text-[10px] text-slate-500 block mb-1">Text Color</span>
                               <div className="flex items-center gap-2">
                                   <input 
                                     type="color" 
@@ -257,7 +386,7 @@ const VisualEditor: React.FC = () => {
                               </div>
                           </div>
                           <div>
-                              <span className="text-xs block text-slate-500 mb-1">الخلفية</span>
+                              <span className="text-[10px] text-slate-500 block mb-1">Background</span>
                               <div className="flex items-center gap-2">
                                   <input 
                                     type="color" 
@@ -267,59 +396,66 @@ const VisualEditor: React.FC = () => {
                               </div>
                           </div>
                       </div>
-                  </div>
+                  </Section>
 
-                  {/* Dimensions & Spacing */}
-                  <div className="space-y-2 pt-2 border-t border-slate-100">
-                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
-                          <Move size={12} /> الأبعاد والمسافات
-                      </label>
-                      <div className="grid grid-cols-2 gap-2">
+                  {/* Borders & Effects */}
+                  <Section title="الحدود والزوايا" icon={Layers} isOpen={openSection === 'borders'} onToggle={() => setOpenSection(openSection === 'borders' ? '' : 'borders')}>
+                      <div className="space-y-3">
+                          <div className="grid grid-cols-2 gap-2">
+                              <div>
+                                  <label className="text-[10px] text-slate-500 block mb-1">Radius (px)</label>
+                                  <input type="number" className="w-full text-xs p-1.5 border rounded" onChange={e => updateStyle('border-radius', `${e.target.value}px`)} />
+                              </div>
+                              <div>
+                                  <label className="text-[10px] text-slate-500 block mb-1">Width (px)</label>
+                                  <input type="number" className="w-full text-xs p-1.5 border rounded" onChange={e => updateStyle('border-width', `${e.target.value}px`)} />
+                              </div>
+                          </div>
                           <div>
-                              <span className="text-xs block text-slate-500 mb-1">حجم الخط (px)</span>
+                              <label className="text-[10px] text-slate-500 block mb-1">Border Color</label>
                               <input 
-                                type="number" 
-                                className="w-full text-xs p-1.5 border rounded"
-                                placeholder="Auto"
-                                onChange={e => updateStyle('font-size', `${e.target.value}px`)}
+                                type="color" 
+                                className="w-full h-6 rounded border p-0 cursor-pointer"
+                                onChange={e => {
+                                    updateStyle('border-color', e.target.value);
+                                    updateStyle('border-style', 'solid'); // Ensure visible
+                                }}
                               />
                           </div>
+                      </div>
+                  </Section>
+
+                  {/* Transform */}
+                  <Section title="التحريك (Transform)" icon={Move} isOpen={openSection === 'transform'} onToggle={() => setOpenSection(openSection === 'transform' ? '' : 'transform')}>
+                      <div className="space-y-3">
                           <div>
-                              <span className="text-xs block text-slate-500 mb-1">سمك الخط</span>
-                              <select 
-                                className="w-full text-xs p-1.5 border rounded"
-                                onChange={e => updateStyle('font-weight', e.target.value)}
-                              >
-                                  <option value="">Default</option>
-                                  <option value="400">Normal</option>
-                                  <option value="700">Bold</option>
-                                  <option value="900">Black</option> 
-                              </select>
-                          </div>
-                          <div>
-                              <span className="text-xs block text-slate-500 mb-1">تحريك X</span>
+                              <span className="text-[10px] text-slate-500 block mb-1">Translate X (px)</span>
                               <input 
-                                type="range" min="-100" max="100"
+                                type="range" min="-50" max="50"
                                 className="w-full h-1 bg-slate-200 rounded appearance-none"
                                 onChange={e => updateStyle('transform', `translate(${e.target.value}px, ${styles['transform']?.split(',')[1] || '0px'})`)}
                               />
                           </div>
                           <div>
-                              <span className="text-xs block text-slate-500 mb-1">تحريك Y</span>
+                              <span className="text-[10px] text-slate-500 block mb-1">Translate Y (px)</span>
                               <input 
-                                type="range" min="-100" max="100"
+                                type="range" min="-50" max="50"
                                 className="w-full h-1 bg-slate-200 rounded appearance-none"
                                 onChange={e => updateStyle('transform', `translate(${styles['transform']?.split(',')[0].split('(')[1] || '0px'}, ${e.target.value}px)`)}
                               />
                           </div>
                       </div>
-                  </div>
+                  </Section>
 
+              </div>
+
+              {/* Panel Footer */}
+              <div className="p-3 bg-slate-50 border-t border-slate-200 shrink-0">
                   <button 
                     onClick={handleApply}
-                    className="w-full bg-secondary-500 hover:bg-secondary-600 text-white font-bold py-2 rounded-lg text-sm flex items-center justify-center gap-2 mt-2"
+                    className="w-full bg-secondary-500 hover:bg-secondary-600 text-white font-bold py-2.5 rounded-lg text-sm flex items-center justify-center gap-2 shadow-lg shadow-secondary-500/20 active:scale-95 transition"
                   >
-                      <Check size={16} />
+                      <Check size={18} />
                       تطبيق التعديل
                   </button>
               </div>
