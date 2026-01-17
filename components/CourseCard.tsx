@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Clock, Users, Star, ArrowLeft } from 'lucide-react';
+import { Clock, Users, Star, ArrowLeft, BookOpen } from 'lucide-react';
 import { Course, Instructor } from '../types';
 import { INSTRUCTORS } from '../constants';
 
@@ -18,85 +18,85 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
   const imageUrl = course.media && course.media.length > 0 ? course.media[0].url : 'https://via.placeholder.com/400x300';
 
   return (
-    <div className="group bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col h-full">
+    <div className="group bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-xl hover:border-primary-100 transition-all duration-300 flex flex-col h-full relative">
       {/* Image Container */}
-      <div className="relative h-48 overflow-hidden">
+      <div className="relative h-52 overflow-hidden bg-slate-100">
         <img 
           src={imageUrl} 
           alt={course.title} 
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
         />
-        <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-primary-700 shadow-sm">
+        
+        {/* Category Badge */}
+        <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-md px-3 py-1 rounded-lg text-xs font-bold text-primary-700 shadow-sm border border-white/50 flex items-center gap-1.5">
+          <BookOpen size={12} className="text-secondary-500" />
           {course.category}
         </div>
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
-             <div className="flex items-center gap-1 text-secondary-400">
-                <Star size={16} fill="currentColor" />
-                <span className="text-white font-bold text-sm">{course.rating}</span>
-                <span className="text-white/80 text-xs">({course.studentsCount})</span>
-             </div>
+
+        {/* Rating Badge */}
+        <div className="absolute bottom-4 left-4 bg-white/95 backdrop-blur-md px-2.5 py-1 rounded-lg flex items-center gap-1.5 shadow-sm border border-white/50">
+            <Star size={14} className="text-amber-400 fill-amber-400" />
+            <span className="text-slate-800 font-bold text-xs">{course.rating}</span>
         </div>
       </div>
 
       {/* Content */}
-      <div className="p-5 flex-grow flex flex-col">
+      <div className="p-6 flex-grow flex flex-col">
         {/* Level & Instructor */}
-        <div className="flex justify-between items-start mb-3">
-          <span className={`text-xs px-2 py-1 rounded-md ${
-            course.level === 'مبتدئ' ? 'bg-green-100 text-green-700' :
-            course.level === 'متوسط' ? 'bg-yellow-100 text-yellow-700' :
-            course.level === 'متقدم' ? 'bg-red-100 text-red-700' : 'bg-primary-100 text-primary-700'
+        <div className="flex justify-between items-center mb-4">
+          <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full border ${
+            course.level === 'مبتدئ' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' :
+            course.level === 'متوسط' ? 'bg-amber-50 text-amber-700 border-amber-100' :
+            'bg-purple-50 text-purple-700 border-purple-100'
           }`}>
             {course.level}
           </span>
-          <div className="text-xs text-slate-500 flex items-center gap-1">
-             <span className="truncate max-w-[100px]">{instructor?.name || 'عدة مدربين'}</span>
-             {instructor?.image && <img src={instructor.image} alt="" className="w-6 h-6 rounded-full border border-slate-200" />}
+          
+          <div className="flex items-center gap-2">
+             <span className="text-xs text-slate-500 font-medium truncate max-w-[100px]">{instructor?.name || 'نخبة المدربين'}</span>
+             <img 
+                src={instructor?.image || 'https://via.placeholder.com/100'} 
+                alt="" 
+                className="w-7 h-7 rounded-full border border-slate-100 object-cover" 
+             />
           </div>
         </div>
 
-        <Link to={`/courses/${course.id}`}>
-          <h3 className="text-lg font-bold text-slate-800 mb-2 line-clamp-2 hover:text-primary-600 transition">
+        <Link to={`/courses/${course.id}`} className="block mb-3">
+          <h3 className="text-lg font-bold text-slate-800 line-clamp-2 group-hover:text-primary-600 transition-colors leading-snug">
             {course.title}
           </h3>
         </Link>
         
-        {course.description && (
-            <p className="text-sm text-slate-500 line-clamp-2 mb-4">
-                {course.description}
-            </p>
-        )}
-
         {/* Meta Info */}
-        <div className="flex items-center gap-4 text-slate-500 text-sm mb-4 mt-auto">
-          <div className="flex items-center gap-1">
-            <Clock size={16} />
+        <div className="flex items-center gap-4 text-slate-400 text-xs mb-6 mt-auto border-t border-slate-50 pt-4">
+          <div className="flex items-center gap-1.5 bg-slate-50 px-2 py-1 rounded-md">
+            <Clock size={14} />
             <span>{course.duration}</span>
           </div>
-          <div className="flex items-center gap-1">
-             <Users size={16} />
-             <span>{course.studentsCount}</span>
+          <div className="flex items-center gap-1.5 bg-slate-50 px-2 py-1 rounded-md">
+             <Users size={14} />
+             <span>{course.studentsCount} طالب</span>
           </div>
         </div>
 
         {/* Footer: Price & Action */}
-        <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
+        <div className="flex items-center justify-between">
           <div className="flex flex-col">
             {course.oldPrice && (
-              <span className="text-xs text-slate-400 line-through">
+              <span className="text-xs text-slate-400 line-through decoration-slate-300">
                 {course.oldPrice.toLocaleString()} د.ع
               </span>
             )}
-            <span className="text-xl font-bold text-primary-700">
+            <span className="text-lg font-extrabold text-primary-600">
               {course.price === 0 ? 'مجاناً' : `${course.price.toLocaleString()} د.ع`}
             </span>
           </div>
           <Link 
             to={`/courses/${course.id}`} 
-            className="flex items-center gap-2 bg-slate-50 hover:bg-primary-50 text-primary-700 px-4 py-2 rounded-lg transition text-sm font-semibold group-hover:bg-primary-600 group-hover:text-white"
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-slate-50 text-primary-600 hover:bg-primary-600 hover:text-white transition-all duration-300 group-hover:translate-x-1"
           >
-            تفاصيل
-            <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+            <ArrowLeft size={18} />
           </Link>
         </div>
       </div>

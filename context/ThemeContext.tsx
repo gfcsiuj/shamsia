@@ -25,7 +25,7 @@ const defaultSettings: SiteSettings = {
   // Colors
   primaryColor: '#10b981', // Emerald 500
   secondaryColor: '#f59e0b', // Amber 500
-  accentColor: '#1efff5',   // Default Cyan
+  accentColor: '#0ea5e9',   // Sky 500 (Much better harmony with Emerald than the previous Cyan)
   backgroundColor: '#f8fafc',
   textColor: '#1e293b',
   
@@ -101,7 +101,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const root = document.documentElement;
     const primary = settings.primaryColor || '#10b981';
     const secondary = settings.secondaryColor || '#f59e0b';
-    const accent = settings.accentColor || '#1efff5';
+    const accent = settings.accentColor || '#0ea5e9'; // Default to Sky Blue if missing
 
     // Primary Palette
     root.style.setProperty('--color-primary-50', hexToRgb(adjustColor(primary, 90)));

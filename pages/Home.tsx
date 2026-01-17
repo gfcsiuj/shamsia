@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, BookOpen, Users, Award, CheckCircle, Loader2 } from 'lucide-react';
+import { ArrowLeft, BookOpen, Users, Award, CheckCircle, Loader2, Sparkles, TrendingUp } from 'lucide-react';
 import { TESTIMONIALS } from '../constants';
 import CourseCard from '../components/CourseCard';
 import { useTheme } from '../context/ThemeContext';
@@ -66,7 +66,7 @@ const Home: React.FC = () => {
   }, []);
 
   return (
-    <div className="animate-fade-in">
+    <div className="animate-fade-in bg-slate-50">
       {/* Hero Section */}
       <section className="relative min-h-[500px] lg:h-[600px] flex items-center overflow-hidden py-16 lg:py-0">
         <div className="absolute inset-0 z-0">
@@ -75,29 +75,35 @@ const Home: React.FC = () => {
             alt="Students learning" 
             className="w-full h-full object-cover animate-scale-in"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-primary-900/95 via-primary-900/80 to-primary-900/40"></div>
+          {/* Enhanced Gradient Overlay for better text readability */}
+          <div className="absolute inset-0 bg-gradient-to-r from-primary-900 via-primary-900/90 to-primary-800/60 mix-blend-multiply"></div>
+          <div className="absolute inset-0 bg-black/20"></div>
         </div>
         
         <div className="container mx-auto px-4 z-10 relative">
           <div className="max-w-4xl text-white">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold mb-8 leading-loose md:leading-relaxed lg:leading-tight animate-fade-in-up tracking-wide">
-              <span className="text-secondary-400 block mb-2 sm:mb-4 sm:inline sm:ml-3">شمسية</span>
-              {settings.heroTitle}
+            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-2 rounded-full mb-6 animate-fade-in-up">
+                <Sparkles size={16} className="text-secondary-400" />
+                <span className="text-sm font-medium text-white/90">مستقبل التعليم الرقمي في العراق</span>
+            </div>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold mb-6 leading-tight animate-fade-in-up tracking-tight">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-primary-100 block mb-2">{settings.siteName || 'شمسية'}</span>
+              <span className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white block mt-2">{settings.heroTitle}</span>
             </h1>
-            <p className="text-base sm:text-lg md:text-xl text-slate-100 mb-10 leading-loose opacity-90 max-w-2xl animate-fade-in-up delay-100">
+            <p className="text-lg sm:text-xl md:text-2xl text-primary-50 mb-10 leading-relaxed max-w-2xl animate-fade-in-up delay-100 font-light">
               {settings.heroSubtitle}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 animate-fade-in-up delay-200">
               <Link 
                 to="/courses" 
-                className="px-6 py-4 md:px-8 md:py-4 bg-secondary-500 hover:bg-secondary-600 text-white text-base md:text-lg font-bold rounded-xl transition shadow-lg shadow-secondary-500/30 flex items-center justify-center gap-2 transform hover:scale-105 duration-300"
+                className="px-8 py-4 bg-secondary-500 hover:bg-secondary-600 text-white text-lg font-bold rounded-xl transition shadow-xl shadow-secondary-500/20 flex items-center justify-center gap-3 transform hover:-translate-y-1"
               >
                 تصفح الدورات
                 <ArrowLeft size={20} />
               </Link>
               <Link 
                 to="/about" 
-                className="px-6 py-4 md:px-8 md:py-4 bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/30 text-white text-base md:text-lg font-bold rounded-xl transition flex items-center justify-center transform hover:scale-105 duration-300"
+                className="px-8 py-4 bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/20 text-white text-lg font-bold rounded-xl transition flex items-center justify-center hover:border-white/40"
               >
                 تعرف علينا
               </Link>
@@ -106,81 +112,89 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="py-8 md:py-12 bg-white relative -mt-8 md:-mt-10 z-20 shadow-sm container mx-auto px-4 rounded-xl border border-slate-100 max-w-[95%] lg:max-w-container animate-fade-in-up delay-300">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 md:divide-x md:divide-x-reverse divide-slate-100">
-          <div className="text-center group">
-            <div className="text-3xl md:text-5xl font-extrabold text-primary-700 mb-2 group-hover:text-secondary-500 transition-colors">
+      {/* Stats Section - Floating Design */}
+      <section className="relative z-20 container mx-auto px-4 -mt-12 md:-mt-16">
+        <div className="bg-white rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100 p-8 grid grid-cols-2 md:grid-cols-4 gap-8 animate-fade-in-up delay-300">
+          <div className="text-center md:border-l md:border-slate-100">
+            <div className="flex items-center justify-center gap-2 text-3xl md:text-4xl font-extrabold text-primary-600 mb-2">
+              <BookOpen size={28} className="text-secondary-500 opacity-80" />
               <CountUp end={50} suffix="+" />
             </div>
-            <div className="text-xs md:text-sm text-slate-500 font-medium">دورة تدريبية</div>
+            <p className="text-sm text-slate-500 font-medium">دورة تدريبية</p>
           </div>
-          <div className="text-center group">
-            <div className="text-3xl md:text-5xl font-extrabold text-primary-700 mb-2 group-hover:text-secondary-500 transition-colors">
+          <div className="text-center md:border-l md:border-slate-100">
+            <div className="flex items-center justify-center gap-2 text-3xl md:text-4xl font-extrabold text-primary-600 mb-2">
+              <Users size={28} className="text-secondary-500 opacity-80" />
               <CountUp end={1200} suffix="+" />
             </div>
-            <div className="text-xs md:text-sm text-slate-500 font-medium">طالب وطالبة</div>
+            <p className="text-sm text-slate-500 font-medium">طالب وطالبة</p>
           </div>
-          <div className="text-center group">
-            <div className="text-3xl md:text-5xl font-extrabold text-primary-700 mb-2 group-hover:text-secondary-500 transition-colors">
+          <div className="text-center md:border-l md:border-slate-100">
+            <div className="flex items-center justify-center gap-2 text-3xl md:text-4xl font-extrabold text-primary-600 mb-2">
+              <Award size={28} className="text-secondary-500 opacity-80" />
               <CountUp end={30} suffix="+" />
             </div>
-            <div className="text-xs md:text-sm text-slate-500 font-medium">مدرب خبير</div>
+            <p className="text-sm text-slate-500 font-medium">مدرب خبير</p>
           </div>
-          <div className="text-center group">
-            <div className="text-3xl md:text-5xl font-extrabold text-primary-700 mb-2 group-hover:text-secondary-500 transition-colors">
+          <div className="text-center">
+            <div className="flex items-center justify-center gap-2 text-3xl md:text-4xl font-extrabold text-primary-600 mb-2">
+              <TrendingUp size={28} className="text-secondary-500 opacity-80" />
               <CountUp end={15} />
             </div>
-            <div className="text-xs md:text-sm text-slate-500 font-medium">شريك أكاديمي</div>
+            <p className="text-sm text-slate-500 font-medium">شريك أكاديمي</p>
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-12 md:py-20 bg-slate-50">
+      {/* Features Section - Clean Cards Design */}
+      <section className="py-20 bg-slate-50">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-10 md:mb-16 animate-fade-in-up">
-            <h2 className="text-2xl md:text-3xl font-bold text-primary-900 mb-4">لماذا تختار منصة شمسية؟</h2>
-            <div className="w-20 h-1 bg-secondary-500 mx-auto rounded-full"></div>
+          <div className="text-center mb-16 animate-fade-in-up">
+            <span className="text-secondary-600 font-bold tracking-wider text-sm uppercase mb-2 block">لماذا شمسية؟</span>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4">مميزات تجعلنا خيارك الأول</h2>
+            <div className="w-24 h-1.5 bg-gradient-to-r from-primary-500 to-accent-500 mx-auto rounded-full opacity-80"></div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { icon: BookOpen, title: "محتوى عالي الجودة", desc: "مناهج دراسية مصممة وفق أحدث المعايير العالمية لتلبية احتياجات سوق العمل." },
-              { icon: Users, title: "نخبة المدربين", desc: "تعلم على يد خبراء وممارسين يمتلكون خبرات واقعية في مجالاتهم." },
-              { icon: Award, title: "شهادات معتمدة", desc: "احصل على شهادات إتمام موثقة تعزز سيرتك الذاتية وتفتح لك آفاقاً جديدة." }
+              { icon: BookOpen, title: "محتوى عالي الجودة", desc: "مناهج دراسية مصممة وفق أحدث المعايير العالمية لتلبية احتياجات سوق العمل المتجددة." },
+              { icon: Users, title: "نخبة المدربين", desc: "تعلم على يد خبراء وممارسين يمتلكون خبرات واقعية وشهادات دولية في مجالاتهم." },
+              { icon: Award, title: "شهادات معتمدة", desc: "احصل على شهادات إتمام موثقة تعزز سيرتك الذاتية وتفتح لك آفاقاً وظيفية جديدة." }
             ].map((feature, idx) => (
-              <div key={idx} className={`bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition duration-300 text-center animate-fade-in-up delay-${idx * 100}`}>
-                <div className="w-14 h-14 md:w-16 md:h-16 bg-accent-500 rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6 text-white group-hover:bg-primary-600 group-hover:text-white transition-colors">
-                  <feature.icon size={28} className="md:w-8 md:h-8" />
+              <div key={idx} className={`group bg-white p-8 rounded-3xl shadow-sm border border-slate-100 hover:shadow-xl hover:border-primary-100 transition-all duration-300 relative overflow-hidden animate-fade-in-up delay-${idx * 150}`}>
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary-500 to-accent-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
+                
+                <div className="w-16 h-16 bg-primary-50 rounded-2xl flex items-center justify-center mb-6 text-primary-600 group-hover:bg-primary-600 group-hover:text-white transition-colors duration-300 shadow-sm">
+                  <feature.icon size={32} strokeWidth={1.5} />
                 </div>
-                <h3 className="text-lg md:text-xl font-bold text-slate-800 mb-2 md:mb-3">{feature.title}</h3>
-                <p className="text-sm md:text-base text-slate-600 leading-relaxed">{feature.desc}</p>
+                
+                <h3 className="text-xl font-bold text-slate-800 mb-3 group-hover:text-primary-700 transition-colors">{feature.title}</h3>
+                <p className="text-slate-500 leading-relaxed group-hover:text-slate-600">{feature.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Featured Courses Section - NOW DYNAMIC */}
-      <section className="py-12 md:py-20 bg-white">
+      {/* Featured Courses Section */}
+      <section className="py-20 bg-white">
         <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-8 md:mb-12 gap-4 animate-fade-in">
+          <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4 animate-fade-in">
             <div className="w-full md:w-auto text-center md:text-right">
-              <h2 className="text-2xl md:text-3xl font-bold text-primary-900 mb-2">أحدث الدورات</h2>
-              <p className="text-slate-500 text-sm md:text-base">اخترنا لك مجموعة من أفضل الدورات لبدء رحلتك التعليمية</p>
+              <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-3">أحدث الدورات التدريبية</h2>
+              <p className="text-slate-500 text-lg">استثمر في مستقبلك مع دوراتنا المتميزة</p>
             </div>
-            <Link to="/courses" className="hidden md:flex items-center text-primary-600 font-bold hover:text-primary-800 transition">
+            <Link to="/courses" className="hidden md:flex items-center px-6 py-3 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold rounded-xl transition border border-slate-200">
               عرض كل الدورات <ArrowLeft size={20} className="mr-2" />
             </Link>
           </div>
 
           {coursesLoading ? (
             <div className="flex justify-center py-20">
-              <Loader2 className="animate-spin text-primary-600" size={40} />
+              <Loader2 className="animate-spin text-primary-600" size={48} />
             </div>
           ) : featuredCourses.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {featuredCourses.map((course, idx) => (
                 <div key={course.id} className={`animate-fade-in-up delay-${idx * 100}`}>
                    <CourseCard course={course} />
@@ -188,13 +202,14 @@ const Home: React.FC = () => {
               ))}
             </div>
           ) : (
-            <div className="text-center py-16 bg-slate-50 rounded-2xl border border-slate-100">
-              <p className="text-slate-500">لا توجد دورات لعرضها حالياً.</p>
+            <div className="text-center py-24 bg-slate-50 rounded-3xl border border-dashed border-slate-200">
+              <BookOpen size={48} className="mx-auto text-slate-300 mb-4" />
+              <p className="text-slate-500 font-medium">لا توجد دورات متاحة حالياً للعرض.</p>
             </div>
           )}
           
-          <div className="mt-8 text-center md:hidden">
-            <Link to="/courses" className="inline-block px-6 py-3 border-2 border-primary-600 text-primary-600 font-bold rounded-lg hover:bg-primary-50 text-sm">
+          <div className="mt-10 text-center md:hidden">
+            <Link to="/courses" className="inline-block px-8 py-4 border border-slate-200 bg-white text-slate-700 font-bold rounded-xl hover:bg-slate-50 shadow-sm w-full">
               عرض جميع الدورات
             </Link>
           </div>
@@ -202,27 +217,33 @@ const Home: React.FC = () => {
       </section>
 
       {/* Testimonials */}
-      <section className="py-12 md:py-20 bg-primary-900 text-white relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 animate-pulse"></div>
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-secondary-500/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
+      <section className="py-24 bg-slate-900 text-white relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary-600/20 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3"></div>
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-secondary-600/10 rounded-full blur-[120px] translate-y-1/2 -translate-x-1/4"></div>
 
         <div className="container mx-auto px-4 relative z-10">
-          <div className="text-center mb-10 md:mb-16 animate-fade-in-up">
-            <h2 className="text-2xl md:text-3xl font-bold mb-4">قصص نجاح ملهمة</h2>
-            <p className="text-primary-200">ماذا يقول طلابنا عن تجربتهم مع شمسية</p>
+          <div className="text-center mb-16 animate-fade-in-up">
+            <h2 className="text-3xl md:text-4xl font-extrabold mb-4">قصص نجاح ملهمة</h2>
+            <p className="text-slate-300 text-lg">أكثر من مجرد منصة تعليمية، نحن مجتمع يصنع النجاح</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
             {TESTIMONIALS.map((testimonial, idx) => (
-              <div key={testimonial.id} className={`bg-white/10 backdrop-blur-md p-6 md:p-8 rounded-2xl border border-white/10 hover:bg-white/15 transition animate-fade-in-up delay-${idx * 100}`}>
-                <div className="flex items-center gap-4 mb-4 md:mb-6">
-                  <img src={testimonial.image} alt={testimonial.name} className="w-12 h-12 md:w-14 md:h-14 rounded-full border-2 border-secondary-500" />
+              <div key={testimonial.id} className={`bg-white/5 backdrop-blur-sm p-8 rounded-3xl border border-white/10 hover:bg-white/10 transition-colors duration-300 animate-fade-in-up delay-${idx * 150}`}>
+                <div className="flex items-center gap-5 mb-6">
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-gradient-to-tr from-primary-500 to-accent-500 rounded-full blur-sm opacity-60"></div>
+                    <img src={testimonial.image} alt={testimonial.name} className="relative w-16 h-16 rounded-full border-2 border-white/20 object-cover" />
+                  </div>
                   <div>
-                    <h4 className="font-bold text-base md:text-lg">{testimonial.name}</h4>
-                    <p className="text-primary-300 text-xs md:text-sm">{testimonial.role}</p>
+                    <h4 className="font-bold text-lg text-white">{testimonial.name}</h4>
+                    <p className="text-primary-300 text-sm font-medium">{testimonial.role}</p>
                   </div>
                 </div>
-                <p className="text-base md:text-lg leading-relaxed italic opacity-90">"{testimonial.content}"</p>
+                <div className="relative">
+                    <span className="absolute -top-4 -right-2 text-6xl text-white/10 font-serif leading-none">"</span>
+                    <p className="text-slate-300 text-lg leading-relaxed relative z-10">{testimonial.content}</p>
+                </div>
               </div>
             ))}
           </div>
@@ -230,20 +251,27 @@ const Home: React.FC = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-12 md:py-20 bg-slate-50">
+      <section className="py-20 bg-slate-50">
         <div className="container mx-auto px-4">
-          <div className="bg-gradient-to-r from-secondary-500 to-secondary-600 rounded-2xl md:rounded-3xl p-8 md:p-12 text-center text-white shadow-xl relative overflow-hidden transform hover:scale-[1.01] transition duration-500 animate-fade-in-up">
-            <div className="relative z-10">
-              <h2 className="text-2xl md:text-4xl font-bold mb-4 md:mb-6">جاهز لبدء رحلة التعلم؟</h2>
-              <p className="text-base md:text-lg mb-6 md:mb-8 max-w-2xl mx-auto opacity-90">
-                سجل الآن وانضم إلى مجتمع شمسية التعليمي، واحصل على وصول فوري لمحتوى تعليمي متميز.
+          <div className="bg-gradient-to-br from-primary-600 to-primary-800 rounded-[2.5rem] p-10 md:p-16 text-center text-white shadow-2xl shadow-primary-900/20 relative overflow-hidden transform hover:scale-[1.005] transition duration-500 animate-fade-in-up">
+            
+            {/* Background Pattern */}
+            <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '30px 30px' }}></div>
+            
+            <div className="relative z-10 max-w-3xl mx-auto">
+              <h2 className="text-3xl md:text-5xl font-extrabold mb-6">هل أنت جاهز لبدء رحلة التعلم؟</h2>
+              <p className="text-lg md:text-xl mb-10 text-primary-100 font-light leading-relaxed">
+                انضم الآن إلى آلاف المتعلمين وابدأ في تطوير مهاراتك مع أفضل المدربين والمحتوى التعليمي المتميز في العراق.
               </p>
-              <Link to="/register" className="inline-block bg-white text-secondary-600 px-6 py-3 md:px-8 md:py-4 rounded-xl font-bold text-base md:text-lg hover:bg-slate-100 transition shadow-lg transform hover:-translate-y-1">
-               سجل الان
+              <Link to="/register" className="inline-flex items-center gap-3 bg-white text-primary-700 px-10 py-4 rounded-2xl font-bold text-lg hover:bg-secondary-50 transition shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+               سجل الآن مجاناً
+               <CheckCircle size={20} className="text-secondary-500" />
               </Link>
             </div>
-            <CheckCircle className="absolute top-10 left-10 text-white/20 w-20 h-20 md:w-32 md:h-32 animate-bounce-slow" />
-            <Award className="absolute bottom-10 right-10 text-white/20 w-20 h-20 md:w-32 md:h-32 animate-bounce-slow delay-100" />
+            
+            {/* Floating Icons */}
+            <CheckCircle className="absolute top-12 left-12 text-white/10 w-24 h-24 animate-bounce-slow" />
+            <Award className="absolute bottom-12 right-12 text-white/10 w-32 h-32 animate-bounce-slow delay-700" />
           </div>
         </div>
       </section>
