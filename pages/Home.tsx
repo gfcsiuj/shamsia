@@ -3,9 +3,10 @@ import { Link } from 'react-router-dom';
 import { ArrowLeft, BookOpen, Users, Award, CheckCircle, Loader2 } from 'lucide-react';
 import { TESTIMONIALS } from '../constants';
 import CourseCard from '../components/CourseCard';
-import { useTheme } from '../context/ThemeContext';
+// تصحيح مسار الاستيراد هنا ليكون دقيقاً جداً
+import { useTheme } from '../context/ThemeContext'; 
 import { db } from '../lib/firebase';
-import { collection, query, limit, getDocs } from 'firebase/firestore';
+import { collection, getDocs, limit, query } from 'firebase/firestore';
 import { Course } from '../types';
 
 // Simple CountUp Component for animation
@@ -21,7 +22,6 @@ const CountUp = ({ end, duration = 2000, suffix = '' }: { end: number, duration?
       const progress = timestamp - startTime;
       const percentage = Math.min(progress / duration, 1);
       
-      // Easing function for smooth effect (easeOutExpo)
       const easeOut = (x: number): number => {
         return x === 1 ? 1 : 1 - Math.pow(2, -10 * x);
       };
@@ -41,31 +41,32 @@ const CountUp = ({ end, duration = 2000, suffix = '' }: { end: number, duration?
 };
 
 const Home: React.FC = () => {
-  const { settings } = useTheme();
   const [featuredCourses, setFeaturedCourses] = useState<Course[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [coursesLoading, setCoursesLoading] = useState(true);
+  
+  // استخدام السياق مع التحقق من وجوده لتجنب الأخطاء إذا فشل التحميل
+  const themeContext = useTheme();
+  const settings = themeContext?.settings || {
+    heroTitle: 'طريقك الأمثل لتحقيق الوظيفة الدائمية',
+    heroSubtitle: 'منصة شمسية الألكترونية منصة تعمل بأيادٍ عراقية وعربية'
+  };
 
+  // جلب أحدث 3 دورات من قاعدة البيانات
   useEffect(() => {
     const fetchFeaturedCourses = async () => {
       try {
         const q = query(collection(db, 'courses'), limit(3));
         const querySnapshot = await getDocs(q);
-        const courses = querySnapshot.docs.map(doc => {
-             const data = doc.data();
-             return {
-                 id: doc.id,
-                 ...data,
-                 instructorIds: data.instructorIds || (data.instructorId ? [data.instructorId] : []),
-                 media: data.media || (data.image ? [{ url: data.image, type: 'image' }] : []),
-                 tags: data.tags || [],
-                 studentsCountMode: data.studentsCountMode || 'auto'
-             } as Course;
-        });
-        setFeaturedCourses(courses);
+        const coursesData = querySnapshot.docs.map(doc => ({ 
+          id: doc.id, 
+          ...doc.data() 
+        } as Course));
+        
+        setFeaturedCourses(coursesData);
       } catch (error) {
         console.error("Error fetching featured courses:", error);
       } finally {
-        setLoading(false);
+        setCoursesLoading(false);
       }
     };
 
@@ -169,7 +170,7 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* Featured Courses */}
+      {/* Featured Courses Section - NOW DYNAMIC */}
       <section className="py-12 md:py-20 bg-white">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-end mb-8 md:mb-12 gap-4 animate-fade-in">
@@ -182,24 +183,22 @@ const Home: React.FC = () => {
             </Link>
           </div>
 
-          {loading ? (
-             <div className="flex justify-center py-12">
-                <Loader2 className="animate-spin text-primary-600" size={40} />
-             </div>
+          {coursesLoading ? (
+            <div className="flex justify-center py-20">
+              <Loader2 className="animate-spin text-primary-600" size={40} />
+            </div>
+          ) : featuredCourses.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+              {featuredCourses.map((course, idx) => (
+                <div key={course.id} className={`animate-fade-in-up delay-${idx * 100}`}>
+                   <CourseCard course={course} />
+                </div>
+              ))}
+            </div>
           ) : (
-             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-               {featuredCourses.length > 0 ? (
-                   featuredCourses.map((course, idx) => (
-                      <div key={course.id} className={`animate-fade-in-up delay-${idx * 100}`}>
-                         <CourseCard course={course} />
-                      </div>
-                   ))
-               ) : (
-                   <div className="col-span-full text-center py-10 text-slate-500 bg-slate-50 rounded-xl">
-                       لا توجد دورات متاحة حالياً.
-                   </div>
-               )}
-             </div>
+            <div className="text-center py-16 bg-slate-50 rounded-2xl border border-slate-100">
+              <p className="text-slate-500">لا توجد دورات لعرضها حالياً.</p>
+            </div>
           )}
           
           <div className="mt-8 text-center md:hidden">
@@ -212,7 +211,6 @@ const Home: React.FC = () => {
 
       {/* Testimonials */}
       <section className="py-12 md:py-20 bg-primary-900 text-white relative overflow-hidden">
-        {/* Background Patterns */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 animate-pulse"></div>
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-secondary-500/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
 
@@ -234,7 +232,7 @@ const Home: React.FC = () => {
                 </div>
                 <p className="text-base md:text-lg leading-relaxed italic opacity-90">"{testimonial.content}"</p>
               </div>
-            ))} 
+            ))}
           </div>
         </div>
       </section>
@@ -252,7 +250,6 @@ const Home: React.FC = () => {
                سجل الان
               </Link>
             </div>
-            {/* Decoration */}
             <CheckCircle className="absolute top-10 left-10 text-white/20 w-20 h-20 md:w-32 md:h-32 animate-bounce-slow" />
             <Award className="absolute bottom-10 right-10 text-white/20 w-20 h-20 md:w-32 md:h-32 animate-bounce-slow delay-100" />
           </div>
