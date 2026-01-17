@@ -43,7 +43,6 @@ const defaultSettings: SiteSettings = {
   maintenanceMessage: 'نحن نعمل حالياً على تحسين تجربتكم. سنعود قريباً!'
 };
 
-// Exporting Context to use it in Settings Preview
 export const ThemeContext = createContext<ThemeContextType>({
   settings: defaultSettings,
   loading: true,

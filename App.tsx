@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Routes, Route, Navigate, Outlet, useLocation } from 'react-router-dom';
 import Layout from './components/Layout';
@@ -19,6 +20,8 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Maintenance from './components/Maintenance';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
+import { VisualEditProvider } from './context/VisualEditContext'; // Import
+import VisualEditor from './components/VisualEditor'; // Import
 
 // Component to handle maintenance logic
 const MaintenanceGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -43,70 +46,73 @@ const App: React.FC = () => {
   return (
     <AuthProvider>
       <ThemeProvider>
-        <MaintenanceGuard>
-          <Routes>
-            {/* Public Routes - Wrapped in Layout */}
-            <Route element={<Layout><Outlet /></Layout>}>
-              <Route path="/" element={<Home />} />
-              <Route path="/courses" element={<Courses />} />
-              <Route path="/courses/:id" element={<CourseDetails />} />
-              <Route path="/courses/:id/register" element={<CourseRegister />} />
-              <Route path="/register" element={<CourseRegister />} />
-              <Route path="/library" element={<Library />} />
-              <Route path="/instructors" element={<Instructors />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/contact" element={<Contact />} />
-            </Route>
+        <VisualEditProvider> {/* Wrap App */}
+          <MaintenanceGuard>
+            <VisualEditor /> {/* Render Overlay */}
+            <Routes>
+              {/* Public Routes - Wrapped in Layout */}
+              <Route element={<Layout><Outlet /></Layout>}>
+                <Route path="/" element={<Home />} />
+                <Route path="/courses" element={<Courses />} />
+                <Route path="/courses/:id" element={<CourseDetails />} />
+                <Route path="/courses/:id/register" element={<CourseRegister />} />
+                <Route path="/register" element={<CourseRegister />} />
+                <Route path="/library" element={<Library />} />
+                <Route path="/instructors" element={<Instructors />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/contact" element={<Contact />} />
+              </Route>
 
-            {/* Admin Routes - Standalone (No Public Layout) */}
-            <Route path="/admin/login" element={<Login />} />
-            <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
-            
-            <Route 
-              path="/admin/dashboard" 
-              element={
-                <ProtectedRoute>
-                  <Dashboard />
+              {/* Admin Routes - Standalone (No Public Layout) */}
+              <Route path="/admin/login" element={<Login />} />
+              <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
+              
+              <Route 
+                path="/admin/dashboard" 
+                element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/admin/instructors" 
+                element={
+                  <ProtectedRoute>
+                    <InstructorsAdmin />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/admin/courses" 
+                element={
+                  <ProtectedRoute>
+                    <CoursesAdmin />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/admin/library" 
+                element={
+                  <ProtectedRoute>
+                    <LibraryAdmin />
                 </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path="/admin/instructors" 
-              element={
-                <ProtectedRoute>
-                  <InstructorsAdmin />
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path="/admin/courses" 
-              element={
-                <ProtectedRoute>
-                  <CoursesAdmin />
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path="/admin/library" 
-              element={
-                <ProtectedRoute>
-                  <LibraryAdmin />
-              </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path="/admin/settings" 
-              element={
-                <ProtectedRoute>
-                  <Settings />
-                </ProtectedRoute>
-              } 
-            />
-            
-            {/* 404 Redirect */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </MaintenanceGuard>
+                } 
+              />
+              <Route 
+                path="/admin/settings" 
+                element={
+                  <ProtectedRoute>
+                    <Settings />
+                  </ProtectedRoute>
+                } 
+              />
+              
+              {/* 404 Redirect */}
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </MaintenanceGuard>
+        </VisualEditProvider>
       </ThemeProvider>
     </AuthProvider>
   );

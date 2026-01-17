@@ -1,8 +1,9 @@
+
 import React, { useState, useEffect } from 'react';
 import { db } from '../../lib/firebase';
 import { SiteSettings } from '../../types';
 import { useTheme, ThemeContext, ThemeProvider as OriginalThemeProvider } from '../../context/ThemeContext'; // Import ThemeContext
-import { Save, Loader2, LayoutTemplate, Palette, Phone, ExternalLink, Globe, Monitor, Type, Share2, MapPin, Power, MessageSquare, Sliders, AlertTriangle, MousePointer2, Smartphone, Monitor as MonitorIcon, RotateCcw } from 'lucide-react';
+import { Save, Loader2, LayoutTemplate, Palette, Phone, ExternalLink, Globe, Monitor, Type, Share2, MapPin, Power, MessageSquare, Sliders, AlertTriangle, MousePointer2, Smartphone, Monitor as MonitorIcon, RotateCcw, Check } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Home from '../Home'; // Import Home for preview
 
@@ -511,6 +512,42 @@ const Settings: React.FC = () => {
                     </div>
                  </div>
               </div>
+            </div>
+          )}
+
+          {/* ================= Free Customization Tab (Launcher) ================= */}
+          {activeTab === 'free' && (
+            <div className="bg-white rounded-xl shadow-lg border border-slate-100 p-12 text-center relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-purple-500 via-pink-500 to-red-500"></div>
+                <div className="absolute -top-20 -right-20 w-64 h-64 bg-secondary-100 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
+                
+                <div className="relative z-10 max-w-2xl mx-auto">
+                    <div className="w-20 h-20 bg-slate-50 rounded-2xl mx-auto mb-6 flex items-center justify-center shadow-sm border border-slate-100">
+                        <MousePointer2 size={40} className="text-primary-600 animate-bounce-slow" />
+                    </div>
+                    <h2 className="text-3xl font-bold text-slate-800 mb-4">وضع التخصيص الحر</h2>
+                    <p className="text-slate-500 text-lg mb-8 leading-relaxed">
+                        استمتع بتجربة تحرير مرئية حية! اضغط على أي نص أو صورة أو كائن في الموقع لتعديل ألوانه، نصوصه، وأبعاده مباشرة.
+                    </p>
+                    
+                    <button 
+                        type="button"
+                        onClick={() => {
+                            // Redirect to home with edit flag
+                            window.location.href = '/?visualEdit=true';
+                        }}
+                        className="bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-700 hover:to-primary-600 text-white px-10 py-4 rounded-xl font-bold text-lg shadow-xl shadow-primary-200 transition transform hover:-translate-y-1 hover:scale-105 flex items-center justify-center gap-3 mx-auto"
+                    >
+                        <ExternalLink size={24} />
+                        دخول وضع التخصيص الحر
+                    </button>
+                    
+                    <div className="mt-8 flex justify-center gap-6 text-sm text-slate-400">
+                        <span className="flex items-center gap-1"><Check size={16} className="text-green-500"/> تعديل النصوص</span>
+                        <span className="flex items-center gap-1"><Check size={16} className="text-green-500"/> تغيير الألوان</span>
+                        <span className="flex items-center gap-1"><Check size={16} className="text-green-500"/> التحكم بالأبعاد</span>
+                    </div>
+                </div>
             </div>
           )}
 
