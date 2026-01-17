@@ -44,23 +44,11 @@ const Settings: React.FC = () => {
             ...prev,
             primaryColor: '#10b981', // Emerald 500
             secondaryColor: '#f59e0b', // Amber 500
-            accentColor: '#f97316', // Orange 500 (Replaces old Cyan)
+            accentColor: '#1efff5', // Default Cyan
             footerBgColor: '#064e3b', // primary-900 equivalent
         }));
     }
   };
-
-  // Trigger CSS var updates when form data changes in Free Customization tab
-  useEffect(() => {
-      if (activeTab === 'free') {
-          const root = document.documentElement;
-          if (formData.heroTitleSize) root.style.setProperty('--hero-title-size', `${formData.heroTitleSize}px`);
-          if (formData.heroSubtitleSize) root.style.setProperty('--hero-subtitle-size', `${formData.heroSubtitleSize}px`);
-          if (formData.heroTitleColor) root.style.setProperty('--hero-title-color', formData.heroTitleColor!);
-          if (formData.footerBgColor) root.style.setProperty('--footer-bg', formData.footerBgColor!);
-      }
-  }, [formData, activeTab]);
-
 
   const tabs = [
     { id: 'general', label: 'عام', icon: LayoutTemplate },
@@ -307,11 +295,11 @@ const Settings: React.FC = () => {
                         <div className="flex items-center justify-between bg-slate-50 p-3 rounded-lg border border-slate-100">
                             <span className="text-sm font-medium text-slate-700">لون التمييز (Accent)</span>
                             <div className="flex items-center gap-2">
-                                <span className="text-xs font-mono text-slate-400">{formData.accentColor || '#f97316'}</span>
+                                <span className="text-xs font-mono text-slate-400">{formData.accentColor || '#1efff5'}</span>
                                 <input 
                                     type="color" 
                                     className="w-8 h-8 rounded cursor-pointer border border-slate-300 p-0.5"
-                                    value={formData.accentColor || '#f97316'}
+                                    value={formData.accentColor || '#1efff5'}
                                     onChange={e => setFormData({...formData, accentColor: e.target.value})}
                                 />
                             </div>

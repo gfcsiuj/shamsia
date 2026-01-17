@@ -164,8 +164,7 @@ const Home: React.FC = () => {
               <div key={idx} className={`group bg-white p-8 rounded-3xl shadow-sm border border-slate-100 hover:shadow-xl hover:border-primary-100 transition-all duration-300 relative overflow-hidden animate-fade-in-up delay-${idx * 150}`}>
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary-500 to-accent-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
                 
-                {/* Changed to use Accent (Orange) instead of Primary (Green) */}
-                <div className="w-16 h-16 bg-accent-50 rounded-2xl flex items-center justify-center mb-6 text-accent-600 group-hover:bg-accent-600 group-hover:text-white transition-colors duration-300 shadow-sm">
+                <div className="w-16 h-16 bg-primary-50 rounded-2xl flex items-center justify-center mb-6 text-primary-600 group-hover:bg-primary-600 group-hover:text-white transition-colors duration-300 shadow-sm">
                   <feature.icon size={32} strokeWidth={1.5} />
                 </div>
                 
