@@ -62,11 +62,31 @@ export interface Resource {
 }
 
 export interface SiteSettings {
+  // General & Hero
   heroTitle: string;
   heroSubtitle: string;
+  logoUrl: string;
+  siteName?: string;
+  siteDescription?: string;
+  
+  // Appearance
   primaryColor: string;
   secondaryColor: string;
-  logoUrl: string;
+  
+  // Contact
   contactPhone: string;
   contactEmail: string;
+  contactAddress?: string;
+  
+  // Social Media
+  facebookUrl?: string;
+  instagramUrl?: string;
+  linkedinUrl?: string;
+  twitterUrl?: string;
+  youtubeUrl?: string;
+
+  // Footer & Misc
+  footerText?: string;
+  enableRegistration?: boolean;
+  maintenanceMode?: boolean;
 }

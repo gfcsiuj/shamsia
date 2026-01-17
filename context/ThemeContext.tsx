@@ -14,7 +14,16 @@ const defaultSettings: SiteSettings = {
   secondaryColor: '#f59e0b', // Amber 500
   logoUrl: 'https://k.top4top.io/p_3662fca071.png',
   contactPhone: '0773 220 0003',
-  contactEmail: 'info@shamsia.edu'
+  contactEmail: 'info@shamsia.edu',
+  siteName: 'شمسية',
+  siteDescription: 'منصة تعليمية رائدة',
+  contactAddress: 'العراق، بغداد',
+  facebookUrl: '',
+  instagramUrl: '',
+  linkedinUrl: '',
+  footerText: 'جميع الحقوق محفوظة © منصة شمسية',
+  enableRegistration: true,
+  maintenanceMode: false
 };
 
 const ThemeContext = createContext<ThemeContextType>({
@@ -71,8 +80,8 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   useEffect(() => {
     // Apply colors to root CSS variables
     const root = document.documentElement;
-    const primary = settings.primaryColor;
-    const secondary = settings.secondaryColor;
+    const primary = settings.primaryColor || '#10b981';
+    const secondary = settings.secondaryColor || '#f59e0b';
 
     // Generate a simple palette
     root.style.setProperty('--color-primary-50', hexToRgb(adjustColor(primary, 90)));
