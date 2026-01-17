@@ -4,7 +4,7 @@ import { useVisualEdit } from '../context/VisualEditContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { 
   X, Save, Move, Type, Palette, Layout, MousePointer2, Check, Loader2, 
-  ChevronRight, ChevronDown, Maximize2, Layers, AlignLeft, AlignCenter, AlignRight
+  ChevronRight, ChevronDown, Maximize2, Layers, AlignLeft, AlignCenter, AlignRight, Globe
 } from 'lucide-react';
 
 // --- Helper: Robust Selector Generator ---
@@ -23,16 +23,6 @@ const getUniqueSelector = (el: HTMLElement): string => {
     const parent = current.parentElement;
     const siblings = Array.from(parent.children);
     
-    // Check if element has unique classes within siblings
-    /* (Disabled to prevent selecting Tailwind utility classes which might change)
-    if (current.className && typeof current.className === 'string' && current.className.trim() !== '') {
-        const classes = current.className.split(' ').filter(c => !c.startsWith('hover:') && !c.includes('visual-editor'));
-        if (classes.length > 0) {
-             // Logic to check uniqueness could go here, but nth-of-type is safer for structure
-        }
-    }
-    */
-
     let index = 1;
     for (let i = 0; i < siblings.length; i++) {
         const sibling = siblings[i];
@@ -222,17 +212,23 @@ const VisualEditor: React.FC = () => {
         ></div>
       )}
 
-      {/* 2. Top Toolbar (The "Tabs above next to save") */}
+      {/* 2. Top Toolbar */}
       <div className="fixed top-0 left-0 right-0 h-16 bg-slate-900 text-white z-[10000] flex items-center justify-between px-4 shadow-2xl visual-editor-ui border-b border-slate-700">
           
+          {/* Left: Branding/Mode */}
           <div className="flex items-center gap-4">
               <div className="flex items-center gap-2 bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700">
                   <MousePointer2 size={16} className="text-secondary-400 animate-pulse" />
-                  <span className="font-bold text-sm">وضع التخصيص الحر</span>
+                  <span className="font-bold text-sm hidden sm:inline">وضع التخصيص الحر</span>
               </div>
+          </div>
+
+          {/* Right: Actions & Nav */}
+          <div className="flex items-center gap-4">
               
-              {/* Navigation Tabs in Toolbar */}
-              <div className="hidden md:flex bg-slate-800 rounded-lg p-1 border border-slate-700">
+              {/* Navigation Tabs (Moved Here) */}
+              <div className="hidden lg:flex items-center bg-slate-800 rounded-lg p-1 border border-slate-700">
+                  <div className="px-2 text-slate-500"><Globe size={14}/></div>
                   {navLinks.map(link => (
                       <button
                         key={link.path}
@@ -247,16 +243,17 @@ const VisualEditor: React.FC = () => {
                       </button>
                   ))}
               </div>
-          </div>
 
-          <div className="flex items-center gap-3">
+              <div className="h-8 w-px bg-slate-700 mx-1 hidden lg:block"></div>
+
+              {/* Action Buttons */}
               <button 
                 onClick={handleGlobalSave}
                 disabled={isSaving}
                 className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg text-xs font-bold transition flex items-center gap-2 disabled:opacity-50 shadow-lg shadow-green-900/20"
               >
                   {isSaving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
-                  حفظ التغييرات
+                  حفظ
               </button>
               <button 
                 onClick={handleExit}
