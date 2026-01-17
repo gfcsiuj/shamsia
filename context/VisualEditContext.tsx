@@ -43,7 +43,7 @@ export const VisualEditProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     }
   }, [location]);
 
-  // Load Overrides
+  // Load Overrides from DB
   useEffect(() => {
     const unsub = db.collection('site_settings').doc('visual_overrides').onSnapshot((doc) => {
       if (doc.exists) {
@@ -57,7 +57,7 @@ export const VisualEditProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     return () => unsub();
   }, []);
 
-  // Inject Styles into Head
+  // Inject Styles into Head (Handles CSS)
   useEffect(() => {
     let styleTag = document.getElementById('visual-editor-styles');
     if (!styleTag) {
@@ -82,25 +82,28 @@ export const VisualEditProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
   }, [overrides]);
 
-  // Apply Text Overrides Logic (Run periodically or on mutation)
+  // Apply Text Overrides Logic (Handles Text Content)
   useEffect(() => {
     const applyTextOverrides = () => {
         overrides.forEach(override => {
             if (override.text) {
                 const els = document.querySelectorAll(override.selector);
                 els.forEach(el => {
-                    // Only replace if it's a direct text node to avoid breaking nested structures
-                    if (el.childNodes.length === 1 && el.childNodes[0].nodeType === Node.TEXT_NODE) {
-                        if (el.textContent !== override.text) {
-                            el.textContent = override.text;
-                        }
+                    // Check if current text content differs to avoid thrashing
+                    if (el instanceof HTMLElement && el.innerText !== override.text) {
+                         // Safer replacement for visual editing
+                         el.innerText = override.text as string;
                     }
                 });
             }
         });
     };
 
-    const interval = setInterval(applyTextOverrides, 1000); // Check every second
+    // Run immediately when overrides change
+    applyTextOverrides();
+
+    // Run periodically to catch dynamic content (like React re-renders)
+    const interval = setInterval(applyTextOverrides, 500); 
     return () => clearInterval(interval);
   }, [overrides]);
 
@@ -110,7 +113,7 @@ export const VisualEditProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     const updatedOverrides = [...overrides];
     const index = updatedOverrides.findIndex(o => o.selector === newOverride.selector);
     
-    if (index > -1) {
+    if (index > -1) { 
       updatedOverrides[index] = {
           ...updatedOverrides[index],
           styles: { ...updatedOverrides[index].styles, ...newOverride.styles },

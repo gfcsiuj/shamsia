@@ -3,23 +3,39 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useVisualEdit } from '../context/VisualEditContext';
 import { X, Save, Move, Type, Palette, Layout, MousePointer2, Check, Loader2 } from 'lucide-react';
 
-// Helper to generate unique selector
+// Helper to generate unique selector - Improved robustness
 const getUniqueSelector = (el: HTMLElement): string => {
+  // If element has ID, use it (highest specificity)
   if (el.id) return `#${el.id}`;
   
   let path = [];
-  while (el.parentElement) {
-    let tag = el.tagName.toLowerCase();
-    let siblingIndex = 1;
-    let sibling = el.previousElementSibling;
-    while (sibling) {
-      if (sibling.tagName.toLowerCase() === tag) siblingIndex++;
-      sibling = sibling.previousElementSibling;
+  let current = el;
+  
+  // Traverse up to body
+  while (current.parentElement) {
+    let tag = current.tagName.toLowerCase();
+    
+    // Stop at body to keep selector clean
+    if (tag === 'body') break;
+
+    const parent = current.parentElement;
+    const siblings = Array.from(parent.children);
+    
+    // Calculate nth-of-type index
+    let index = 1;
+    for (let i = 0; i < siblings.length; i++) {
+        const sibling = siblings[i];
+        if (sibling === current) break;
+        if (sibling.tagName.toLowerCase() === tag) {
+            index++;
+        }
     }
-    path.unshift(`${tag}:nth-of-type(${siblingIndex})`);
-    el = el.parentElement;
+    
+    path.unshift(`${tag}:nth-of-type(${index})`);
+    current = parent;
   }
-  return path.join(' > ');
+  
+  return 'body > ' + path.join(' > ');
 };
 
 const VisualEditor: React.FC = () => {
@@ -63,9 +79,8 @@ const VisualEditor: React.FC = () => {
       
       // Init inputs
       setTextContent(target.innerText);
-      const computed = window.getComputedStyle(target);
       
-      // Reset local styles for editor
+      // Reset local styles map for editor inputs
       setStyles({});
     };
 
@@ -79,7 +94,13 @@ const VisualEditor: React.FC = () => {
   }, [isEditing]);
 
   const handleApply = () => {
-    if (!selector) return;
+    if (!selector || !selectedEl) return;
+    
+    // 1. Remove Inline Styles used for Preview
+    // This is crucial: if we don't remove them, we don't know if the global CSS worked.
+    Object.keys(styles).forEach(key => {
+        selectedEl.style.removeProperty(key);
+    });
     
     // Clean empty styles
     const cleanStyles: Record<string, string> = {};
@@ -87,10 +108,11 @@ const VisualEditor: React.FC = () => {
         if (v) cleanStyles[k] = v;
     });
 
+    // 2. Save Override to Context (which writes the <style> tag)
     saveOverride({
         selector,
         styles: cleanStyles,
-        text: textContent !== selectedEl?.innerText ? textContent : undefined
+        text: textContent !== selectedEl.innerText ? textContent : undefined
     });
     
     setSelectedEl(null);
@@ -271,7 +293,7 @@ const VisualEditor: React.FC = () => {
                                   <option value="">Default</option>
                                   <option value="400">Normal</option>
                                   <option value="700">Bold</option>
-                                  <option value="900">Black</option>
+                                  <option value="900">Black</option> 
                               </select>
                           </div>
                           <div>
