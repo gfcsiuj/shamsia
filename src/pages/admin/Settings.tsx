@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { db } from '../../lib/firebase';
 import { SiteSettings } from '../../types';
 import { useTheme, ThemeContext, ThemeProvider as OriginalThemeProvider } from '../../context/ThemeContext'; // Import ThemeContext
-import { Save, Loader2, LayoutTemplate, Palette, Phone, ExternalLink, Globe, Monitor, Type, Share2, MapPin, Power, MessageSquare, Sliders, AlertTriangle, MousePointer2, Smartphone, Monitor as MonitorIcon, RotateCcw, Check } from 'lucide-react';
+import { Save, Loader2, LayoutTemplate, Palette, Phone, ExternalLink, Globe, Monitor, Type, Share2, MapPin, Power, MessageSquare, Sliders, AlertTriangle, MousePointer2, Smartphone, Monitor as MonitorIcon, RotateCcw, Check, Wand2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Home from '../Home'; // Import Home for preview
 
@@ -47,6 +47,78 @@ const Settings: React.FC = () => {
             accentColor: '#f29c0b', // Default Orange (Explicitly set to #f29c0b)
             footerBgColor: '#064e3b', // primary-900 equivalent
         }));
+    }
+  };
+
+  // --- NEW FUNCTION TO KILL THE CYAN COLOR ---
+  const handleFixCyanIssues = async () => {
+    if (!window.confirm('هذا الإجراء سيقوم بالبحث عن اللون السمائي (#1efff5) في كامل قاعدة البيانات واستبداله باللون البرتقالي (#f29c0b) فوراً. هل تريد المتابعة؟')) return;
+    
+    setSaveLoading(true);
+    setMessage('جاري تنظيف الألوان...');
+
+    try {
+        const batch = db.batch();
+        const genRef = db.collection('site_settings').doc('general');
+        const vizRef = db.collection('site_settings').doc('visual_overrides');
+        const BAD_CYAN = '#1efff5';
+        const GOOD_ORANGE = '#f29c0b';
+
+        // 1. Fix General Settings
+        const genDoc = await genRef.get();
+        let genUpdated = false;
+        if (genDoc.exists) {
+            const data = genDoc.data() as SiteSettings;
+            const newData = { ...data };
+            
+            if (newData.accentColor?.toLowerCase() === BAD_CYAN) { newData.accentColor = GOOD_ORANGE; genUpdated = true; }
+            if (newData.primaryColor?.toLowerCase() === BAD_CYAN) { newData.primaryColor = GOOD_ORANGE; genUpdated = true; }
+            if (newData.secondaryColor?.toLowerCase() === BAD_CYAN) { newData.secondaryColor = GOOD_ORANGE; genUpdated = true; }
+            
+            if (genUpdated) {
+                batch.update(genRef, newData);
+                setFormData(prev => ({...prev, ...newData}));
+            }
+        }
+
+        // 2. Fix Visual Overrides (The likely culprit for stubborn elements)
+        const vizDoc = await vizRef.get();
+        let vizUpdated = false;
+        if (vizDoc.exists) {
+            const data = vizDoc.data() || {};
+            if (data.overrides && Array.isArray(data.overrides)) {
+                const newOverrides = data.overrides.map((o: any) => {
+                    const newStyles = { ...o.styles };
+                    let itemChanged = false;
+                    for (const [key, val] of Object.entries(newStyles)) {
+                        if (typeof val === 'string' && val.toLowerCase().includes(BAD_CYAN)) {
+                            newStyles[key] = val.replace(new RegExp(BAD_CYAN, 'gi'), GOOD_ORANGE);
+                            itemChanged = true;
+                            vizUpdated = true;
+                        }
+                    }
+                    return itemChanged ? { ...o, styles: newStyles } : o;
+                });
+                if (vizUpdated) {
+                    batch.update(vizRef, { overrides: newOverrides });
+                }
+            }
+        }
+
+        await batch.commit();
+        
+        if (genUpdated || vizUpdated) {
+            setMessage('تم حذف اللون السمائي بنجاح! جاري تحديث الصفحة...');
+            setTimeout(() => window.location.reload(), 1500);
+        } else {
+            setMessage('لم يتم العثور على اللون السمائي، النظام نظيف.');
+        }
+
+    } catch (error) {
+        console.error("Error fixing colors:", error);
+        setMessage('حدث خطأ أثناء الإصلاح.');
+    } finally {
+        setSaveLoading(false);
     }
   };
 
@@ -255,15 +327,26 @@ const Settings: React.FC = () => {
                             <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
                                 <Palette size={14}/> ألوان الهوية
                             </h3>
-                            <button 
-                                type="button" 
-                                onClick={handleResetColors}
-                                className="flex items-center gap-1.5 px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded text-[10px] font-bold transition"
-                                title="استعادة الألوان الافتراضية"
-                            >
-                                <RotateCcw size={10} />
-                                استعادة الأصلي
-                            </button>
+                            <div className="flex gap-1">
+                                <button 
+                                    type="button" 
+                                    onClick={handleFixCyanIssues}
+                                    className="flex items-center gap-1.5 px-3 py-1 bg-orange-100 hover:bg-orange-200 text-orange-700 rounded text-[10px] font-bold transition border border-orange-200"
+                                    title="استبدال السمائي بالبرتقالي في كل مكان"
+                                >
+                                    <Wand2 size={12} />
+                                    إصلاح اللون
+                                </button>
+                                <button 
+                                    type="button" 
+                                    onClick={handleResetColors}
+                                    className="flex items-center gap-1.5 px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded text-[10px] font-bold transition"
+                                    title="استعادة الألوان الافتراضية"
+                                >
+                                    <RotateCcw size={10} />
+                                    استعادة
+                                </button>
+                            </div>
                         </div>
                         
                         <div className="flex items-center justify-between bg-slate-50 p-3 rounded-lg border border-slate-100">
