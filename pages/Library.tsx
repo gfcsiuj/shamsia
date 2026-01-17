@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FileText, Download, PlayCircle, Book, ArrowLeft, Loader2, Search } from 'lucide-react';
 import { db } from '../lib/firebase';
-import { collection, getDocs, orderBy, query } from 'firebase/firestore';
 import { Resource } from '../types';
 
 const Library: React.FC = () => {
@@ -13,8 +12,7 @@ const Library: React.FC = () => {
   useEffect(() => {
     const fetchResources = async () => {
       try {
-        const q = query(collection(db, 'resources'), orderBy('date', 'desc'));
-        const querySnapshot = await getDocs(q);
+        const querySnapshot = await db.collection('resources').orderBy('date', 'desc').get();
         const data = querySnapshot.docs.map(doc => ({ 
             id: doc.id, 
             ...doc.data() 

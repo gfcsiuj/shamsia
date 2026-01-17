@@ -1,7 +1,7 @@
 import React from 'react';
 import { auth } from '../../lib/firebase';
 import { useNavigate, Link } from 'react-router-dom';
-import { LogOut, Users, BookOpen, Settings, LayoutDashboard, Library } from 'lucide-react';
+import { LogOut, Users, BookOpen, Settings, LayoutDashboard, ExternalLink, Library } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -37,6 +37,14 @@ const Dashboard: React.FC = () => {
           <Link to="/admin/library" className="flex items-center gap-3 px-4 py-3 hover:bg-primary-800 rounded-lg text-primary-100 transition">
             <Library size={20} />
             إدارة المكتبة
+          </Link>
+          <Link to="/admin/settings" className="flex items-center gap-3 px-4 py-3 hover:bg-primary-800 rounded-lg text-primary-100 transition">
+            <Settings size={20} />
+            إعدادات الموقع
+          </Link>
+          <Link to="/" target="_blank" className="flex items-center gap-3 px-4 py-3 hover:bg-primary-800 rounded-lg text-secondary-400 transition font-bold mt-4">
+            <ExternalLink size={20} />
+            عرض الموقع
           </Link>
         </nav>
         <div className="p-4 border-t border-primary-800">
@@ -91,6 +99,16 @@ const Dashboard: React.FC = () => {
             </div>
             <div className="text-slate-500 text-sm">إدارة</div>
             <div className="text-xl font-bold text-slate-800">المكتبة والمصادر</div>
+          </Link>
+
+          <Link to="/admin/settings" className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition group">
+            <div className="flex items-center justify-between mb-4">
+              <div className="bg-slate-100 p-3 rounded-lg text-slate-600 group-hover:bg-primary-600 group-hover:text-white transition">
+                <Settings size={24} />
+              </div>
+            </div>
+            <div className="text-slate-500 text-sm">تخصيص</div>
+            <div className="text-xl font-bold text-slate-800">إعدادات الموقع</div>
           </Link>
         </div>
       </main>

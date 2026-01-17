@@ -3,10 +3,8 @@ import { Link } from 'react-router-dom';
 import { ArrowLeft, BookOpen, Users, Award, CheckCircle, Loader2 } from 'lucide-react';
 import { TESTIMONIALS } from '../constants';
 import CourseCard from '../components/CourseCard';
-// هذا هو التعديل الهام: أضفنا src للمسار
-import { useTheme } from '../src/context/ThemeContext'; 
+import { useTheme } from '../context/ThemeContext';
 import { db } from '../lib/firebase';
-import { collection, getDocs, limit, query } from 'firebase/firestore';
 import { Course } from '../types';
 
 // Simple CountUp Component for animation
@@ -49,8 +47,7 @@ const Home: React.FC = () => {
   useEffect(() => {
     const fetchFeaturedCourses = async () => {
       try {
-        const q = query(collection(db, 'courses'), limit(3));
-        const querySnapshot = await getDocs(q);
+        const querySnapshot = await db.collection('courses').limit(3).get();
         const coursesData = querySnapshot.docs.map(doc => ({ 
           id: doc.id, 
           ...doc.data() 
@@ -164,7 +161,7 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* Featured Courses Section - DYNAMIC */}
+      {/* Featured Courses Section - NOW DYNAMIC */}
       <section className="py-12 md:py-20 bg-white">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-end mb-8 md:mb-12 gap-4 animate-fade-in">

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Mail, Phone, MapPin, Send, MessageCircle } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
 
 const Contact: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -8,6 +9,7 @@ const Contact: React.FC = () => {
     phone: '',
     message: ''
   });
+  const { settings } = useTheme();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,9 +34,9 @@ const Contact: React.FC = () => {
               
               <div className="space-y-6">
                 {[
-                    { icon: Phone, title: "اتصل بنا", val: "0773 220 0003" },
-                    { icon: MessageCircle, title: "واتساب", val: "+964 783 220 0003" },
-                    { icon: Mail, title: "البريد الإلكتروني", val: "info@shamsia.edu" },
+                    { icon: Phone, title: "اتصل بنا", val: settings.contactPhone },
+                    { icon: MessageCircle, title: "واتساب", val: settings.contactPhone },
+                    { icon: Mail, title: "البريد الإلكتروني", val: settings.contactEmail },
                     { icon: MapPin, title: "الموقع", val: "العراق، بغداد" }
                 ].map((item, idx) => (
                     <div key={idx} className={`flex items-start gap-4 animate-fade-in-up delay-${idx * 100 + 300}`}>

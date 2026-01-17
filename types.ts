@@ -23,17 +23,17 @@ export interface MediaItem {
 export interface Course {
   id: string;
   title: string;
-  category: string; // Changed to string to allow flexibility
-  level: string; // Changed to string to allow custom levels
+  category: string;
+  level: string;
   price: number;
   oldPrice?: number;
-  media: MediaItem[]; // Replaces single 'image' string
-  instructorIds: string[]; // Replaces single 'instructorId'
+  media: MediaItem[];
+  instructorIds: string[];
   duration: string;
   rating: number;
   studentsCount: number;
-  studentsCountMode: 'auto' | 'manual'; // New field
-  tags: string[]; // New field (e.g., 'شهادة معتمدة')
+  studentsCountMode: 'auto' | 'manual';
+  tags: string[];
   description: string;
   longDescription?: string; 
   objectives: string[];

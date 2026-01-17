@@ -1,7 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
 import { db, storage } from '../../lib/firebase';
-import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { Course, Instructor, MediaItem } from '../../types';
 import { Plus, Pencil, Trash2, X, Upload, Loader2, Save, ArrowRight, Minus, Image as ImageIcon, Video, Link as LinkIcon, Users, Tag, CheckSquare, Layers, Award } from 'lucide-react';
@@ -56,8 +54,8 @@ const CoursesAdmin: React.FC = () => {
     try {
       setLoading(true);
       const [coursesSnap, instructorsSnap] = await Promise.all([
-        getDocs(collection(db, 'courses')),
-        getDocs(collection(db, 'instructors'))
+        db.collection('courses').get(),
+        db.collection('instructors').get()
       ]);
 
       const coursesData = coursesSnap.docs.map(doc => {
@@ -101,7 +99,7 @@ const CoursesAdmin: React.FC = () => {
   const handleDelete = async (id: string) => {
     if (window.confirm('هل أنت متأكد من حذف هذه الدورة؟')) {
       try {
-        await deleteDoc(doc(db, 'courses', id));
+        await db.collection('courses').doc(id).delete();
         fetchData();
       } catch (error) {
         console.error("Error deleting course: ", error);
@@ -164,9 +162,9 @@ const CoursesAdmin: React.FC = () => {
       const { id, ...payload } = dataToSave;
 
       if (formData.id) {
-        await updateDoc(doc(db, 'courses', formData.id), payload);
+        await db.collection('courses').doc(formData.id).update(payload);
       } else {
-        await addDoc(collection(db, 'courses'), payload);
+        await db.collection('courses').add(payload);
       }
 
       setIsEditing(false);

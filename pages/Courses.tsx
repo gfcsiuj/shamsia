@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Filter, Search, Loader2 } from 'lucide-react';
 import { db } from '../lib/firebase';
-import { collection, getDocs } from 'firebase/firestore';
 import CourseCard from '../components/CourseCard';
 import { Course } from '../types';
 
@@ -15,7 +14,7 @@ const Courses: React.FC = () => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, 'courses'));
+        const querySnapshot = await db.collection('courses').get();
         const data = querySnapshot.docs.map(doc => ({ id: doc.id, ...(doc.data() as any) } as Course));
         setCourses(data);
       } catch (error) {

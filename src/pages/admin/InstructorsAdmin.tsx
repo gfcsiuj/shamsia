@@ -1,10 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import { db, storage } from '../../lib/firebase';
-import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { Instructor, Course } from '../../types';
-import { Plus, Pencil, Trash2, X, Upload, Loader2, Save, ArrowRight, Minus, Link as LinkIcon, MoreVertical, Briefcase, User, Award, Share2 } from 'lucide-react';
+import { Plus, Pencil, Trash2, X, Upload, Loader2, Save, ArrowRight, Minus, Link as LinkIcon, Briefcase, User, Award, Share2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import './InstructorsAdmin.css';
 
@@ -37,8 +35,8 @@ const InstructorsAdmin: React.FC = () => {
     try {
       setLoading(true);
       const [instSnap, coursesSnap] = await Promise.all([
-        getDocs(collection(db, 'instructors')),
-        getDocs(collection(db, 'courses'))
+        db.collection('instructors').get(),
+        db.collection('courses').get()
       ]);
 
       const instData = instSnap.docs.map(doc => {
@@ -87,7 +85,7 @@ const InstructorsAdmin: React.FC = () => {
   const handleDelete = async (id: string) => {
     if (window.confirm('هل أنت متأكد من حذف هذا المدرب؟')) {
       try {
-        await deleteDoc(doc(db, 'instructors', id));
+        await db.collection('instructors').doc(id).delete();
         fetchData();
       } catch (error) {
         console.error("Error deleting document: ", error);
@@ -122,9 +120,9 @@ const InstructorsAdmin: React.FC = () => {
       };
 
       if (formData.id) {
-        await updateDoc(doc(db, 'instructors', formData.id), dataToSave);
+        await db.collection('instructors').doc(formData.id).update(dataToSave);
       } else {
-        await addDoc(collection(db, 'instructors'), dataToSave);
+        await db.collection('instructors').add(dataToSave);
       }
 
       setIsEditing(false);

@@ -1,80 +1,15 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Calendar, Clock, Award, PlayCircle, CheckCircle, User, BarChart, Users, Medal, FileText, Loader2, Tag } from 'lucide-react';
-import { db } from '../lib/firebase';
-import { doc, getDoc, collection, getDocs, query, where, documentId } from 'firebase/firestore';
-import { Course, Instructor } from '../types';
+import { Calendar, Clock, Award, PlayCircle, CheckCircle, User, BarChart, Users, Medal, FileText } from 'lucide-react';
+import { COURSES, INSTRUCTORS } from '../constants';
 
 const CourseDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const [course, setCourse] = useState<Course | null>(null);
-  const [instructors, setInstructors] = useState<Instructor[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'about' | 'syllabus' | 'instructors' | 'details'>('about');
-
-  useEffect(() => {
-    const fetchCourseData = async () => {
-      if (!id) return;
-      
-      try {
-        const courseRef = doc(db, 'courses', id);
-        const courseSnap = await getDoc(courseRef);
-
-        if (courseSnap.exists()) {
-          const data = courseSnap.data();
-          // Map data safely
-          const courseData = { 
-              id: courseSnap.id, 
-              ...data,
-              instructorIds: data.instructorIds || (data.instructorId ? [data.instructorId] : []),
-              media: data.media || (data.image ? [{ url: data.image, type: 'image' }] : []),
-              tags: data.tags || []
-          } as Course;
-          
-          setCourse(courseData);
-
-          // Fetch Instructors
-          if (courseData.instructorIds && courseData.instructorIds.length > 0) {
-              // Firestore 'in' query supports up to 10 items. For simplicity in this demo, fetching logic is basic.
-              // We'll fetch all matching IDs.
-              const instructorsRef = collection(db, 'instructors');
-              const q = query(instructorsRef, where(documentId(), 'in', courseData.instructorIds));
-              const instructorsSnap = await getDocs(q);
-              
-              const fetchedInstructors = instructorsSnap.docs.map(doc => {
-                  const iData = doc.data();
-                   return { 
-                     id: doc.id, 
-                     name: iData.name,
-                     roles: iData.roles || (iData.role ? [iData.role] : []),
-                     image: iData.image,
-                     shortBio: iData.shortBio || '',
-                     bio: iData.bio,
-                     certifications: iData.certifications || [],
-                     socials: iData.socials || []
-                 } as Instructor;
-              });
-              setInstructors(fetchedInstructors);
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching course details:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCourseData();
-  }, [id]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <Loader2 className="animate-spin text-primary-600" size={40} />
-      </div>
-    );
-  }
+  const course = COURSES.find(c => c.id === id);
+  const instructorId = course?.instructorIds?.[0];
+  const instructor = INSTRUCTORS.find(i => i.id === instructorId);
+  const [activeTab, setActiveTab] = useState<'about' | 'syllabus' | 'instructor' | 'details'>('about');
 
   if (!course) {
     return (
@@ -87,7 +22,9 @@ const CourseDetails: React.FC = () => {
     );
   }
 
-  const mainMedia = course.media && course.media.length > 0 ? course.media[0] : null;
+  const mediaItem = course.media?.[0];
+  const mediaUrl = mediaItem?.url || 'https://via.placeholder.com/800x450';
+  const isVideo = mediaItem?.type === 'video';
 
   return (
     <div className="bg-slate-50 min-h-screen pb-24">
@@ -96,17 +33,9 @@ const CourseDetails: React.FC = () => {
         <div className="container mx-auto px-4">
            <div className="flex flex-col lg:flex-row gap-8 items-start">
              <div className="lg:w-2/3 animate-fade-in-right">
-                <div className="flex flex-wrap gap-2 mb-4 animate-scale-in delay-100">
-                    <span className="bg-secondary-500 text-white text-xs font-bold px-3 py-1 rounded-full">
-                    {course.category}
-                    </span>
-                    {course.tags && course.tags.map(tag => (
-                         <span key={tag} className="bg-white/20 backdrop-blur-sm text-white text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
-                             <Tag size={12} /> {tag}
-                         </span>
-                    ))}
-                </div>
-                
+                <span className="inline-block bg-secondary-500 text-white text-xs font-bold px-3 py-1 rounded-full mb-4 animate-scale-in delay-100">
+                  {course.category}
+                </span>
                 <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6 leading-tight animate-fade-in-up delay-200">{course.title}</h1>
                 <p className="text-primary-100 text-base md:text-lg mb-6 md:mb-8 leading-relaxed max-w-2xl animate-fade-in-up delay-300">
                   {course.description}
@@ -115,16 +44,11 @@ const CourseDetails: React.FC = () => {
                 <div className="flex flex-wrap gap-4 md:gap-6 text-sm md:text-base animate-fade-in-up delay-400">
                   <div className="flex items-center gap-2">
                     <User className="text-secondary-400" size={18} />
-                    <span>
-                        {instructors.length > 0 
-                            ? instructors.map(i => i.name.split(' ')[0]).join('، ') // Show first names comma separated
-                            : 'نخبة من المدربين'
-                        }
-                    </span>
+                    <span>المدرب: {instructor?.name || 'غير محدد'}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <BarChart className="text-secondary-400" size={18} />
-                    <span>{course.level}</span>
+                    <span>المستوى: {course.level}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Award className="text-secondary-400" size={18} />
@@ -141,20 +65,14 @@ const CourseDetails: React.FC = () => {
           
           {/* Main Content Column */}
           <div className="lg:w-2/3 animate-fade-in-up delay-500">
-            {/* Media Placeholder */}
-            <div className="bg-black rounded-xl overflow-hidden aspect-video shadow-lg mb-8 relative group">
-              {mainMedia ? (
-                   mainMedia.type === 'video' ? (
-                        <div className="w-full h-full flex items-center justify-center bg-slate-900">
-                            {/* In a real app, embed actual video player here */}
-                            <PlayCircle size={64} className="text-white/80" />
-                            <span className="mt-4 text-white text-sm absolute bottom-4">فيديو توضيحي (محاكاة)</span>
-                        </div>
-                   ) : (
-                       <img src={mainMedia.url} alt={course.title} className="w-full h-full object-cover" />
-                   )
+            {/* Video Placeholder */}
+            <div className="bg-black rounded-xl overflow-hidden aspect-video shadow-lg mb-8 relative group cursor-pointer">
+              {isVideo ? (
+                 <div className="w-full h-full bg-slate-900 flex items-center justify-center text-white">
+                    <PlayCircle size={64} className="opacity-80" />
+                 </div>
               ) : (
-                  <div className="w-full h-full bg-slate-800 flex items-center justify-center text-slate-500">لا توجد وسائط</div>
+                 <img src={mediaUrl} alt={course.title} className="w-full h-full object-cover" />
               )}
             </div>
 
@@ -181,10 +99,10 @@ const CourseDetails: React.FC = () => {
                 المنهج الدراسي
               </button>
               <button 
-                onClick={() => setActiveTab('instructors')}
-                className={`flex-shrink-0 px-6 md:px-8 py-4 font-bold text-sm md:text-base whitespace-nowrap border-b-2 transition ${activeTab === 'instructors' ? 'border-primary-600 text-primary-600 bg-primary-50' : 'border-transparent text-slate-500 hover:text-slate-800'}`}
+                onClick={() => setActiveTab('instructor')}
+                className={`flex-shrink-0 px-6 md:px-8 py-4 font-bold text-sm md:text-base whitespace-nowrap border-b-2 transition ${activeTab === 'instructor' ? 'border-primary-600 text-primary-600 bg-primary-50' : 'border-transparent text-slate-500 hover:text-slate-800'}`}
               >
-                المدربون
+                المدرب
               </button>
             </div>
 
@@ -195,14 +113,12 @@ const CourseDetails: React.FC = () => {
                   <div>
                     <h3 className="text-xl md:text-2xl font-bold text-slate-800 mb-4">ماذا ستتعلم؟</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {course.objectives && course.objectives.length > 0 ? course.objectives.map((obj, i) => (
+                      {course.objectives.map((obj, i) => (
                         <div key={i} className="flex items-start gap-3">
                           <CheckCircle className="text-secondary-500 flex-shrink-0 mt-1" size={20} />
                           <span className="text-slate-600 text-sm md:text-base">{obj}</span>
                         </div>
-                      )) : (
-                          <p className="text-slate-500 text-sm">سيتم إضافة الأهداف قريباً.</p>
-                      )}
+                      ))}
                     </div>
                   </div>
 
@@ -232,14 +148,12 @@ const CourseDetails: React.FC = () => {
                     </h3>
                     <p className="text-sm text-slate-500 mb-4">هذه الدورة مصممة خصيصاً لـ:</p>
                     <ul className="grid grid-cols-1 gap-3">
-                      {course.targetAudience && course.targetAudience.length > 0 ? course.targetAudience.map((target, i) => (
+                      {course.targetAudience.map((target, i) => (
                         <li key={i} className="flex items-center gap-2 text-slate-700 font-medium text-sm md:text-base">
                           <div className="w-2 h-2 rounded-full bg-secondary-500"></div>
                           {target}
                         </li>
-                      )) : (
-                         <li className="text-slate-500 text-sm">للجميع</li>
-                      )}
+                      ))}
                     </ul>
                   </div>
 
@@ -267,7 +181,7 @@ const CourseDetails: React.FC = () => {
               {activeTab === 'syllabus' && (
                 <div className="animate-fade-in space-y-4">
                   <h3 className="text-xl md:text-2xl font-bold text-slate-800 mb-6">محتوى الدورة</h3>
-                  {course.syllabus && course.syllabus.length > 0 ? course.syllabus.map((week, i) => (
+                  {course.syllabus.map((week, i) => (
                     <div key={i} className={`border border-slate-100 rounded-lg p-4 hover:border-primary-200 transition bg-slate-50 hover:bg-white animate-fade-in-up delay-${i * 100}`}>
                       <div className="flex items-center gap-4">
                         <div className="bg-primary-100 text-primary-700 w-10 h-10 md:w-12 md:h-12 rounded-lg flex items-center justify-center font-bold text-base md:text-lg flex-shrink-0">
@@ -279,35 +193,23 @@ const CourseDetails: React.FC = () => {
                         </div>
                       </div>
                     </div>
-                  )) : (
-                    <p className="text-slate-500">سيتم إضافة المنهج قريباً.</p>
-                  )}
+                  ))}
                 </div>
               )}
 
-              {activeTab === 'instructors' && (
-                <div className="animate-fade-in space-y-8">
-                   <h3 className="text-xl md:text-2xl font-bold text-slate-800 mb-6">فريق التدريب</h3>
-                   {instructors.map(instructor => (
-                        <div key={instructor.id} className="flex flex-col md:flex-row gap-6 md:gap-8 items-center md:items-start text-center md:text-right border-b border-slate-100 pb-8 last:border-0">
-                            <img src={instructor.image} alt={instructor.name} className="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover shadow-md" />
-                            <div>
-                                <h3 className="text-xl md:text-2xl font-bold text-slate-800 mb-2">{instructor.name}</h3>
-                                <p className="text-secondary-600 font-medium mb-4">
-                                {instructor.roles && instructor.roles.length > 0 ? instructor.roles[0] : ''}
-                                </p>
-                                <p className="text-slate-600 leading-relaxed mb-6 text-sm md:text-base">
-                                {instructor.bio}
-                                </p>
-                                <Link to="/instructors" className="text-primary-600 font-bold hover:underline">
-                                عرض ملف المدرب
-                                </Link>
-                            </div>
-                        </div>
-                   ))}
-                   {instructors.length === 0 && (
-                       <p className="text-slate-500 italic">لم يتم تعيين مدربين لهذه الدورة بعد.</p>
-                   )}
+              {activeTab === 'instructor' && instructor && (
+                <div className="animate-fade-in flex flex-col md:flex-row gap-6 md:gap-8 items-center md:items-start text-center md:text-right">
+                  <img src={instructor.image} alt={instructor.name} className="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover shadow-md" />
+                  <div>
+                    <h3 className="text-xl md:text-2xl font-bold text-slate-800 mb-2">{instructor.name}</h3>
+                    <p className="text-secondary-600 font-medium mb-4">{instructor.roles?.[0]}</p>
+                    <p className="text-slate-600 leading-relaxed mb-6 text-sm md:text-base">
+                      {instructor.bio}
+                    </p>
+                    <Link to="/instructors" className="text-primary-600 font-bold hover:underline">
+                      عرض ملف المدرب الكامل
+                    </Link>
+                  </div>
                 </div>
               )}
             </div>

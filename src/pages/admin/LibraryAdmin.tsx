@@ -1,7 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
 import { db, storage } from '../../lib/firebase';
-import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { Resource } from '../../types';
 import { Plus, Pencil, Trash2, X, Upload, Loader2, Save, ArrowRight, FileText, PlayCircle, Book, ExternalLink, Link as LinkIcon, Calendar } from 'lucide-react';
@@ -34,7 +32,7 @@ const LibraryAdmin: React.FC = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const querySnapshot = await getDocs(collection(db, 'resources'));
+      const querySnapshot = await db.collection('resources').get();
       const data = querySnapshot.docs.map(doc => ({ 
           id: doc.id, 
           ...doc.data() 
@@ -56,7 +54,7 @@ const LibraryAdmin: React.FC = () => {
   const handleDelete = async (id: string) => {
     if (window.confirm('هل أنت متأكد من حذف هذا المصدر؟')) {
       try {
-        await deleteDoc(doc(db, 'resources', id));
+        await db.collection('resources').doc(id).delete();
         fetchData();
       } catch (error) {
         console.error("Error deleting resource: ", error);
@@ -92,9 +90,9 @@ const LibraryAdmin: React.FC = () => {
       };
 
       if (formData.id) {
-        await updateDoc(doc(db, 'resources', formData.id), dataToSave);
+        await db.collection('resources').doc(formData.id).update(dataToSave);
       } else {
-        await addDoc(collection(db, 'resources'), dataToSave);
+        await db.collection('resources').add(dataToSave);
       }
 
       setIsEditing(false);
@@ -354,4 +352,3 @@ const LibraryAdmin: React.FC = () => {
 };
 
 export default LibraryAdmin;
- 

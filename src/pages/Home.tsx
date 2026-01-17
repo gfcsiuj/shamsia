@@ -5,7 +5,6 @@ import { TESTIMONIALS } from '../constants';
 import CourseCard from '../components/CourseCard';
 import { useTheme } from '../context/ThemeContext';
 import { db } from '../lib/firebase';
-import { collection, getDocs, limit, query } from 'firebase/firestore';
 import { Course } from '../types';
 
 // Simple CountUp Component for animation
@@ -48,8 +47,7 @@ const Home: React.FC = () => {
   useEffect(() => {
     const fetchFeaturedCourses = async () => {
       try {
-        const q = query(collection(db, 'courses'), limit(3));
-        const querySnapshot = await getDocs(q);
+        const querySnapshot = await db.collection('courses').limit(3).get();
         const coursesData = querySnapshot.docs.map(doc => ({ 
           id: doc.id, 
           ...doc.data() 

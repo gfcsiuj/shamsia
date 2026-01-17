@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, Award, BookOpen, Mail, Phone, ExternalLink, Loader2, Facebook, Instagram, Linkedin, Twitter, Globe, Youtube, Send } from 'lucide-react';
 import { db } from '../lib/firebase';
-import { collection, getDocs } from 'firebase/firestore';
 import InstructorCard from '../components/InstructorCard';
 import { Instructor, Course, SocialLink } from '../types';
 import { Link } from 'react-router-dom';
@@ -16,8 +15,8 @@ const Instructors: React.FC = () => {
     const fetchData = async () => {
       try {
         const [instructorsSnap, coursesSnap] = await Promise.all([
-          getDocs(collection(db, 'instructors')),
-          getDocs(collection(db, 'courses'))
+          db.collection('instructors').get(),
+          db.collection('courses').get()
         ]);
 
         const instData = instructorsSnap.docs.map(doc => {
