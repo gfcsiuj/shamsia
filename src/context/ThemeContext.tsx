@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { db } from '../lib/firebase';
 import { SiteSettings } from '../types';
@@ -24,6 +25,7 @@ const defaultSettings: SiteSettings = {
   // Colors
   primaryColor: '#10b981', // Emerald 500
   secondaryColor: '#f59e0b', // Amber 500
+  accentColor: '#f97316',   // Orange 500 (Matches the logo orange/gold accents)
   backgroundColor: '#f8fafc',
   textColor: '#1e293b',
   
@@ -99,8 +101,9 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const root = document.documentElement;
     const primary = settings.primaryColor || '#10b981';
     const secondary = settings.secondaryColor || '#f59e0b';
+    const accent = settings.accentColor || '#f97316'; // Default to Orange if missing
 
-    // Tailwind Color Palette Generation
+    // Primary Palette
     root.style.setProperty('--color-primary-50', hexToRgb(adjustColor(primary, 90)));
     root.style.setProperty('--color-primary-100', hexToRgb(adjustColor(primary, 70)));
     root.style.setProperty('--color-primary-200', hexToRgb(adjustColor(primary, 50)));
@@ -112,9 +115,22 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     root.style.setProperty('--color-primary-800', hexToRgb(adjustColor(primary, -50)));
     root.style.setProperty('--color-primary-900', hexToRgb(adjustColor(primary, -70)));
 
+    // Secondary Palette
     root.style.setProperty('--color-secondary-400', hexToRgb(adjustColor(secondary, 20)));
     root.style.setProperty('--color-secondary-500', hexToRgb(secondary));
     root.style.setProperty('--color-secondary-600', hexToRgb(adjustColor(secondary, -20)));
+
+    // Accent Palette
+    root.style.setProperty('--color-accent-50', hexToRgb(adjustColor(accent, 90)));
+    root.style.setProperty('--color-accent-100', hexToRgb(adjustColor(accent, 70)));
+    root.style.setProperty('--color-accent-200', hexToRgb(adjustColor(accent, 50)));
+    root.style.setProperty('--color-accent-300', hexToRgb(adjustColor(accent, 30)));
+    root.style.setProperty('--color-accent-400', hexToRgb(adjustColor(accent, 10)));
+    root.style.setProperty('--color-accent-500', hexToRgb(accent));
+    root.style.setProperty('--color-accent-600', hexToRgb(adjustColor(accent, -10)));
+    root.style.setProperty('--color-accent-700', hexToRgb(adjustColor(accent, -30)));
+    root.style.setProperty('--color-accent-800', hexToRgb(adjustColor(accent, -50)));
+    root.style.setProperty('--color-accent-900', hexToRgb(adjustColor(accent, -70)));
 
     // Custom Typography & Colors
     if (settings.heroTitleSize) {

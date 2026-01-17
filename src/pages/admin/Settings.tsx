@@ -44,46 +44,11 @@ const Settings: React.FC = () => {
             ...prev,
             primaryColor: '#10b981', // Emerald 500
             secondaryColor: '#f59e0b', // Amber 500
+            accentColor: '#f97316', // Orange 500
             footerBgColor: '#064e3b', // primary-900 equivalent
         }));
     }
   };
-
-  // Helper to update styles dynamically for preview without saving
-  const getPreviewStyleVariables = () => {
-    const root = document.documentElement;
-    // We can't easily change root vars for just the preview component without affecting the admin panel unless we use a Shadow DOM or iframe.
-    // However, the Home component uses the useTheme() hook values.
-    // If we wrap the Home component in a new ThemeProvider with formData, it will receive the data.
-    // BUT the CSS variables (colors) are set on :root in the real app. 
-    // To make the preview colors work, we might need to inline styles or rely on the ThemeProvider effect if we were modifying it.
-    // Since ThemeProvider sets root vars, modifying it globally affects Admin panel too (which is fine, it's a "Live Preview" of the whole app).
-    
-    // Actually, let's just let the Admin Panel colors shift as we edit. It's a cool effect for the admin to see the theme change live.
-    // We will trigger the style update effect by using the formData.
-    
-    // WORKAROUND: We will manually update CSS variables here for instant feedback when in "free" tab
-    if (activeTab === 'free') {
-        root.style.setProperty('--hero-title-size', `${formData.heroTitleSize}px`);
-        root.style.setProperty('--hero-subtitle-size', `${formData.heroSubtitleSize}px`);
-        root.style.setProperty('--hero-title-color', formData.heroTitleColor || '#ffffff');
-        root.style.setProperty('--footer-bg', formData.footerBgColor || '#064e3b');
-        // Colors are harder to generate RGBs for on the fly without the helper functions, 
-        // but let's assume the user saves to apply global color theme changes, or we can import the helpers.
-    }
-  };
-
-  // Trigger CSS var updates when form data changes in Free Customization tab
-  useEffect(() => {
-      if (activeTab === 'free') {
-          const root = document.documentElement;
-          if (formData.heroTitleSize) root.style.setProperty('--hero-title-size', `${formData.heroTitleSize}px`);
-          if (formData.heroSubtitleSize) root.style.setProperty('--hero-subtitle-size', `${formData.heroSubtitleSize}px`);
-          if (formData.heroTitleColor) root.style.setProperty('--hero-title-color', formData.heroTitleColor!);
-          if (formData.footerBgColor) root.style.setProperty('--footer-bg', formData.footerBgColor!);
-      }
-  }, [formData, activeTab]);
-
 
   const tabs = [
     { id: 'general', label: 'عام', icon: LayoutTemplate },
@@ -323,6 +288,19 @@ const Settings: React.FC = () => {
                                     className="w-8 h-8 rounded cursor-pointer border border-slate-300 p-0.5"
                                     value={formData.secondaryColor}
                                     onChange={e => setFormData({...formData, secondaryColor: e.target.value})}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="flex items-center justify-between bg-slate-50 p-3 rounded-lg border border-slate-100">
+                            <span className="text-sm font-medium text-slate-700">لون التمييز (Accent)</span>
+                            <div className="flex items-center gap-2">
+                                <span className="text-xs font-mono text-slate-400">{formData.accentColor || '#f97316'}</span>
+                                <input 
+                                    type="color" 
+                                    className="w-8 h-8 rounded cursor-pointer border border-slate-300 p-0.5"
+                                    value={formData.accentColor || '#f97316'}
+                                    onChange={e => setFormData({...formData, accentColor: e.target.value})}
                                 />
                             </div>
                         </div>
