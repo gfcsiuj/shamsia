@@ -34,9 +34,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <span className="flex items-center gap-2"><Mail size={14} /> {settings.contactEmail}</span>
           </div>
           <div className="flex gap-4">
-             <a href="https://www.facebook.com/profile.php?id=61554748052998" target="_blank" rel="noopener noreferrer" className="hover:text-secondary-500 transition"><Facebook size={14} /></a>
-             <a href="https://www.instagram.com/shamsia.iq/" target="_blank" rel="noopener noreferrer" className="hover:text-secondary-500 transition"><Instagram size={14} /></a>
-             <a href="#" className="hover:text-secondary-500 transition"><Linkedin size={14} /></a>
+             {settings.facebookUrl && <a href={settings.facebookUrl} target="_blank" rel="noopener noreferrer" className="hover:text-secondary-500 transition"><Facebook size={14} /></a>}
+             {settings.instagramUrl && <a href={settings.instagramUrl} target="_blank" rel="noopener noreferrer" className="hover:text-secondary-500 transition"><Instagram size={14} /></a>}
+             {settings.linkedinUrl && <a href={settings.linkedinUrl} className="hover:text-secondary-500 transition"><Linkedin size={14} /></a>}
           </div>
         </div>
       </div>
@@ -127,7 +127,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <MobileBottomNav />
 
       {/* Footer */}
-      <footer className="bg-primary-900 text-white pt-12 md:pt-16 pb-24 lg:pb-8">
+      <footer 
+        className="text-white pt-12 md:pt-16 pb-24 lg:pb-8 transition-colors duration-300"
+        style={{ backgroundColor: settings.footerBgColor || 'rgb(var(--color-primary-900))', color: settings.footerTextColor || '#ffffff' }}
+      >
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
             
@@ -137,15 +140,15 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                  <GraduationCap className="text-secondary-500" size={32} />
                  <h3 className="text-2xl font-bold">شمسية</h3>
               </div>
-              <p className="text-primary-100 text-sm leading-relaxed">
-                منصة شمسية الألكترونية منصة تعمل بأيادٍ عراقية وعربية، هدفها تحقيق مفهوم التنمية المستدامة (SDG).
+              <p className="text-primary-100 text-sm leading-relaxed" style={{ color: settings.footerTextColor ? `${settings.footerTextColor}cc` : undefined }}>
+                {settings.siteDescription || 'منصة شمسية الألكترونية منصة تعمل بأيادٍ عراقية وعربية، هدفها تحقيق مفهوم التنمية المستدامة (SDG).'}
               </p>
             </div>
 
             {/* Column 2: Quick Links */}
             <div>
               <h4 className="text-lg font-bold mb-6 border-r-4 border-secondary-500 pr-3">روابط سريعة</h4>
-              <ul className="space-y-2 text-primary-100">
+              <ul className="space-y-2 text-primary-100" style={{ color: settings.footerTextColor ? `${settings.footerTextColor}cc` : undefined }}>
                 <li><Link to="/courses" className="hover:text-secondary-400 transition">جميع الدورات</Link></li>
                 <li><Link to="/library" className="hover:text-secondary-400 transition">المكتبة</Link></li>
                 <li><Link to="/instructors" className="hover:text-secondary-400 transition">فريق المدربين</Link></li>
@@ -156,7 +159,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
              {/* Column 3: Categories */}
              <div>
               <h4 className="text-lg font-bold mb-6 border-r-4 border-secondary-500 pr-3">التصنيفات</h4>
-              <ul className="space-y-2 text-primary-100">
+              <ul className="space-y-2 text-primary-100" style={{ color: settings.footerTextColor ? `${settings.footerTextColor}cc` : undefined }}>
                 <li><Link to="/courses" className="hover:text-secondary-400 transition">التقنية والبرمجة</Link></li>
                 <li><Link to="/courses" className="hover:text-secondary-400 transition">الأمن السيبراني</Link></li>
                 <li><Link to="/courses" className="hover:text-secondary-400 transition">الإدارة والقيادة</Link></li>
@@ -167,10 +170,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             {/* Column 4: Contact */}
             <div>
               <h4 className="text-lg font-bold mb-6 border-r-4 border-secondary-500 pr-3">تواصل معنا</h4>
-              <ul className="space-y-4 text-primary-100">
+              <ul className="space-y-4 text-primary-100" style={{ color: settings.footerTextColor ? `${settings.footerTextColor}cc` : undefined }}>
                 <li className="flex items-start gap-3">
                   <MapPin className="text-secondary-500 mt-1 flex-shrink-0" size={18} />
-                  <span>العراق، بغداد</span>
+                  <span>{settings.contactAddress || 'العراق، بغداد'}</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <Phone className="text-secondary-500 flex-shrink-0" size={18} />
@@ -184,12 +187,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             </div>
           </div>
           
-          <div className="border-t border-primary-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-primary-200">
-            <p className="text-center md:text-right">جميع الحقوق محفوظة © منصة شمسية {new Date().getFullYear()}</p>
+          <div className="border-t border-primary-800/30 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-primary-200" style={{ color: settings.footerTextColor ? `${settings.footerTextColor}99` : undefined }}>
+            <p className="text-center md:text-right">{settings.footerText || `جميع الحقوق محفوظة © منصة شمسية ${new Date().getFullYear()}`}</p>
             <div className="flex gap-4">
-              <a href="https://www.facebook.com/profile.php?id=61554748052998" target="_blank" rel="noopener noreferrer" className="bg-primary-800 p-2 rounded-full hover:bg-secondary-500 hover:text-white transition"><Facebook size={18}/></a>
-              <a href="https://www.instagram.com/shamsia.iq/" target="_blank" rel="noopener noreferrer" className="bg-primary-800 p-2 rounded-full hover:bg-secondary-500 hover:text-white transition"><Instagram size={18}/></a>
-              <a href="#" className="bg-primary-800 p-2 rounded-full hover:bg-secondary-500 hover:text-white transition"><Linkedin size={18}/></a>
+              {settings.facebookUrl && <a href={settings.facebookUrl} target="_blank" rel="noopener noreferrer" className="bg-white/10 p-2 rounded-full hover:bg-secondary-500 hover:text-white transition"><Facebook size={18}/></a>}
+              {settings.instagramUrl && <a href={settings.instagramUrl} target="_blank" rel="noopener noreferrer" className="bg-white/10 p-2 rounded-full hover:bg-secondary-500 hover:text-white transition"><Instagram size={18}/></a>}
+              {settings.linkedinUrl && <a href={settings.linkedinUrl} target="_blank" rel="noopener noreferrer" className="bg-white/10 p-2 rounded-full hover:bg-secondary-500 hover:text-white transition"><Linkedin size={18}/></a>}
             </div>
           </div>
         </div>

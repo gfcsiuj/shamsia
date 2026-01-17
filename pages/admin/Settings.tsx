@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { db } from '../../lib/firebase';
 import { SiteSettings } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
-import { Save, Loader2, LayoutTemplate, Palette, Phone, ExternalLink, Globe, Monitor, Type, Share2, MapPin, Power, MessageSquare } from 'lucide-react';
+import { Save, Loader2, LayoutTemplate, Palette, Phone, ExternalLink, Globe, Monitor, Type, Share2, MapPin, Power, MessageSquare, Sliders, AlertTriangle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Settings: React.FC = () => {
@@ -10,7 +10,7 @@ const Settings: React.FC = () => {
   const [formData, setFormData] = useState<SiteSettings>(initialSettings);
   const [saveLoading, setSaveLoading] = useState(false);
   const [message, setMessage] = useState('');
-  const [activeTab, setActiveTab] = useState<'general' | 'appearance' | 'contact' | 'advanced'>('general');
+  const [activeTab, setActiveTab] = useState<'general' | 'visual' | 'contact' | 'system'>('general');
 
   useEffect(() => {
     if (!initialLoading) {
@@ -37,9 +37,9 @@ const Settings: React.FC = () => {
 
   const tabs = [
     { id: 'general', label: 'عام', icon: LayoutTemplate },
-    { id: 'appearance', label: 'المظهر', icon: Palette },
+    { id: 'visual', label: 'تخصيص بصري', icon: Palette },
     { id: 'contact', label: 'التواصل', icon: Phone },
-    { id: 'advanced', label: 'متقدم', icon: Monitor },
+    { id: 'system', label: 'النظام والصيانة', icon: Power },
   ];
 
   if (initialLoading) {
@@ -48,17 +48,17 @@ const Settings: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 p-6 md:p-8">
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-slate-800">تخصيص الموقع</h1>
-            <p className="text-slate-500 text-sm mt-1">تحكم في هوية ومظهر ومعلومات المنصة بالكامل</p>
+            <h1 className="text-2xl md:text-3xl font-bold text-slate-800">إعدادات المنصة</h1>
+            <p className="text-slate-500 text-sm mt-1">تحكم كامل في الهوية، المظهر، وخصائص النظام</p>
           </div>
           <Link to="/" target="_blank" className="bg-white text-primary-600 border border-primary-200 px-5 py-2.5 rounded-xl font-bold hover:bg-primary-50 transition flex items-center gap-2 shadow-sm w-fit">
             <ExternalLink size={18} />
-             معاينة حية
+             معاينة الموقع
           </Link>
         </div>
 
@@ -85,13 +85,13 @@ const Settings: React.FC = () => {
 
         <form onSubmit={handleSubmit} className="space-y-6 animate-fade-in">
           
-          {/* Tab Content: General */}
+          {/* ================= General Tab ================= */}
           {activeTab === 'general' && (
             <div className="grid gap-6">
               <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6 md:p-8">
                  <div className="flex items-center gap-3 mb-6 border-b border-slate-50 pb-4">
                     <div className="p-2 bg-blue-50 text-blue-600 rounded-lg"><Globe size={20} /></div>
-                    <h2 className="text-lg font-bold text-slate-800">المعلومات الأساسية</h2>
+                    <h2 className="text-lg font-bold text-slate-800">بيانات الموقع الرئيسية</h2>
                  </div>
                  
                  <div className="grid md:grid-cols-2 gap-6">
@@ -106,7 +106,7 @@ const Settings: React.FC = () => {
                        />
                     </div>
                     <div className="md:col-span-2">
-                       <label className="block text-sm font-bold text-slate-700 mb-2">وصف الموقع (لتحسين محركات البحث)</label>
+                       <label className="block text-sm font-bold text-slate-700 mb-2">وصف الموقع (Meta Description)</label>
                        <textarea 
                           rows={2}
                           className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:border-primary-500 outline-none transition resize-none"
@@ -114,80 +114,7 @@ const Settings: React.FC = () => {
                           onChange={e => setFormData({...formData, siteDescription: e.target.value})}
                           placeholder="منصة تعليمية رائدة..."
                        />
-                    </div>
-                 </div>
-              </div>
-
-              <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6 md:p-8">
-                 <div className="flex items-center gap-3 mb-6 border-b border-slate-50 pb-4">
-                    <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg"><Type size={20} /></div>
-                    <h2 className="text-lg font-bold text-slate-800">واجهة الاستقبال (Hero Section)</h2>
-                 </div>
-                 
-                 <div className="space-y-6">
-                    <div>
-                       <label className="block text-sm font-bold text-slate-700 mb-2">العنوان الرئيسي</label>
-                       <input 
-                          type="text" 
-                          className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:border-primary-500 outline-none transition text-lg font-bold text-slate-800"
-                          value={formData.heroTitle}
-                          onChange={e => setFormData({...formData, heroTitle: e.target.value})}
-                       />
-                    </div>
-                    <div>
-                       <label className="block text-sm font-bold text-slate-700 mb-2">العنوان الفرعي</label>
-                       <textarea 
-                          rows={3}
-                          className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:border-primary-500 outline-none transition leading-relaxed"
-                          value={formData.heroSubtitle}
-                          onChange={e => setFormData({...formData, heroSubtitle: e.target.value})}
-                       />
-                    </div>
-                 </div>
-              </div>
-            </div>
-          )}
-
-          {/* Tab Content: Appearance */}
-          {activeTab === 'appearance' && (
-            <div className="grid gap-6">
-              <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6 md:p-8">
-                 <div className="flex items-center gap-3 mb-6 border-b border-slate-50 pb-4">
-                    <div className="p-2 bg-purple-50 text-purple-600 rounded-lg"><Palette size={20} /></div>
-                    <h2 className="text-lg font-bold text-slate-800">الألوان والهوية البصرية</h2>
-                 </div>
-                 
-                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="space-y-4">
-                        <label className="block text-sm font-bold text-slate-700">اللون الأساسي (Primary)</label>
-                        <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-xl border border-slate-200">
-                            <input 
-                                type="color" 
-                                className="w-14 h-14 p-1 rounded-lg cursor-pointer border border-slate-300 shadow-sm"
-                                value={formData.primaryColor}
-                                onChange={e => setFormData({...formData, primaryColor: e.target.value})}
-                            />
-                            <div>
-                                <span className="font-mono text-slate-600 block mb-1 uppercase bg-white px-2 py-1 rounded border border-slate-200 text-xs">{formData.primaryColor}</span>
-                                <p className="text-xs text-slate-400">للعناوين، الأزرار الرئيسية، والروابط</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="space-y-4">
-                        <label className="block text-sm font-bold text-slate-700">اللون الثانوي (Secondary)</label>
-                        <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-xl border border-slate-200">
-                            <input 
-                                type="color" 
-                                className="w-14 h-14 p-1 rounded-lg cursor-pointer border border-slate-300 shadow-sm"
-                                value={formData.secondaryColor}
-                                onChange={e => setFormData({...formData, secondaryColor: e.target.value})}
-                            />
-                            <div>
-                                <span className="font-mono text-slate-600 block mb-1 uppercase bg-white px-2 py-1 rounded border border-slate-200 text-xs">{formData.secondaryColor}</span>
-                                <p className="text-xs text-slate-400">للتمييز، أيقونات، وعناصر جمالية</p>
-                            </div>
-                        </div>
+                       <p className="text-xs text-slate-400 mt-2">يظهر هذا الوصف في نتائج محركات البحث.</p>
                     </div>
                  </div>
               </div>
@@ -208,7 +135,7 @@ const Settings: React.FC = () => {
                           onChange={e => setFormData({...formData, logoUrl: e.target.value})}
                           placeholder="https://example.com/logo.png"
                        />
-                       <p className="text-xs text-slate-400 mt-2">يفضل استخدام صورة بخلفية شفافة (PNG) بحجم مناسب.</p>
+                       <p className="text-xs text-slate-400 mt-2">يفضل استخدام صورة بخلفية شفافة (PNG).</p>
                     </div>
                     <div className="w-full md:w-40 h-40 bg-slate-100 rounded-xl border-2 border-dashed border-slate-300 flex items-center justify-center p-4">
                         {formData.logoUrl ? (
@@ -222,7 +149,114 @@ const Settings: React.FC = () => {
             </div>
           )}
 
-          {/* Tab Content: Contact */}
+          {/* ================= Visual Customization Tab ================= */}
+          {activeTab === 'visual' && (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              
+              {/* Left Col: Colors */}
+              <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6 space-y-6">
+                 <div className="flex items-center gap-3 border-b border-slate-50 pb-4">
+                    <div className="p-2 bg-purple-50 text-purple-600 rounded-lg"><Palette size={20} /></div>
+                    <h2 className="text-lg font-bold text-slate-800">الألوان الرئيسية</h2>
+                 </div>
+                 
+                 <div className="space-y-5">
+                    <div>
+                        <label className="block text-sm font-bold text-slate-700 mb-2">اللون الأساسي (Primary)</label>
+                        <div className="flex gap-3">
+                            <input type="color" className="h-10 w-14 p-1 rounded cursor-pointer border" value={formData.primaryColor} onChange={e => setFormData({...formData, primaryColor: e.target.value})} />
+                            <input type="text" className="flex-1 px-3 py-2 bg-slate-50 border rounded-lg text-sm font-mono uppercase" value={formData.primaryColor} onChange={e => setFormData({...formData, primaryColor: e.target.value})} />
+                        </div>
+                    </div>
+                    <div>
+                        <label className="block text-sm font-bold text-slate-700 mb-2">اللون الثانوي (Accent)</label>
+                        <div className="flex gap-3">
+                            <input type="color" className="h-10 w-14 p-1 rounded cursor-pointer border" value={formData.secondaryColor} onChange={e => setFormData({...formData, secondaryColor: e.target.value})} />
+                            <input type="text" className="flex-1 px-3 py-2 bg-slate-50 border rounded-lg text-sm font-mono uppercase" value={formData.secondaryColor} onChange={e => setFormData({...formData, secondaryColor: e.target.value})} />
+                        </div>
+                    </div>
+                    <div>
+                        <label className="block text-sm font-bold text-slate-700 mb-2">خلفية التذييل (Footer)</label>
+                        <div className="flex gap-3">
+                            <input type="color" className="h-10 w-14 p-1 rounded cursor-pointer border" value={formData.footerBgColor || '#064e3b'} onChange={e => setFormData({...formData, footerBgColor: e.target.value})} />
+                            <input type="text" className="flex-1 px-3 py-2 bg-slate-50 border rounded-lg text-sm font-mono uppercase" value={formData.footerBgColor || ''} onChange={e => setFormData({...formData, footerBgColor: e.target.value})} />
+                        </div>
+                    </div>
+                 </div>
+              </div>
+
+              {/* Right Col: Typography & Hero Config */}
+              <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6 space-y-6">
+                 <div className="flex items-center gap-3 border-b border-slate-50 pb-4">
+                    <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg"><Sliders size={20} /></div>
+                    <h2 className="text-lg font-bold text-slate-800">تخصيص الواجهة والنصوص</h2>
+                 </div>
+
+                 <div className="space-y-6">
+                    {/* Hero Title Settings */}
+                    <div className="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                        <h3 className="font-bold text-slate-800 mb-3">عنوان الهيرو (Hero Title)</h3>
+                        <div className="space-y-3">
+                            <input 
+                                type="text" 
+                                className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm mb-2"
+                                value={formData.heroTitle}
+                                onChange={e => setFormData({...formData, heroTitle: e.target.value})}
+                                placeholder="النص الرئيسي..."
+                            />
+                            <div className="flex gap-4">
+                                <div className="flex-1">
+                                    <label className="text-xs text-slate-500 block mb-1">الحجم (px)</label>
+                                    <input type="number" className="w-full px-2 py-1 text-sm border rounded" value={formData.heroTitleSize || 48} onChange={e => setFormData({...formData, heroTitleSize: Number(e.target.value)})} />
+                                </div>
+                                <div>
+                                    <label className="text-xs text-slate-500 block mb-1">اللون</label>
+                                    <input type="color" className="h-8 w-12 border rounded cursor-pointer" value={formData.heroTitleColor || '#ffffff'} onChange={e => setFormData({...formData, heroTitleColor: e.target.value})} />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Hero Subtitle Settings */}
+                    <div className="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                        <h3 className="font-bold text-slate-800 mb-3">وصف الهيرو (Subtitle)</h3>
+                        <div className="space-y-3">
+                            <textarea 
+                                rows={2}
+                                className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm mb-2"
+                                value={formData.heroSubtitle}
+                                onChange={e => setFormData({...formData, heroSubtitle: e.target.value})}
+                                placeholder="الوصف الثانوي..."
+                            />
+                            <div className="flex gap-4">
+                                <div className="flex-1">
+                                    <label className="text-xs text-slate-500 block mb-1">الحجم (px)</label>
+                                    <input type="number" className="w-full px-2 py-1 text-sm border rounded" value={formData.heroSubtitleSize || 18} onChange={e => setFormData({...formData, heroSubtitleSize: Number(e.target.value)})} />
+                                </div>
+                                <div>
+                                    <label className="text-xs text-slate-500 block mb-1">اللون</label>
+                                    <input type="color" className="h-8 w-12 border rounded cursor-pointer" value={formData.heroSubtitleColor || '#f1f5f9'} onChange={e => setFormData({...formData, heroSubtitleColor: e.target.value})} />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Footer Text */}
+                    <div>
+                        <label className="block text-sm font-bold text-slate-700 mb-2">نص حقوق الملكية (Footer)</label>
+                        <input 
+                            type="text" 
+                            className="w-full px-4 py-3 rounded-xl bg-white border border-slate-200 focus:border-primary-500 outline-none transition text-sm"
+                            value={formData.footerText || ''}
+                            onChange={e => setFormData({...formData, footerText: e.target.value})}
+                        />
+                    </div>
+                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* ================= Contact Tab ================= */}
           {activeTab === 'contact' && (
             <div className="grid gap-6">
               <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6 md:p-8">
@@ -296,20 +330,53 @@ const Settings: React.FC = () => {
             </div>
           )}
 
-          {/* Tab Content: Advanced */}
-          {activeTab === 'advanced' && (
+          {/* ================= System Tab ================= */}
+          {activeTab === 'system' && (
             <div className="grid gap-6">
               <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6 md:p-8">
                  <div className="flex items-center gap-3 mb-6 border-b border-slate-50 pb-4">
                     <div className="p-2 bg-red-50 text-red-600 rounded-lg"><Power size={20} /></div>
-                    <h2 className="text-lg font-bold text-slate-800">التحكم في النظام</h2>
+                    <h2 className="text-lg font-bold text-slate-800">حالة النظام والصيانة</h2>
                  </div>
                  
                  <div className="space-y-6">
-                    <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-200">
+                    {/* Maintenance Mode */}
+                    <div className={`flex items-start justify-between p-5 rounded-xl border-2 transition-all duration-300 ${formData.maintenanceMode ? 'bg-red-50 border-red-200' : 'bg-white border-slate-100'}`}>
+                        <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-2">
+                                <h3 className={`font-bold text-lg ${formData.maintenanceMode ? 'text-red-700' : 'text-slate-800'}`}>وضع الصيانة</h3>
+                                {formData.maintenanceMode && <span className="bg-red-100 text-red-600 text-xs font-bold px-2 py-0.5 rounded-full flex items-center gap-1"><AlertTriangle size={10}/> مفعل</span>}
+                            </div>
+                            <p className="text-sm text-slate-500 leading-relaxed mb-4">
+                                عند تفعيل هذا الوضع، سيتم إغلاق الموقع أمام جميع الزوار (باستثناء المسؤولين). سيظهر لهم صفحة الصيانة فقط.
+                            </p>
+                            
+                            <label className="block text-sm font-bold text-slate-700 mb-2">رسالة الصيانة</label>
+                            <textarea 
+                                rows={2}
+                                className="w-full px-4 py-2 rounded-lg bg-white border border-slate-300 focus:border-primary-500 outline-none transition text-sm"
+                                value={formData.maintenanceMessage || ''}
+                                onChange={e => setFormData({...formData, maintenanceMessage: e.target.value})}
+                                disabled={!formData.maintenanceMode}
+                                placeholder="نحن نعمل حالياً على تحسين الموقع..."
+                            />
+                        </div>
+                        <label className="relative inline-flex items-center cursor-pointer mr-6 mt-2">
+                            <input 
+                                type="checkbox" 
+                                className="sr-only peer" 
+                                checked={formData.maintenanceMode || false}
+                                onChange={e => setFormData({...formData, maintenanceMode: e.target.checked})}
+                            />
+                            <div className="w-14 h-8 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-100 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:start-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-red-500"></div>
+                        </label>
+                    </div>
+
+                    {/* Registration Toggle */}
+                    <div className="flex items-center justify-between p-5 bg-white rounded-xl border border-slate-200">
                         <div>
-                            <h3 className="font-bold text-slate-800">تفعيل التسجيل الجديد</h3>
-                            <p className="text-xs text-slate-500">السماح للطلاب بإنشاء حسابات جديدة أو التسجيل في الدورات</p>
+                            <h3 className="font-bold text-slate-800 text-lg mb-1">التسجيل الجديد</h3>
+                            <p className="text-sm text-slate-500">السماح للطلاب بإنشاء حسابات جديدة أو التسجيل في الدورات.</p>
                         </div>
                         <label className="relative inline-flex items-center cursor-pointer">
                             <input 
@@ -321,40 +388,6 @@ const Settings: React.FC = () => {
                             <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-100 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
                         </label>
                     </div>
-
-                    <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-200">
-                        <div>
-                            <h3 className="font-bold text-slate-800">وضع الصيانة</h3>
-                            <p className="text-xs text-slate-500">إغلاق الموقع مؤقتاً أمام الزوار وعرض صفحة الصيانة</p>
-                        </div>
-                        <label className="relative inline-flex items-center cursor-pointer">
-                            <input 
-                                type="checkbox" 
-                                className="sr-only peer" 
-                                checked={formData.maintenanceMode || false}
-                                onChange={e => setFormData({...formData, maintenanceMode: e.target.checked})}
-                            />
-                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-100 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-500"></div>
-                        </label>
-                    </div>
-                 </div>
-              </div>
-
-              <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6 md:p-8">
-                 <div className="flex items-center gap-3 mb-6 border-b border-slate-50 pb-4">
-                    <div className="p-2 bg-gray-50 text-gray-600 rounded-lg"><MessageSquare size={20} /></div>
-                    <h2 className="text-lg font-bold text-slate-800">تذييل الموقع (Footer)</h2>
-                 </div>
-                 
-                 <div>
-                    <label className="block text-sm font-bold text-slate-700 mb-2">نص الحقوق</label>
-                    <input 
-                        type="text" 
-                        className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:border-primary-500 outline-none transition"
-                        value={formData.footerText || ''}
-                        onChange={e => setFormData({...formData, footerText: e.target.value})}
-                        placeholder="جميع الحقوق محفوظة © منصة شمسية"
-                    />
                  </div>
               </div>
             </div>
@@ -366,7 +399,7 @@ const Settings: React.FC = () => {
              </div>
           )}
 
-          <div className="flex justify-end pt-4">
+          <div className="flex justify-end pt-4 border-t border-slate-200 mt-8">
              <button 
                 type="submit" 
                 disabled={saveLoading}

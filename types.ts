@@ -62,16 +62,27 @@ export interface Resource {
 }
 
 export interface SiteSettings {
-  // General & Hero
+  // General
+  siteName: string;
+  siteDescription: string;
+  logoUrl: string;
+  faviconUrl?: string;
+
+  // Hero Section Customization
   heroTitle: string;
   heroSubtitle: string;
-  logoUrl: string;
-  siteName?: string;
-  siteDescription?: string;
-  
-  // Appearance
+  heroTitleColor?: string;
+  heroTitleSize?: number; // in px
+  heroSubtitleColor?: string;
+  heroSubtitleSize?: number; // in px
+  heroOverlayOpacity?: number; // 0-100
+
+  // Theme & Colors
   primaryColor: string;
   secondaryColor: string;
+  backgroundColor?: string;
+  surfaceColor?: string;
+  textColor?: string;
   
   // Contact
   contactPhone: string;
@@ -85,8 +96,13 @@ export interface SiteSettings {
   twitterUrl?: string;
   youtubeUrl?: string;
 
-  // Footer & Misc
+  // Footer
   footerText?: string;
-  enableRegistration?: boolean;
-  maintenanceMode?: boolean;
+  footerBgColor?: string;
+  footerTextColor?: string;
+
+  // System
+  enableRegistration: boolean;
+  maintenanceMode: boolean;
+  maintenanceMessage?: string;
 }
