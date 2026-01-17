@@ -173,8 +173,20 @@ export const VisualEditProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
   const saveAllChanges = async () => {
     try {
-      const cleanOverrides = overrides.filter(o => 
-        (o.styles && Object.keys(o.styles).length > 0) || (o.text !== undefined && o.text !== '')
+      // Firebase throws an error if any field is undefined.
+      // We must clean the overrides array before saving.
+      const cleanOverrides = overrides.map(o => {
+        const cleanObj: any = { 
+            selector: o.selector, 
+            styles: o.styles || {}
+        };
+        // Only include text if it is defined and not null
+        if (o.text !== undefined && o.text !== null) {
+            cleanObj.text = o.text;
+        }
+        return cleanObj;
+      }).filter(o => 
+        (Object.keys(o.styles).length > 0) || (o.text !== undefined && o.text !== '')
       );
       
       await db.collection('site_settings').doc('visual_overrides').set(
