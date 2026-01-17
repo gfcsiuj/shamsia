@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, BookOpen, Users, Award, CheckCircle } from 'lucide-react';
-import { COURSES, TESTIMONIALS } from '../constants';
+import { ArrowLeft, BookOpen, Users, Award, CheckCircle, Loader2 } from 'lucide-react';
+import { TESTIMONIALS } from '../constants';
 import CourseCard from '../components/CourseCard';
+import { useTheme } from '../context/ThemeContext';
+import { db } from '../lib/firebase';
+import { collection, query, limit, getDocs } from 'firebase/firestore';
+import { Course } from '../types';
 
 // Simple CountUp Component for animation
 const CountUp = ({ end, duration = 2000, suffix = '' }: { end: number, duration?: number, suffix?: string }) => {
@@ -37,7 +41,36 @@ const CountUp = ({ end, duration = 2000, suffix = '' }: { end: number, duration?
 };
 
 const Home: React.FC = () => {
-  const featuredCourses = COURSES.slice(0, 3);
+  const { settings } = useTheme();
+  const [featuredCourses, setFeaturedCourses] = useState<Course[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchFeaturedCourses = async () => {
+      try {
+        const q = query(collection(db, 'courses'), limit(3));
+        const querySnapshot = await getDocs(q);
+        const courses = querySnapshot.docs.map(doc => {
+             const data = doc.data();
+             return {
+                 id: doc.id,
+                 ...data,
+                 instructorIds: data.instructorIds || (data.instructorId ? [data.instructorId] : []),
+                 media: data.media || (data.image ? [{ url: data.image, type: 'image' }] : []),
+                 tags: data.tags || [],
+                 studentsCountMode: data.studentsCountMode || 'auto'
+             } as Course;
+        });
+        setFeaturedCourses(courses);
+      } catch (error) {
+        console.error("Error fetching featured courses:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFeaturedCourses();
+  }, []);
 
   return (
     <div className="animate-fade-in">
@@ -56,10 +89,10 @@ const Home: React.FC = () => {
           <div className="max-w-4xl text-white">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold mb-8 leading-loose md:leading-relaxed lg:leading-tight animate-fade-in-up tracking-wide">
               <span className="text-secondary-400 block mb-2 sm:mb-4 sm:inline sm:ml-3">شمسية</span>
-              طريقك الأمثل لتحقيق <br className="hidden sm:block" /> الوظيفة الدائمية
+              {settings.heroTitle}
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-slate-100 mb-10 leading-loose opacity-90 max-w-2xl animate-fade-in-up delay-100">
-              منصة شمسية الألكترونية منصة تعمل بأيادٍ عراقية وعربية، هدفها تحقيق مفهوم التنمية المستدامة (SDG).
+              {settings.heroSubtitle}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 animate-fade-in-up delay-200">
               <Link 
@@ -149,13 +182,25 @@ const Home: React.FC = () => {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {featuredCourses.map((course, idx) => (
-              <div key={course.id} className={`animate-fade-in-up delay-${idx * 100}`}>
-                 <CourseCard course={course} />
-              </div>
-            ))}
-          </div>
+          {loading ? (
+             <div className="flex justify-center py-12">
+                <Loader2 className="animate-spin text-primary-600" size={40} />
+             </div>
+          ) : (
+             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+               {featuredCourses.length > 0 ? (
+                   featuredCourses.map((course, idx) => (
+                      <div key={course.id} className={`animate-fade-in-up delay-${idx * 100}`}>
+                         <CourseCard course={course} />
+                      </div>
+                   ))
+               ) : (
+                   <div className="col-span-full text-center py-10 text-slate-500 bg-slate-50 rounded-xl">
+                       لا توجد دورات متاحة حالياً.
+                   </div>
+               )}
+             </div>
+          )}
           
           <div className="mt-8 text-center md:hidden">
             <Link to="/courses" className="inline-block px-6 py-3 border-2 border-primary-600 text-primary-600 font-bold rounded-lg hover:bg-primary-50 text-sm">
@@ -189,7 +234,7 @@ const Home: React.FC = () => {
                 </div>
                 <p className="text-base md:text-lg leading-relaxed italic opacity-90">"{testimonial.content}"</p>
               </div>
-            ))}
+            ))} 
           </div>
         </div>
       </section>
