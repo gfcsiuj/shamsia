@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { db } from '../lib/firebase';
 import { SiteSettings } from '../types';
@@ -43,7 +44,7 @@ const defaultSettings: SiteSettings = {
   maintenanceMessage: 'نحن نعمل حالياً على تحسين تجربتكم. سنعود قريباً!'
 };
 
-const ThemeContext = createContext<ThemeContextType>({
+export const ThemeContext = createContext<ThemeContextType>({
   settings: defaultSettings,
   loading: true,
 });
