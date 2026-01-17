@@ -37,6 +37,17 @@ const Settings: React.FC = () => {
     }
   };
 
+  const handleResetColors = () => {
+    if (window.confirm('هل أنت متأكد من استعادة الألوان الافتراضية للموقع؟')) {
+        setFormData(prev => ({
+            ...prev,
+            primaryColor: '#10b981', // Emerald 500
+            secondaryColor: '#f59e0b', // Amber 500
+            footerBgColor: '#064e3b', // primary-900 equivalent
+        }));
+    }
+  };
+
   // Helper to update styles dynamically for preview without saving
   const getPreviewStyleVariables = () => {
     const root = document.documentElement;
@@ -274,9 +285,20 @@ const Settings: React.FC = () => {
 
                     {/* Colors Section */}
                     <div className="space-y-4 pt-4 border-t border-slate-100">
-                        <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                            <Palette size={14}/> ألوان الهوية
-                        </h3>
+                        <div className="flex justify-between items-center">
+                            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                                <Palette size={14}/> ألوان الهوية
+                            </h3>
+                            <button 
+                                type="button" 
+                                onClick={handleResetColors}
+                                className="flex items-center gap-1.5 px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded text-[10px] font-bold transition"
+                                title="استعادة الألوان الافتراضية"
+                            >
+                                <RotateCcw size={10} />
+                                استعادة الأصلي
+                            </button>
+                        </div>
                         
                         <div className="flex items-center justify-between bg-slate-50 p-3 rounded-lg border border-slate-100">
                             <span className="text-sm font-medium text-slate-700">اللون الأساسي</span>
