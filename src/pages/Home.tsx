@@ -46,30 +46,30 @@ const Home: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchCourses = async () => {
+    const fetchFeaturedCourses = async () => {
       try {
         const q = query(collection(db, 'courses'), limit(3));
         const querySnapshot = await getDocs(q);
-        const data = querySnapshot.docs.map(doc => {
-            const courseData = doc.data();
-            return { 
-                id: doc.id, 
-                ...courseData,
-                instructorIds: courseData.instructorIds || (courseData.instructorId ? [courseData.instructorId] : []),
-                media: courseData.media || (courseData.image ? [{ url: courseData.image, type: 'image' }] : []),
-                tags: courseData.tags || [],
-                studentsCountMode: courseData.studentsCountMode || 'auto'
-            } as Course;
+        const courses = querySnapshot.docs.map(doc => {
+             const data = doc.data();
+             return {
+                 id: doc.id,
+                 ...data,
+                 instructorIds: data.instructorIds || (data.instructorId ? [data.instructorId] : []),
+                 media: data.media || (data.image ? [{ url: data.image, type: 'image' }] : []),
+                 tags: data.tags || [],
+                 studentsCountMode: data.studentsCountMode || 'auto'
+             } as Course;
         });
-        setFeaturedCourses(data);
+        setFeaturedCourses(courses);
       } catch (error) {
-        console.error("Error fetching courses:", error);
+        console.error("Error fetching featured courses:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchCourses();
+    fetchFeaturedCourses();
   }, []);
 
   return (
@@ -235,7 +235,7 @@ const Home: React.FC = () => {
                 <p className="text-base md:text-lg leading-relaxed italic opacity-90">"{testimonial.content}"</p>
               </div>
             ))}
-          </div> 
+          </div>
         </div>
       </section>
 
