@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 import { ArrowLeft, BookOpen, Users, Award, CheckCircle, Loader2 } from 'lucide-react';
 import { TESTIMONIALS } from '../constants';
 import CourseCard from '../components/CourseCard';
-// تصحيح مسار الاستيراد هنا ليكون دقيقاً جداً
-import { useTheme } from '../context/ThemeContext'; 
+// هذا هو التعديل الهام: أضفنا src للمسار
+import { useTheme } from '../src/context/ThemeContext'; 
 import { db } from '../lib/firebase';
 import { collection, getDocs, limit, query } from 'firebase/firestore';
 import { Course } from '../types';
@@ -43,13 +43,7 @@ const CountUp = ({ end, duration = 2000, suffix = '' }: { end: number, duration?
 const Home: React.FC = () => {
   const [featuredCourses, setFeaturedCourses] = useState<Course[]>([]);
   const [coursesLoading, setCoursesLoading] = useState(true);
-  
-  // استخدام السياق مع التحقق من وجوده لتجنب الأخطاء إذا فشل التحميل
-  const themeContext = useTheme();
-  const settings = themeContext?.settings || {
-    heroTitle: 'طريقك الأمثل لتحقيق الوظيفة الدائمية',
-    heroSubtitle: 'منصة شمسية الألكترونية منصة تعمل بأيادٍ عراقية وعربية'
-  };
+  const { settings } = useTheme();
 
   // جلب أحدث 3 دورات من قاعدة البيانات
   useEffect(() => {
@@ -170,7 +164,7 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* Featured Courses Section - NOW DYNAMIC */}
+      {/* Featured Courses Section - DYNAMIC */}
       <section className="py-12 md:py-20 bg-white">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-end mb-8 md:mb-12 gap-4 animate-fade-in">
