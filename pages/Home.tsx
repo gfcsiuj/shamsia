@@ -5,7 +5,7 @@ import { TESTIMONIALS } from '../constants';
 import CourseCard from '../components/CourseCard';
 // هذا هو التعديل الهام: أضفنا src للمسار
 import { useTheme } from '../src/context/ThemeContext'; 
-import { db } from '../lib/firebase';
+import { db } from '../src/lib/firebase';
 import { collection, getDocs, limit, query } from 'firebase/firestore';
 import { Course } from '../types';
 
