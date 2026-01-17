@@ -25,7 +25,7 @@ const defaultSettings: SiteSettings = {
   // Colors
   primaryColor: '#10b981', // Emerald 500
   secondaryColor: '#f59e0b', // Amber 500
-  accentColor: '#f97316',   // Orange 500 (Replaced #1efff5/Cyan)
+  accentColor: '#f97316',   // Orange 500 (Replaced Cyan/Sky)
   backgroundColor: '#f8fafc',
   textColor: '#1e293b',
   

@@ -44,11 +44,23 @@ const Settings: React.FC = () => {
             ...prev,
             primaryColor: '#10b981', // Emerald 500
             secondaryColor: '#f59e0b', // Amber 500
-            accentColor: '#f97316', // Orange 500 (Replaces #1efff5)
+            accentColor: '#f97316', // Orange 500 (Replaces old Cyan)
             footerBgColor: '#064e3b', // primary-900 equivalent
         }));
     }
   };
+
+  // Trigger CSS var updates when form data changes in Free Customization tab
+  useEffect(() => {
+      if (activeTab === 'free') {
+          const root = document.documentElement;
+          if (formData.heroTitleSize) root.style.setProperty('--hero-title-size', `${formData.heroTitleSize}px`);
+          if (formData.heroSubtitleSize) root.style.setProperty('--hero-subtitle-size', `${formData.heroSubtitleSize}px`);
+          if (formData.heroTitleColor) root.style.setProperty('--hero-title-color', formData.heroTitleColor!);
+          if (formData.footerBgColor) root.style.setProperty('--footer-bg', formData.footerBgColor!);
+      }
+  }, [formData, activeTab]);
+
 
   const tabs = [
     { id: 'general', label: 'عام', icon: LayoutTemplate },
