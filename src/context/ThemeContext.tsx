@@ -1,8 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-// التغيير هنا: في Vite، عادة ما يكون ملف lib داخل src.
-// لنتأكد من استدعائه من المسار الصحيح.
-// إذا كان في src/lib/firebase.ts، فالمسار الصحيح هو ../lib/firebase
-import { db } from '../lib/firebase'; 
+import { db } from '../lib/firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { SiteSettings } from '../types';
 
@@ -62,54 +59,37 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // التأكد من أن قاعدة البيانات قد تم تحميلها
-    if (!db) {
-      console.error("Firebase DB is not initialized");
+    const unsub = onSnapshot(doc(db, 'site_settings', 'general'), (doc) => {
+      if (doc.exists()) {
+        setSettings({ ...defaultSettings, ...doc.data() as SiteSettings });
+      }
       setLoading(false);
-      return;
-    }
+    });
 
-    try {
-      const unsub = onSnapshot(doc(db, 'site_settings', 'general'), (doc) => {
-        if (doc.exists()) {
-          setSettings({ ...defaultSettings, ...doc.data() as SiteSettings });
-        }
-        setLoading(false);
-      }, (error) => {
-        console.error("Error fetching settings:", error);
-        setLoading(false);
-      });
-
-      return () => unsub();
-    } catch (err) {
-      console.error("Error setting up snapshot listener:", err);
-      setLoading(false);
-    }
+    return () => unsub();
   }, []);
 
   useEffect(() => {
+    // Apply colors to root CSS variables
     const root = document.documentElement;
     const primary = settings.primaryColor;
     const secondary = settings.secondaryColor;
 
-    try {
-      root.style.setProperty('--color-primary-50', hexToRgb(adjustColor(primary, 90)));
-      root.style.setProperty('--color-primary-100', hexToRgb(adjustColor(primary, 70)));
-      root.style.setProperty('--color-primary-200', hexToRgb(adjustColor(primary, 50)));
-      root.style.setProperty('--color-primary-300', hexToRgb(adjustColor(primary, 30)));
-      root.style.setProperty('--color-primary-400', hexToRgb(adjustColor(primary, 10)));
-      root.style.setProperty('--color-primary-500', hexToRgb(primary));
-      root.style.setProperty('--color-primary-600', hexToRgb(adjustColor(primary, -10)));
-      root.style.setProperty('--color-primary-700', hexToRgb(adjustColor(primary, -30)));
-      root.style.setProperty('--color-primary-800', hexToRgb(adjustColor(primary, -50)));
-      root.style.setProperty('--color-primary-900', hexToRgb(adjustColor(primary, -70)));
+    // Generate a simple palette
+    root.style.setProperty('--color-primary-50', hexToRgb(adjustColor(primary, 90)));
+    root.style.setProperty('--color-primary-100', hexToRgb(adjustColor(primary, 70)));
+    root.style.setProperty('--color-primary-200', hexToRgb(adjustColor(primary, 50)));
+    root.style.setProperty('--color-primary-300', hexToRgb(adjustColor(primary, 30)));
+    root.style.setProperty('--color-primary-400', hexToRgb(adjustColor(primary, 10)));
+    root.style.setProperty('--color-primary-500', hexToRgb(primary));
+    root.style.setProperty('--color-primary-600', hexToRgb(adjustColor(primary, -10)));
+    root.style.setProperty('--color-primary-700', hexToRgb(adjustColor(primary, -30)));
+    root.style.setProperty('--color-primary-800', hexToRgb(adjustColor(primary, -50)));
+    root.style.setProperty('--color-primary-900', hexToRgb(adjustColor(primary, -70)));
 
-      root.style.setProperty('--color-secondary-400', hexToRgb(adjustColor(secondary, 20)));
-      root.style.setProperty('--color-secondary-500', hexToRgb(secondary));
-      root.style.setProperty('--color-secondary-600', hexToRgb(adjustColor(secondary, -20)));
-    } catch (e) {
-      console.error("Error applying theme colors", e);
-    }
+    root.style.setProperty('--color-secondary-400', hexToRgb(adjustColor(secondary, 20)));
+    root.style.setProperty('--color-secondary-500', hexToRgb(secondary));
+    root.style.setProperty('--color-secondary-600', hexToRgb(adjustColor(secondary, -20)));
 
   }, [settings]);
 
