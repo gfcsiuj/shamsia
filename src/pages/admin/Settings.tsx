@@ -44,7 +44,7 @@ const Settings: React.FC = () => {
             ...prev,
             primaryColor: '#10b981', // Emerald 500
             secondaryColor: '#f59e0b', // Amber 500
-            accentColor: '#f29c0b', // Default Orange (Fixed from Cyan)
+            accentColor: '#f29c0b', // Default Orange (Explicitly set to #f29c0b)
             footerBgColor: '#064e3b', // primary-900 equivalent
         }));
     }

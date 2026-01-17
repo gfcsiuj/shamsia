@@ -88,7 +88,23 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   useEffect(() => {
     const unsub = db.collection('site_settings').doc('general').onSnapshot((doc) => {
       if (doc.exists) {
-        setSettings({ ...defaultSettings, ...doc.data() as SiteSettings });
+        const data = doc.data() as SiteSettings;
+        
+        // --- BAD COLOR INTERCEPTOR ---
+        // If we detect the unwanted Cyan, we force it to Orange immediately on the client side
+        const BAD_CYAN = '#1efff5';
+        const GOOD_ORANGE = '#f29c0b';
+
+        if (data.accentColor && data.accentColor.toLowerCase() === BAD_CYAN) {
+            data.accentColor = GOOD_ORANGE;
+        }
+        // Also check primary just in case
+        if (data.primaryColor && data.primaryColor.toLowerCase() === BAD_CYAN) {
+            data.primaryColor = GOOD_ORANGE;
+        }
+        // -----------------------------
+
+        setSettings({ ...defaultSettings, ...data });
       }
       setLoading(false);
     });
@@ -99,9 +115,11 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   useEffect(() => {
     // Apply colors to root CSS variables
     const root = document.documentElement;
+    
+    // Explicit fallback to ensure Orange is used if variables are missing/null
     const primary = settings.primaryColor || '#10b981';
     const secondary = settings.secondaryColor || '#f59e0b';
-    const accent = settings.accentColor || '#f29c0b'; // Default to the requested Orange
+    const accent = settings.accentColor || '#f29c0b';
 
     // Primary Palette
     root.style.setProperty('--color-primary-50', hexToRgb(adjustColor(primary, 90)));
