@@ -14,6 +14,7 @@ interface VisualEditContextType {
   overrides: StyleOverride[];
   toggleEditMode: () => void;
   saveOverride: (override: StyleOverride) => void;
+  saveAllChanges: () => Promise<void>;
   loading: boolean;
 }
 
@@ -22,6 +23,7 @@ const VisualEditContext = createContext<VisualEditContextType>({
   overrides: [],
   toggleEditMode: () => {},
   saveOverride: () => {},
+  saveAllChanges: async () => {},
   loading: true,
 });
 
@@ -74,11 +76,6 @@ export const VisualEditProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       if (styleString) {
         css += `${item.selector} { ${styleString} }\n`;
       }
-
-      // Handle Text Content (Best Effort for static text)
-      // Note: Replacing text via JS is tricky in React due to re-renders. 
-      // We use a MutationObserver in the VisualEditor component to enforce text, 
-      // or we accept that CSS handles the styling and text is best effort.
     });
 
     styleTag.textContent = css;
@@ -108,8 +105,8 @@ export const VisualEditProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   }, [overrides]);
 
 
-  const saveOverride = async (newOverride: StyleOverride) => {
-    // Merge with existing overrides
+  const saveOverride = (newOverride: StyleOverride) => {
+    // Merge with existing overrides - Updates LOCAL STATE ONLY
     const updatedOverrides = [...overrides];
     const index = updatedOverrides.findIndex(o => o.selector === newOverride.selector);
     
@@ -124,19 +121,21 @@ export const VisualEditProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     }
 
     setOverrides(updatedOverrides);
-    
-    // Persist
+  };
+
+  const saveAllChanges = async () => {
     try {
-      await db.collection('site_settings').doc('visual_overrides').set({ overrides: updatedOverrides }, { merge: true });
+      await db.collection('site_settings').doc('visual_overrides').set({ overrides: overrides }, { merge: true });
     } catch (e) {
-      console.error("Failed to save override", e);
+      console.error("Failed to save all changes", e);
+      throw e;
     }
   };
 
   const toggleEditMode = () => setIsEditing(!isEditing);
 
   return (
-    <VisualEditContext.Provider value={{ isEditing, overrides, toggleEditMode, saveOverride, loading }}>
+    <VisualEditContext.Provider value={{ isEditing, overrides, toggleEditMode, saveOverride, saveAllChanges, loading }}>
       {children}
     </VisualEditContext.Provider>
   );

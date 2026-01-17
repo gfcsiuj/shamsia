@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useVisualEdit } from '../context/VisualEditContext';
-import { X, Save, Move, Type, Palette, Layout, MousePointer2, Check } from 'lucide-react';
+import { X, Save, Move, Type, Palette, Layout, MousePointer2, Check, Loader2 } from 'lucide-react';
 
 // Helper to generate unique selector
 const getUniqueSelector = (el: HTMLElement): string => {
@@ -23,10 +23,12 @@ const getUniqueSelector = (el: HTMLElement): string => {
 };
 
 const VisualEditor: React.FC = () => {
-  const { isEditing, saveOverride, toggleEditMode } = useVisualEdit();
+  const { isEditing, saveOverride, saveAllChanges } = useVisualEdit();
   const [hoveredEl, setHoveredEl] = useState<HTMLElement | null>(null);
   const [selectedEl, setSelectedEl] = useState<HTMLElement | null>(null);
   const [selector, setSelector] = useState('');
+  
+  const [isSaving, setIsSaving] = useState(false);
   
   // Editor State
   const [textContent, setTextContent] = useState('');
@@ -63,10 +65,8 @@ const VisualEditor: React.FC = () => {
       setTextContent(target.innerText);
       const computed = window.getComputedStyle(target);
       
-      // We only want to populate state with overrides if they exist, or empty strings
-      // But for UX, let's grab current computed for color
-      // To properly track overrides, we'd check the context 'overrides' array here.
-      // For now, we start "fresh" or allow overwriting.
+      // Reset local styles for editor
+      setStyles({});
     };
 
     document.addEventListener('mouseover', handleMouseOver);
@@ -78,7 +78,7 @@ const VisualEditor: React.FC = () => {
     };
   }, [isEditing]);
 
-  const handleSave = () => {
+  const handleApply = () => {
     if (!selector) return;
     
     // Clean empty styles
@@ -94,6 +94,18 @@ const VisualEditor: React.FC = () => {
     });
     
     setSelectedEl(null);
+  };
+
+  const handleGlobalSave = async () => {
+      setIsSaving(true);
+      try {
+          await saveAllChanges();
+          alert('تم حفظ كافة التغييرات ونشرها على الموقع بنجاح!');
+      } catch (error) {
+          alert('حدث خطأ أثناء الحفظ.');
+      } finally {
+          setIsSaving(false);
+      }
   };
 
   const updateStyle = (key: string, value: string) => {
@@ -146,12 +158,20 @@ const VisualEditor: React.FC = () => {
               <div className="bg-secondary-500 p-1.5 rounded-lg">
                   <MousePointer2 size={18} className="text-white animate-pulse" />
               </div>
-              <span className="font-bold text-sm">وضع التخصيص الحر</span>
-              <span className="text-xs bg-slate-800 px-2 py-1 rounded text-slate-400 border border-slate-700">
+              <span className="font-bold text-sm hidden sm:inline">وضع التخصيص الحر</span>
+              <span className="text-xs bg-slate-800 px-2 py-1 rounded text-slate-400 border border-slate-700 hidden sm:inline">
                   اضغط على أي عنصر لتعديله
               </span>
           </div>
           <div className="flex items-center gap-3">
+              <button 
+                onClick={handleGlobalSave}
+                disabled={isSaving}
+                className="bg-green-600 hover:bg-green-700 text-white px-4 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2 disabled:opacity-50"
+              >
+                  {isSaving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
+                  حفظ التغييرات
+              </button>
               <button 
                 onClick={() => {
                     const url = new URL(window.location.href);
@@ -274,11 +294,11 @@ const VisualEditor: React.FC = () => {
                   </div>
 
                   <button 
-                    onClick={handleSave}
+                    onClick={handleApply}
                     className="w-full bg-secondary-500 hover:bg-secondary-600 text-white font-bold py-2 rounded-lg text-sm flex items-center justify-center gap-2 mt-2"
                   >
-                      <Save size={16} />
-                      حفظ التغييرات
+                      <Check size={16} />
+                      تطبيق التعديل
                   </button>
               </div>
           </div>
