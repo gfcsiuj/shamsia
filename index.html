@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>شمسية - منصة التعليم للمستقبل</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Cairo', 'sans-serif'],
+          },
+          colors: {
+            primary: {
+              50: 'rgb(var(--color-primary-50) / <alpha-value>)',
+              100: 'rgb(var(--color-primary-100) / <alpha-value>)',
+              200: 'rgb(var(--color-primary-200) / <alpha-value>)',
+              300: 'rgb(var(--color-primary-300) / <alpha-value>)',
+              400: 'rgb(var(--color-primary-400) / <alpha-value>)',
+              500: 'rgb(var(--color-primary-500) / <alpha-value>)',
+              600: 'rgb(var(--color-primary-600) / <alpha-value>)',
+              700: 'rgb(var(--color-primary-700) / <alpha-value>)',
+              800: 'rgb(var(--color-primary-800) / <alpha-value>)',
+              900: 'rgb(var(--color-primary-900) / <alpha-value>)',
+            },
+            secondary: {
+              400: 'rgb(var(--color-secondary-400) / <alpha-value>)',
+              500: 'rgb(var(--color-secondary-500) / <alpha-value>)',
+              600: 'rgb(var(--color-secondary-600) / <alpha-value>)',
+            },
+            accent: {
+              50: 'rgb(var(--color-accent-50) / <alpha-value>)',
+              100: 'rgb(var(--color-accent-100) / <alpha-value>)',
+              200: 'rgb(var(--color-accent-200) / <alpha-value>)',
+              300: 'rgb(var(--color-accent-300) / <alpha-value>)',
+              400: 'rgb(var(--color-accent-400) / <alpha-value>)',
+              500: 'rgb(var(--color-accent-500) / <alpha-value>)',
+              600: 'rgb(var(--color-accent-600) / <alpha-value>)',
+              700: 'rgb(var(--color-accent-700) / <alpha-value>)',
+              800: 'rgb(var(--color-accent-800) / <alpha-value>)',
+              900: 'rgb(var(--color-accent-900) / <alpha-value>)',
+            }
+          },
+          animation: {
+            'fade-in-up': 'fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            'fade-in-down': 'fadeInDown 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            'fade-in': 'fadeIn 0.6s ease-out forwards',
+            'scale-in': 'scaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            'pop-in': 'popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
+            'slide-in-right': 'slideInRight 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            'slide-in-left': 'slideInLeft 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            'bounce-slow': 'bounce 3s infinite',
+          },
+          keyframes: {
+            fadeInUp: {
+              '0%': { opacity: '0', transform: 'translateY(30px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+            fadeInDown: {
+              '0%': { opacity: '0', transform: 'translateY(-30px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+            fadeIn: {
+              '0%': { opacity: '0' },
+              '100%': { opacity: '1' },
+            },
+            scaleIn: {
+              '0%': { opacity: '0', transform: 'scale(0.95)' },
+              '100%': { opacity: '1', transform: 'scale(1)' },
+            },
+            popIn: {
+              '0%': { opacity: '0', transform: 'scale(0.5)' },
+              '100%': { opacity: '1', transform: 'scale(1)' },
+            },
+            slideInRight: {
+              '0%': { opacity: '0', transform: 'translateX(30px)' },
+              '100%': { opacity: '1', transform: 'translateX(0)' },
+            },
+            slideInLeft: {
+              '0%': { opacity: '0', transform: 'translateX(-30px)' },
+              '100%': { opacity: '1', transform: 'translateX(0)' },
+            }
+          }
+        },
+      },
+    }
+  </script>
+  <style>
+    :root {
+      /* Default Colors - will be overridden by JS */
+      --color-primary-50: 236 253 245;
+      --color-primary-100: 209 250 229;
+      --color-primary-200: 167 243 208;
+      --color-primary-300: 110 231 183;
+      --color-primary-400: 52 211 153;
+      --color-primary-500: 16 185 129;
+      --color-primary-600: 5 150 105;
+      --color-primary-700: 4 120 87;
+      --color-primary-800: 6 95 70;
+      --color-primary-900: 6 78 59;
+
+      --color-secondary-400: 251 191 36;
+      --color-secondary-500: 245 158 11;
+      --color-secondary-600: 217 119 6;
+
+      --color-accent-500: 242 156 11;
+      /* #f29c0b - Fixed Orange */
+      --color-accent-600: 217 140 10;
+    }
+
+    body {
+      font-family: 'Cairo', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* Custom scrollbar for webkit */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgb(var(--color-primary-700));
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgb(var(--color-primary-900));
+    }
+
+    .delay-100 {
+      animation-delay: 100ms;
+    }
+
+    .delay-150 {
+      animation-delay: 150ms;
+    }
+
+    .delay-200 {
+      animation-delay: 200ms;
+    }
+
+    .delay-300 {
+      animation-delay: 300ms;
+    }
+
+    .delay-400 {
+      animation-delay: 400ms;
+    }
+
+    .delay-500 {
+      animation-delay: 500ms;
+    }
+
+    .delay-600 {
+      animation-delay: 600ms;
+    }
+
+    .delay-700 {
+      animation-delay: 700ms;
+    }
+  </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-router-dom": "https://esm.sh/react-router-dom@^7.12.0",
+    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
+    "firebase/": "https://esm.sh/firebase@^12.7.0/",
+    "react-dom": "https://esm.sh/react-dom@^19.2.3"
+  }
+}
+</script>
+  <link rel="stylesheet" href="/index.css">
+</head>
+
+<body class="bg-slate-50 text-slate-800">
+  <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+
+</body>
+
+</html>
