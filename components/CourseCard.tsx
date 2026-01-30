@@ -15,7 +15,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, instructor }) => {
   const imageUrl = course.media && course.media.length > 0 ? course.media[0].url : 'https://via.placeholder.com/400x300';
 
   return (
-    <div className="group bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-xl hover:border-primary-100 transition-all duration-300 flex flex-col h-full relative">
+    <div className="group bg-white rounded-3xl shadow-lg shadow-slate-200/50 border border-slate-100 overflow-hidden hover:shadow-2xl hover:shadow-primary-500/10 hover:border-primary-200 transition-all duration-500 flex flex-col h-full relative transform hover:-translate-y-2">
       {/* Image Container */}
       <div className="relative h-52 overflow-hidden bg-slate-100">
         <img
@@ -42,8 +42,8 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, instructor }) => {
         {/* Level & Instructor */}
         <div className="flex justify-between items-center mb-4">
           <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full border ${course.level === 'مبتدئ' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' :
-              course.level === 'متوسط' ? 'bg-amber-50 text-amber-700 border-amber-100' :
-                'bg-purple-50 text-purple-700 border-purple-100'
+            course.level === 'متوسط' ? 'bg-amber-50 text-amber-700 border-amber-100' :
+              'bg-purple-50 text-purple-700 border-purple-100'
             }`}>
             {course.level}
           </span>
@@ -84,13 +84,13 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, instructor }) => {
                 {course.oldPrice.toLocaleString()} د.ع
               </span>
             )}
-            <span className="text-lg font-extrabold text-primary-600">
+            <span className="text-lg font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-secondary-600">
               {course.price === 0 ? 'مجاناً' : `${course.price.toLocaleString()} د.ع`}
             </span>
           </div>
           <Link
             to={`/courses/${course.id}`}
-            className="w-10 h-10 flex items-center justify-center rounded-full bg-slate-50 text-primary-600 hover:bg-primary-600 hover:text-white transition-all duration-300 group-hover:translate-x-1"
+            className="w-11 h-11 flex items-center justify-center rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 text-white shadow-lg shadow-primary-500/30 hover:from-secondary-500 hover:to-secondary-600 hover:shadow-secondary-500/30 transition-all duration-300 group-hover:scale-110"
           >
             <ArrowLeft size={18} />
           </Link>
