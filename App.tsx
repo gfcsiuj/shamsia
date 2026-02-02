@@ -42,7 +42,12 @@ const MaintenanceGuard: React.FC<{ children: React.ReactNode }> = ({ children })
     return <Maintenance />;
   }
 
-  return <>{children}</>;
+  // Wrap content with entrance animation
+  return (
+    <div className="animate-fade-up" style={{ animationDuration: '0.6s' }}>
+      {children}
+    </div>
+  );
 };
 
 const App: React.FC = () => {
