@@ -171,7 +171,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       </nav>
 
       {/* Main Content */}
-      <main className="flex-grow pb-20 lg:pb-0 pt-16 lg:pt-20">
+      <main className="flex-grow pb-20 lg:pb-0 pt-16 lg:pt-20 animate-fade-up" style={{ animationDuration: '0.5s' }}>
         {children}
       </main>
 
