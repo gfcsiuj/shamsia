@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { db } from '../lib/firebase';
 import { SiteSettings } from '../types';
@@ -6,6 +5,11 @@ import { SiteSettings } from '../types';
 interface ThemeContextType {
   settings: SiteSettings;
   loading: boolean;
+  isDarkMode: boolean;
+  setIsDarkMode: (value: boolean) => void;
+  isEnglish: boolean;
+  setIsEnglish: (value: boolean) => void;
+  t: (ar: string, en: string) => string; // Translation helper
 }
 
 const defaultSettings: SiteSettings = {
@@ -13,31 +17,35 @@ const defaultSettings: SiteSettings = {
   siteName: 'شمسية',
   siteDescription: 'منصة تعليمية رائدة',
   logoUrl: 'https://k.top4top.io/p_3662fca071.png',
-  
+
   // Hero
   heroTitle: 'طريقك الأمثل لتحقيق الوظيفة الدائمية',
   heroSubtitle: 'منصة شمسية الألكترونية منصة تعمل بأيادٍ عراقية وعربية، هدفها تحقيق مفهوم التنمية المستدامة (SDG).',
-  heroTitleSize: 48, // px (approx 3rem/4xl)
-  heroSubtitleSize: 18, // px
+  heroTitleSize: 48,
+  heroSubtitleSize: 18,
   heroTitleColor: '#ffffff',
   heroSubtitleColor: '#f1f5f9',
-  
+
   // Colors
-  primaryColor: '#10b981', // Emerald 500
-  secondaryColor: '#f59e0b', // Amber 500
-  accentColor: '#0ea5e9',   // Sky 500 (Much better harmony with Emerald than the previous Cyan)
+  primaryColor: '#10b981',
+  secondaryColor: '#f59e0b',
+  accentColor: '#0ea5e9',
   backgroundColor: '#f8fafc',
   textColor: '#1e293b',
-  
+
   // Contact
   contactPhone: '0773 220 0003',
   contactEmail: 'info@shamsia.edu',
   contactAddress: 'العراق، بغداد',
-  
+
   // Footer
   footerText: 'جميع الحقوق محفوظة © منصة شمسية',
-  footerBgColor: '#064e3b', // primary-900 equivalent
+  footerBgColor: '#064e3b',
   footerTextColor: '#ffffff',
+
+  // Social Media
+  facebookUrl: 'https://www.facebook.com/profile.php?id=61554748052998',
+  instagramUrl: 'https://www.instagram.com/shamsia.iq/',
 
   // System
   enableRegistration: true,
@@ -48,6 +56,11 @@ const defaultSettings: SiteSettings = {
 export const ThemeContext = createContext<ThemeContextType>({
   settings: defaultSettings,
   loading: true,
+  isDarkMode: false,
+  setIsDarkMode: () => { },
+  isEnglish: false,
+  setIsEnglish: () => { },
+  t: (ar) => ar,
 });
 
 export const useTheme = () => useContext(ThemeContext);
@@ -60,31 +73,47 @@ const hexToRgb = (hex: string): string => {
     : '0 0 0';
 };
 
-// Helper to lighten/darken hex color (simple version)
+// Helper to lighten/darken hex color
 const adjustColor = (hex: string, percent: number) => {
-    let R = parseInt(hex.substring(1,3),16);
-    let G = parseInt(hex.substring(3,5),16);
-    let B = parseInt(hex.substring(5,7),16);
+  let R = parseInt(hex.substring(1, 3), 16);
+  let G = parseInt(hex.substring(3, 5), 16);
+  let B = parseInt(hex.substring(5, 7), 16);
 
-    R = Math.floor(R * (100 + percent) / 100);
-    G = Math.floor(G * (100 + percent) / 100);
-    B = Math.floor(B * (100 + percent) / 100);
+  R = Math.floor(R * (100 + percent) / 100);
+  G = Math.floor(G * (100 + percent) / 100);
+  B = Math.floor(B * (100 + percent) / 100);
 
-    R = (R<255)?R:255;  
-    G = (G<255)?G:255;  
-    B = (B<255)?B:255;  
+  R = (R < 255) ? R : 255;
+  G = (G < 255) ? G : 255;
+  B = (B < 255) ? B : 255;
 
-    const RR = ((R.toString(16).length===1)?"0"+R.toString(16):R.toString(16));
-    const GG = ((G.toString(16).length===1)?"0"+G.toString(16):G.toString(16));
-    const BB = ((B.toString(16).length===1)?"0"+B.toString(16):B.toString(16));
+  const RR = ((R.toString(16).length === 1) ? "0" + R.toString(16) : R.toString(16));
+  const GG = ((G.toString(16).length === 1) ? "0" + G.toString(16) : G.toString(16));
+  const BB = ((B.toString(16).length === 1) ? "0" + B.toString(16) : B.toString(16));
 
-    return "#"+RR+GG+BB;
+  return "#" + RR + GG + BB;
 };
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [settings, setSettings] = useState<SiteSettings>(defaultSettings);
   const [loading, setLoading] = useState(true);
 
+  // Dark Mode State with localStorage persistence
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
+    const saved = localStorage.getItem('shamsiya_darkMode');
+    return saved ? JSON.parse(saved) : false;
+  });
+
+  // Language State with localStorage persistence
+  const [isEnglish, setIsEnglish] = useState<boolean>(() => {
+    const saved = localStorage.getItem('shamsiya_language');
+    return saved ? JSON.parse(saved) : false;
+  });
+
+  // Translation helper function
+  const t = (ar: string, en: string): string => isEnglish ? en : ar;
+
+  // Fetch settings from Firebase
   useEffect(() => {
     const unsub = db.collection('site_settings').doc('general').onSnapshot((doc) => {
       if (doc.exists) {
@@ -96,12 +125,35 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return () => unsub();
   }, []);
 
+  // Apply dark mode to document
   useEffect(() => {
-    // Apply colors to root CSS variables
+    localStorage.setItem('shamsiya_darkMode', JSON.stringify(isDarkMode));
+
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+      document.body.classList.add('dark', 'bg-slate-900', 'text-white');
+      document.body.classList.remove('bg-slate-50', 'bg-white');
+    } else {
+      document.documentElement.classList.remove('dark');
+      document.body.classList.remove('dark', 'bg-slate-900', 'text-white');
+      document.body.classList.add('bg-white');
+    }
+  }, [isDarkMode]);
+
+  // Apply language direction
+  useEffect(() => {
+    localStorage.setItem('shamsiya_language', JSON.stringify(isEnglish));
+
+    document.documentElement.dir = isEnglish ? 'ltr' : 'rtl';
+    document.documentElement.lang = isEnglish ? 'en' : 'ar';
+  }, [isEnglish]);
+
+  // Apply colors to root CSS variables
+  useEffect(() => {
     const root = document.documentElement;
     const primary = settings.primaryColor || '#10b981';
     const secondary = settings.secondaryColor || '#f59e0b';
-    const accent = settings.accentColor || '#0ea5e9'; // Default to Sky Blue if missing
+    const accent = settings.accentColor || '#0ea5e9';
 
     // Primary Palette
     root.style.setProperty('--color-primary-50', hexToRgb(adjustColor(primary, 90)));
@@ -134,22 +186,30 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     // Custom Typography & Colors
     if (settings.heroTitleSize) {
-        root.style.setProperty('--hero-title-size', `${settings.heroTitleSize}px`);
+      root.style.setProperty('--hero-title-size', `${settings.heroTitleSize}px`);
     }
     if (settings.heroSubtitleSize) {
-        root.style.setProperty('--hero-subtitle-size', `${settings.heroSubtitleSize}px`);
+      root.style.setProperty('--hero-subtitle-size', `${settings.heroSubtitleSize}px`);
     }
     if (settings.heroTitleColor) {
-        root.style.setProperty('--hero-title-color', settings.heroTitleColor);
+      root.style.setProperty('--hero-title-color', settings.heroTitleColor);
     }
     if (settings.footerBgColor) {
-        root.style.setProperty('--footer-bg', settings.footerBgColor);
+      root.style.setProperty('--footer-bg', settings.footerBgColor);
     }
 
   }, [settings]);
 
   return (
-    <ThemeContext.Provider value={{ settings, loading }}>
+    <ThemeContext.Provider value={{
+      settings,
+      loading,
+      isDarkMode,
+      setIsDarkMode,
+      isEnglish,
+      setIsEnglish,
+      t
+    }}>
       {children}
     </ThemeContext.Provider>
   );

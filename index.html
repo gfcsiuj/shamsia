@@ -3,21 +3,36 @@
 
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>شمسية - منصة التعليم للمستقبل</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>منصة شمسية | التميز في التعليم الرقمي</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800;900&display=swap"
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap"
     rel="stylesheet">
+
+  <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       theme: {
         extend: {
           fontFamily: {
-            sans: ['Cairo', 'sans-serif'],
+            sans: ['Tajawal', 'sans-serif'],
           },
           colors: {
+            emerald: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              200: '#a7f3d0',
+              300: '#6ee7b7',
+              400: '#34d399',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b',
+            },
             primary: {
               50: 'rgb(var(--color-primary-50) / <alpha-value>)',
               100: 'rgb(var(--color-primary-100) / <alpha-value>)',
@@ -52,11 +67,14 @@
             'fade-in-up': 'fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
             'fade-in-down': 'fadeInDown 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
             'fade-in': 'fadeIn 0.6s ease-out forwards',
+            'fade-up': 'fadeUp 0.8s ease-out forwards',
             'scale-in': 'scaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards',
             'pop-in': 'popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
             'slide-in-right': 'slideInRight 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
             'slide-in-left': 'slideInLeft 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
             'bounce-slow': 'bounce 3s infinite',
+            'float': 'float 8s ease-in-out infinite',
+            'blob': 'blob 7s infinite',
           },
           keyframes: {
             fadeInUp: {
@@ -70,6 +88,10 @@
             fadeIn: {
               '0%': { opacity: '0' },
               '100%': { opacity: '1' },
+            },
+            fadeUp: {
+              '0%': { opacity: '0', transform: 'translateY(20px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
             },
             scaleIn: {
               '0%': { opacity: '0', transform: 'scale(0.95)' },
@@ -86,6 +108,16 @@
             slideInLeft: {
               '0%': { opacity: '0', transform: 'translateX(-30px)' },
               '100%': { opacity: '1', transform: 'translateX(0)' },
+            },
+            float: {
+              '0%, 100%': { transform: 'translateY(0px) rotate(1deg)' },
+              '50%': { transform: 'translateY(-20px) rotate(-1deg)' },
+            },
+            blob: {
+              '0%': { transform: 'translate(0px, 0px) scale(1)' },
+              '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+              '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+              '100%': { transform: 'translate(0px, 0px) scale(1)' },
             }
           }
         },
@@ -94,21 +126,19 @@
   </script>
   <style>
     :root {
-      /* Modern Color Scheme - Elegant & Professional */
+      /* Primary Colors - Emerald (New Theme) */
+      --color-primary-50: 236 253 245;
+      --color-primary-100: 209 250 229;
+      --color-primary-200: 167 243 208;
+      --color-primary-300: 110 231 183;
+      --color-primary-400: 52 211 153;
+      --color-primary-500: 16 185 129;
+      --color-primary-600: 5 150 105;
+      --color-primary-700: 4 120 87;
+      --color-primary-800: 6 95 70;
+      --color-primary-900: 6 78 59;
 
-      /* Primary Colors - Slate Blue (Professional & Elegant) */
-      --color-primary-50: 248 250 252;
-      --color-primary-100: 241 245 249;
-      --color-primary-200: 226 232 240;
-      --color-primary-300: 203 213 225;
-      --color-primary-400: 148 163 184;
-      --color-primary-500: 100 116 139;
-      --color-primary-600: 71 85 105;
-      --color-primary-700: 51 65 85;
-      --color-primary-800: 30 41 59;
-      --color-primary-900: 15 23 42;
-
-      /* Secondary Colors - Warm Orange (More Vibrant) */
+      /* Secondary Colors - Orange */
       --color-secondary-50: 255 251 235;
       --color-secondary-100: 254 243 199;
       --color-secondary-200: 253 230 138;
@@ -120,7 +150,7 @@
       --color-secondary-800: 146 64 14;
       --color-secondary-900: 120 53 15;
 
-      /* Accent Colors - Coral Orange */
+      /* Accent Colors - From Template */
       --color-accent-50: 255 241 242;
       --color-accent-100: 255 228 230;
       --color-accent-200: 254 205 211;
@@ -134,13 +164,50 @@
     }
 
     body {
-      font-family: 'Cairo', sans-serif;
+      font-family: 'Tajawal', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      background-color: #fdfdfd;
       overflow-x: hidden;
+      padding-bottom: env(safe-area-inset-bottom);
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    /* Dark Mode Body */
+    body.dark {
+      background-color: #0f172a !important;
+      color: #f1f5f9 !important;
+    }
+
+    /* Dark Mode Scrollbar */
+    .dark ::-webkit-scrollbar-track {
+      background: #1e293b;
+    }
+
+    .dark ::-webkit-scrollbar-thumb {
+      background: #475569;
+    }
+
+    .dark ::-webkit-scrollbar-thumb:hover {
+      background: #10b981;
+    }
+
+    /* Grain Overlay */
+    .grain-overlay::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+      opacity: 0.03;
+      pointer-events: none;
+      z-index: 50;
     }
 
     /* Custom scrollbar for webkit */
     ::-webkit-scrollbar {
-      width: 8px;
+      width: 6px;
     }
 
     ::-webkit-scrollbar-track {
@@ -148,12 +215,23 @@
     }
 
     ::-webkit-scrollbar-thumb {
-      background: linear-gradient(180deg, rgb(var(--color-primary-500)), rgb(var(--color-secondary-500)));
-      border-radius: 8px;
+      background: #cbd5e1;
+      border-radius: 10px;
     }
 
     ::-webkit-scrollbar-thumb:hover {
-      background: linear-gradient(180deg, rgb(var(--color-primary-600)), rgb(var(--color-secondary-600)));
+      background: #10b981;
+    }
+
+    /* Glass Nav Effect */
+    .glass-nav {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .dark .glass-nav {
+      background: rgba(15, 23, 42, 0.9);
     }
 
     /* Glassmorphism utilities */
@@ -164,6 +242,11 @@
       border: 1px solid rgba(255, 255, 255, 0.3);
     }
 
+    .dark .glass {
+      background: rgba(30, 41, 59, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
     .glass-dark {
       background: rgba(0, 0, 0, 0.6);
       backdrop-filter: blur(12px);
@@ -171,7 +254,16 @@
       border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    /* Gradient text */
+    /* Text Gradient - Emerald Theme */
+    .text-gradient {
+      background: linear-gradient(135deg, #059669 0%, #10b981 50%, #34d399 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      background-size: 200% auto;
+    }
+
+    /* Gradient text (old style for compatibility) */
     .gradient-text {
       background: linear-gradient(135deg, rgb(var(--color-primary-500)), rgb(var(--color-secondary-500)));
       -webkit-background-clip: text;
@@ -186,6 +278,16 @@
 
     .glow-secondary {
       box-shadow: 0 0 30px rgba(var(--color-secondary-500), 0.3);
+    }
+
+    /* Hide scrollbar for tabs */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
     }
 
     /* Animation delays */
@@ -220,6 +322,44 @@
     .delay-700 {
       animation-delay: 700ms;
     }
+
+    .delay-2000 {
+      animation-delay: 2000ms;
+    }
+
+    /* Dark Mode Utility Classes */
+    .dark .bg-white {
+      background-color: #1e293b !important;
+    }
+
+    .dark .bg-slate-50 {
+      background-color: #0f172a !important;
+    }
+
+    .dark .bg-slate-100 {
+      background-color: #1e293b !important;
+    }
+
+    .dark .text-slate-900,
+    .dark .text-slate-800,
+    .dark .text-slate-700 {
+      color: #f1f5f9 !important;
+    }
+
+    .dark .text-slate-600,
+    .dark .text-slate-500 {
+      color: #94a3b8 !important;
+    }
+
+    .dark .border-slate-100,
+    .dark .border-slate-200 {
+      border-color: #334155 !important;
+    }
+
+    .dark .shadow-lg,
+    .dark .shadow-xl {
+      --tw-shadow-color: rgba(0, 0, 0, 0.5);
+    }
   </style>
   <script type="importmap">
 {
@@ -237,7 +377,7 @@
   <link rel="stylesheet" href="/index.css">
 </head>
 
-<body class="bg-slate-50 text-slate-800">
+<body class="grain-overlay bg-slate-50 text-slate-800 transition-colors duration-300">
   <div id="root"></div>
   <script type="module" src="/index.tsx"></script>
 

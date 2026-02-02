@@ -1,42 +1,50 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Home, BookOpen, Library, Users, Info, Phone } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
 
 const MobileBottomNav: React.FC = () => {
   const location = useLocation();
+  const { isDarkMode, t } = useTheme();
   const isActive = (path: string) => location.pathname === path;
 
+  // Navigation items with translation support
   const navItems = [
-    { name: 'الرئيسية', path: '/', icon: Home },
-    { name: 'الدورات', path: '/courses', icon: BookOpen },
-    { name: 'المكتبة', path: '/library', icon: Library },
-    { name: 'المدربون', path: '/instructors', icon: Users },
-    { name: 'من نحن', path: '/about', icon: Info },
-    { name: 'اتصل بنا', path: '/contact', icon: Phone },
+    { id: 'home', icon: Home, label: t('الرئيسية', 'Home'), path: '/' },
+    { id: 'courses', icon: BookOpen, label: t('الدورات', 'Courses'), path: '/courses' },
+    { id: 'library', icon: Library, label: t('المكتبة', 'Library'), path: '/library' },
+    { id: 'instructors', icon: Users, label: t('المدربون', 'Instructors'), path: '/instructors' },
+    { id: 'about', icon: Info, label: t('من نحن', 'About'), path: '/about' },
+    { id: 'contact', icon: Phone, label: t('اتصل بنا', 'Contact'), path: '/contact' },
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 shadow-[0_-4px_10px_-1px_rgba(0,0,0,0.05)] z-50 lg:hidden pb-safe animate-fade-in-up">
-      <div className="flex justify-between items-center h-16 px-1">
-        {navItems.map((item) => (
+    <div
+      className={`lg:hidden fixed bottom-0 left-0 right-0 backdrop-blur-xl border-t px-2 py-2 flex justify-around items-center z-[100] shadow-[0_-4px_20px_-5px_rgba(0,0,0,0.1)] ${isDarkMode
+          ? 'bg-slate-900/95 border-slate-700'
+          : 'bg-white/95 border-slate-100'
+        }`}
+      style={{ paddingBottom: 'max(8px, env(safe-area-inset-bottom))' }}
+    >
+      {navItems.map((item) => {
+        const active = isActive(item.path);
+        return (
           <Link
-            key={item.path}
+            key={item.id}
             to={item.path}
-            className={`flex flex-col items-center justify-center w-full h-full transition-all duration-300 active:scale-95 ${
-              isActive(item.path) 
-                ? 'text-primary-600' 
-                : 'text-slate-400 hover:text-slate-600'
-            }`}
+            className={`flex flex-col items-center justify-center py-1 px-1.5 transition-all duration-300 relative ${active
+                ? 'text-emerald-500'
+                : isDarkMode ? 'text-slate-400' : 'text-slate-400'
+              }`}
           >
-            <div className={`p-1.5 rounded-xl transition-all duration-300 ${isActive(item.path) ? 'bg-primary-50 -translate-y-1 shadow-sm' : ''}`}>
-               <item.icon size={isActive(item.path) ? 20 : 18} strokeWidth={isActive(item.path) ? 2.5 : 2} />
-            </div>
-            <span className={`text-[9px] sm:text-[10px] mt-0.5 whitespace-nowrap ${isActive(item.path) ? 'font-bold' : 'font-medium'}`}>
-              {item.name}
-            </span>
+            {active && (
+              <span className="absolute -top-2 w-6 h-0.5 bg-emerald-500 rounded-full"></span>
+            )}
+            <item.icon className={`w-5 h-5 ${active ? 'fill-emerald-100' : ''}`} strokeWidth={active ? 2.5 : 2} />
+            <span className={`text-[9px] mt-0.5 whitespace-nowrap ${active ? 'font-black' : 'font-medium'}`}>{item.label}</span>
           </Link>
-        ))}
-      </div>
+        );
+      })}
     </div>
   );
 };

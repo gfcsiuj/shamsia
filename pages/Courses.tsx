@@ -1,11 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { Filter, Search, Loader2 } from 'lucide-react';
+import { Filter, Search, BookOpen } from 'lucide-react';
 import { db } from '../lib/firebase';
 import CourseCard from '../components/CourseCard';
 import { Course } from '../types';
+import { useTheme } from '../context/ThemeContext';
 
 const Courses: React.FC = () => {
-  const categories = ['All', 'Tech', 'Human Development', 'Cyber Security', 'Admin Skills', 'Student Skills'];
+  const { t, isEnglish } = useTheme();
+
+  const categories = [
+    { id: 'All', label: t('الكل', 'All') },
+    { id: 'Tech', label: t('تقنية', 'Tech') },
+    { id: 'Human Development', label: t('تنمية بشرية', 'Human Development') },
+    { id: 'Cyber Security', label: t('أمن سيبراني', 'Cyber Security') },
+    { id: 'Admin Skills', label: t('مهارات إدارية', 'Admin Skills') },
+    { id: 'Student Skills', label: t('مهارات طلابية', 'Student Skills') },
+  ];
+
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -36,46 +47,59 @@ const Courses: React.FC = () => {
 
   return (
     <div className="bg-slate-50 min-h-screen pb-24">
-      {/* Header */}
-      <div className="bg-gradient-to-br from-primary-900 via-primary-800 to-secondary-900 py-20 text-white overflow-hidden relative">
-        <div className="absolute top-0 right-0 w-72 h-72 bg-secondary-500/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 animate-pulse"></div>
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-primary-500/15 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4"></div>
-        <div className="absolute inset-0 opacity-5" style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '30px 30px' }}></div>
+      {/* Header - New Emerald Design */}
+      <div className="relative pt-36 pb-20 overflow-hidden">
+        {/* Background Blobs */}
+        <div className="absolute inset-0 -z-10">
+          <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-emerald-100/50 rounded-full blur-[100px] animate-blob"></div>
+          <div className="absolute bottom-[-5%] left-[-5%] w-[400px] h-[400px] bg-orange-100/40 rounded-full blur-[80px] animate-blob delay-2000"></div>
+        </div>
+
         <div className="container mx-auto px-4 text-center relative z-10">
-          <h1 className="text-4xl md:text-5xl font-extrabold mb-5 animate-fade-in-down">دوراتنا التدريبية</h1>
-          <p className="text-primary-100/90 text-lg md:text-xl max-w-2xl mx-auto animate-fade-in-up delay-100 font-light">
-            تصفح مكتبتنا الواسعة من الدورات التدريبية المصممة لرفع كفاءتك المهنية والشخصية
+          <h1 className="text-5xl md:text-7xl font-black text-slate-900 mb-6 italic tracking-tight animate-fade-up">
+            {isEnglish ? (
+              <>Our <span className="text-gradient">Training Courses</span></>
+            ) : (
+              <>دوراتنا <span className="text-gradient">التدريبية</span></>
+            )}
+          </h1>
+          <p className="text-slate-600 text-lg md:text-xl max-w-2xl mx-auto font-medium animate-fade-up delay-100">
+            {t(
+              'تصفح مكتبتنا الواسعة من الدورات التدريبية المصممة لرفع كفاءتك المهنية والشخصية',
+              'Browse our extensive library of training courses designed to boost your professional and personal skills'
+            )}
           </p>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 -mt-10 relative z-20">
-        <div className="bg-white rounded-2xl shadow-2xl shadow-slate-200/50 p-6 mb-10 animate-scale-in delay-200 border border-slate-100">
+      <div className="container mx-auto px-4 -mt-6 relative z-20">
+        {/* Filter Bar - New Design */}
+        <div className="bg-white rounded-[2.5rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] p-6 mb-12 border border-slate-100">
           <div className="flex flex-col md:flex-row gap-6 items-center justify-between">
             {/* Categories */}
-            <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-hide">
-              <Filter className="text-primary-500 flex-shrink-0" size={22} />
+            <div className="flex items-center gap-3 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 no-scrollbar">
+              <Filter className="text-emerald-500 flex-shrink-0" size={22} />
               {categories.map(cat => (
                 <button
-                  key={cat}
-                  onClick={() => setSelectedCategory(cat)}
-                  className={`px-5 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all duration-300 ${selectedCategory === cat
-                    ? 'bg-gradient-to-l from-primary-600 to-primary-700 text-white shadow-lg shadow-primary-500/30 transform scale-105'
-                    : 'bg-slate-50 text-slate-600 hover:bg-slate-100 hover:text-primary-600'
+                  key={cat.id}
+                  onClick={() => setSelectedCategory(cat.id)}
+                  className={`px-6 py-3 rounded-2xl text-sm font-black whitespace-nowrap transition-all duration-300 ${selectedCategory === cat.id
+                    ? 'bg-slate-900 text-white shadow-xl'
+                    : 'bg-slate-50 text-slate-600 hover:bg-slate-100 hover:text-emerald-600'
                     }`}
                 >
-                  {cat === 'All' ? 'الكل' : cat}
+                  {cat.label}
                 </button>
               ))}
             </div>
 
             {/* Search */}
             <div className="relative w-full md:w-80">
-              <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-primary-500" size={20} />
+              <Search className={`absolute ${isEnglish ? 'left-4' : 'right-4'} top-1/2 -translate-y-1/2 text-slate-400`} size={20} />
               <input
                 type="text"
-                placeholder="ابحث عن دورة..."
-                className="w-full pl-4 pr-12 py-3 rounded-xl border-2 border-slate-200 focus:border-primary-500 focus:ring-4 focus:ring-primary-100 outline-none transition-all duration-300 font-medium"
+                placeholder={t('ابحث عن دورة...', 'Search for a course...')}
+                className={`w-full ${isEnglish ? 'pl-12 pr-4' : 'pl-4 pr-12'} py-4 rounded-2xl border-2 border-slate-200 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 outline-none transition-all duration-300 font-bold`}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -86,23 +110,25 @@ const Courses: React.FC = () => {
         {/* Results */}
         {loading ? (
           <div className="flex justify-center py-20">
-            <Loader2 className="animate-spin text-primary-600" size={40} />
+            <div className="w-12 h-12 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin"></div>
           </div>
         ) : filteredCourses.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
             {filteredCourses.map((course, index) => (
-              <div key={course.id} className={`animate-fade-in-up delay-${(index % 5) * 100 + 300}`}>
+              <div key={course.id} className="animate-fade-up" style={{ animationDelay: `${index * 100}ms` }}>
                 <CourseCard course={course} />
               </div>
             ))}
           </div>
         ) : (
-          <div className="text-center py-20 animate-fade-in">
-            <div className="bg-slate-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Search size={40} className="text-slate-400" />
-            </div>
-            <h3 className="text-xl font-bold text-slate-700">لا توجد نتائج</h3>
-            <p className="text-slate-500">جرب البحث بكلمات مختلفة أو تغيير التصنيف</p>
+          <div className="text-center py-24 bg-white rounded-[3rem] border border-dashed border-slate-200">
+            <BookOpen size={48} className="mx-auto text-slate-300 mb-4" />
+            <h3 className="text-2xl font-black text-slate-700 italic mb-2">
+              {t('لا توجد نتائج', 'No Results Found')}
+            </h3>
+            <p className="text-slate-500 font-medium">
+              {t('جرب البحث بكلمات مختلفة أو تغيير التصنيف', 'Try searching with different keywords or change the category')}
+            </p>
           </div>
         )}
       </div>
