@@ -258,6 +258,27 @@
     .text-gradient {
       background: linear-gradient(135deg, #059669 0%, #10b981 50%, #34d399 100%);
       -webkit-background-clip: text;
+
+      /* Loading Bar Animation */
+      @keyframes loading-bar {
+        0% {
+          left: -33%;
+        }
+
+        100% {
+          left: 100%;
+        }
+      }
+
+      .animate-loading-bar {
+        animation: loading-bar 1.2s ease-in-out infinite;
+      }
+
+      /* Bounce Slow Animation */
+      .animate-bounce-slow {
+        animation: bounce 2s ease-in-out infinite;
+      }
+
       -webkit-text-fill-color: transparent;
       background-clip: text;
       background-size: 200% auto;

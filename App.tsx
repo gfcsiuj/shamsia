@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Routes, Route, Navigate, Outlet, useLocation } from 'react-router-dom';
 import Layout from './components/Layout';
@@ -18,6 +17,7 @@ import LibraryAdmin from './pages/admin/LibraryAdmin';
 import Settings from './pages/admin/Settings';
 import ProtectedRoute from './components/ProtectedRoute';
 import Maintenance from './components/Maintenance';
+import LoadingScreen from './components/LoadingScreen';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { VisualEditProvider } from './context/VisualEditContext'; // Import
@@ -29,10 +29,13 @@ const MaintenanceGuard: React.FC<{ children: React.ReactNode }> = ({ children })
   const { user, loading: authLoading } = useAuth();
   const location = useLocation();
 
-  if (themeLoading || authLoading) return null;
+  // Show loading screen while fetching settings
+  if (themeLoading || authLoading) {
+    return <LoadingScreen />;
+  }
 
   const isAdminRoute = location.pathname.startsWith('/admin');
-  
+
   // If maintenance mode is ON, and user is NOT logged in, and NOT trying to access admin login
   // Note: We allow /admin routes so admins can login and turn it off
   if (settings.maintenanceMode && !user && !isAdminRoute) {
@@ -66,48 +69,48 @@ const App: React.FC = () => {
               {/* Admin Routes - Standalone (No Public Layout) */}
               <Route path="/admin/login" element={<Login />} />
               <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
-              
-              <Route 
-                path="/admin/dashboard" 
+
+              <Route
+                path="/admin/dashboard"
                 element={
                   <ProtectedRoute>
                     <Dashboard />
                   </ProtectedRoute>
-                } 
+                }
               />
-              <Route 
-                path="/admin/instructors" 
+              <Route
+                path="/admin/instructors"
                 element={
                   <ProtectedRoute>
                     <InstructorsAdmin />
                   </ProtectedRoute>
-                } 
+                }
               />
-              <Route 
-                path="/admin/courses" 
+              <Route
+                path="/admin/courses"
                 element={
                   <ProtectedRoute>
                     <CoursesAdmin />
                   </ProtectedRoute>
-                } 
+                }
               />
-              <Route 
-                path="/admin/library" 
+              <Route
+                path="/admin/library"
                 element={
                   <ProtectedRoute>
                     <LibraryAdmin />
-                </ProtectedRoute>
-                } 
+                  </ProtectedRoute>
+                }
               />
-              <Route 
-                path="/admin/settings" 
+              <Route
+                path="/admin/settings"
                 element={
                   <ProtectedRoute>
                     <Settings />
                   </ProtectedRoute>
-                } 
+                }
               />
-              
+
               {/* 404 Redirect */}
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>

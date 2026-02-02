@@ -78,15 +78,15 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, instructor }) => {
         <div className="flex items-center justify-between pt-8 border-t border-slate-50">
           <div className="flex flex-col">
             <span className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-1 italic">
-              {t('قيمة الاستثمار', 'Investment Value')}
+              {t('سعر الكورس', 'Course Price')}
             </span>
-            {course.oldPrice && (
+            {Number(course.oldPrice) > 0 && (
               <span className="text-xs text-slate-400 line-through decoration-slate-300">
                 {course.oldPrice.toLocaleString()} {t('د.ع', 'IQD')}
               </span>
             )}
             <span className="text-2xl lg:text-3xl font-black text-slate-900 tracking-tighter italic">
-              {course.price === 0 ? t('مجاناً', 'Free') : `$${course.price}`}
+              {course.price === 0 ? t('مجاناً', 'Free') : `$${course.price.toLocaleString()}`}
             </span>
           </div>
           <Link
