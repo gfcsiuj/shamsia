@@ -10,7 +10,7 @@ interface CourseCardProps {
 }
 
 const CourseCard: React.FC<CourseCardProps> = ({ course, instructor }) => {
-  const { t, isEnglish } = useTheme();
+  const { t, isEnglish, isDarkMode } = useTheme();
 
   // Handle media (use first image or placeholder)
   const imageUrl = course.media && course.media.length > 0 ? course.media[0].url : 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=600';
@@ -34,7 +34,10 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, instructor }) => {
   const ChevronIcon = isEnglish ? ChevronRight : ChevronLeft;
 
   return (
-    <div className="group bg-white rounded-[3rem] border border-slate-100 shadow-sm overflow-hidden transition-all duration-500 hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] hover:-translate-y-3 cursor-pointer">
+    <div className={`group rounded-[3rem] border shadow-sm overflow-hidden transition-all duration-500 hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] hover:-translate-y-3 cursor-pointer ${isDarkMode
+        ? 'bg-slate-800 border-slate-700'
+        : 'bg-white border-slate-100'
+      }`}>
       {/* Image Area */}
       <div className="relative h-64 lg:h-72 overflow-hidden">
         <img
@@ -59,7 +62,8 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, instructor }) => {
       <div className={`p-8 lg:p-10 ${isEnglish ? 'text-left' : 'text-right'}`}>
         {/* Meta Info */}
         <div className="flex items-center gap-6 mb-6">
-          <span className="flex items-center gap-2 text-[10px] lg:text-xs font-black text-slate-400 uppercase tracking-widest">
+          <span className={`flex items-center gap-2 text-[10px] lg:text-xs font-black uppercase tracking-widest ${isDarkMode ? 'text-slate-500' : 'text-slate-400'
+            }`}>
             <Users className="w-4 h-4 opacity-50" /> {course.studentsCount || 0} {t('طالب', 'Students')}
           </span>
           <span className="flex items-center gap-2 text-[10px] lg:text-xs font-black text-amber-500 uppercase tracking-widest">
@@ -69,29 +73,37 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, instructor }) => {
 
         {/* Title */}
         <Link to={`/courses/${course.id}`}>
-          <h4 className="text-xl lg:text-2xl font-black text-slate-900 mb-8 group-hover:text-emerald-700 transition-colors leading-snug italic tracking-tight min-h-[4rem]">
+          <h4 className={`text-xl lg:text-2xl font-black mb-8 group-hover:text-emerald-500 transition-colors leading-snug italic tracking-tight min-h-[4rem] ${isDarkMode ? 'text-white' : 'text-slate-900'
+            }`}>
             {course.title}
           </h4>
         </Link>
 
         {/* Footer: Price & Action */}
-        <div className="flex items-center justify-between pt-8 border-t border-slate-50">
+        <div className={`flex items-center justify-between pt-8 border-t ${isDarkMode ? 'border-slate-700' : 'border-slate-50'
+          }`}>
           <div className="flex flex-col">
-            <span className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-1 italic">
+            <span className={`text-[10px] font-black uppercase tracking-widest mb-1 italic ${isDarkMode ? 'text-slate-500' : 'text-slate-400'
+              }`}>
               {t('سعر الكورس', 'Course Price')}
             </span>
             {Number(course.oldPrice) > 0 && (
-              <span className="text-xs text-slate-400 line-through decoration-slate-300">
+              <span className={`text-xs line-through ${isDarkMode ? 'text-slate-500 decoration-slate-600' : 'text-slate-400 decoration-slate-300'
+                }`}>
                 {course.oldPrice.toLocaleString()} {t('د.ع', 'IQD')}
               </span>
             )}
-            <span className="text-2xl lg:text-3xl font-black text-slate-900 tracking-tighter italic">
+            <span className={`text-2xl lg:text-3xl font-black tracking-tighter italic ${isDarkMode ? 'text-white' : 'text-slate-900'
+              }`}>
               {course.price === 0 ? t('مجاناً', 'Free') : `$${course.price.toLocaleString()}`}
             </span>
           </div>
           <Link
             to={`/courses/${course.id}`}
-            className="w-12 h-12 lg:w-14 lg:h-14 rounded-2xl bg-slate-100 text-slate-900 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-all shadow-sm group-hover:shadow-xl group-hover:rotate-6 active:scale-90"
+            className={`w-12 h-12 lg:w-14 lg:h-14 rounded-2xl flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-all shadow-sm group-hover:shadow-xl group-hover:rotate-6 active:scale-90 ${isDarkMode
+                ? 'bg-slate-700 text-slate-300'
+                : 'bg-slate-100 text-slate-900'
+              }`}
           >
             <ChevronIcon className="w-6 h-6 lg:w-7 lg:h-7" />
           </Link>

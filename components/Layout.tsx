@@ -178,6 +178,18 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       {/* Mobile Bottom Navigation */}
       <MobileBottomNav />
 
+      {/* Floating WhatsApp Chat Button */}
+      <a
+        href="https://wa.me/9647732200003"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-24 lg:bottom-10 left-6 lg:left-10 w-14 h-14 lg:w-16 lg:h-16 bg-emerald-600 text-white rounded-full flex items-center justify-center shadow-[0_20px_40px_-10px_rgba(5,150,105,0.4)] z-[99] transition-all hover:scale-110 active:scale-95 group overflow-hidden border-2 border-white/20"
+      >
+        <div className="absolute inset-0 bg-white/20 scale-0 group-hover:scale-100 transition-transform duration-500 rounded-full"></div>
+        <MessageCircle className="w-7 h-7 lg:w-8 lg:h-8 fill-current relative z-10" />
+      </a>
+
+
       {/* Footer - Modern Design */}
       <footer className="pt-20 pb-28 lg:pb-10 border-t border-slate-100 px-4 lg:px-6 text-center lg:text-right">
         <div className="container mx-auto max-w-7xl">

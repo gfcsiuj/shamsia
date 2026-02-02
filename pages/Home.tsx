@@ -367,12 +367,6 @@ const Home: React.FC = () => {
         <div className="absolute -top-[20%] -left-[10%] w-[800px] h-[800px] bg-emerald-600/10 rounded-full blur-[160px]"></div>
         <div className="absolute -bottom-[20%] -right-[10%] w-[600px] h-[600px] bg-emerald-400/5 rounded-full blur-[140px]"></div>
       </section>
-
-      {/* Floating Chat Button */}
-      <Link to="/contact" className="fixed bottom-24 md:bottom-10 left-6 md:left-10 w-14 h-14 md:w-16 md:h-16 bg-emerald-600 text-white rounded-full flex items-center justify-center shadow-[0_20px_40px_-10px_rgba(5,150,105,0.4)] z-40 transition-all hover:scale-110 active:scale-95 group overflow-hidden border-2 border-white/20">
-        <div className="absolute inset-0 bg-white/20 scale-0 group-hover:scale-100 transition-transform duration-500 rounded-full"></div>
-        <MessageCircle className="w-7 h-7 md:w-8 md:h-8 fill-current relative z-10" />
-      </Link>
     </div>
   );
 };
