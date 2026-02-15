@@ -10,6 +10,7 @@ const CourseDetails: React.FC = () => {
   const { t, isEnglish } = useTheme();
   const [course, setCourse] = useState<Course | null>(null);
   const [instructor, setInstructor] = useState<Instructor | null>(null);
+  const [graduates, setGraduates] = useState<Instructor[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'about' | 'syllabus' | 'instructor' | 'details'>('about');
 
@@ -29,6 +30,17 @@ const CourseDetails: React.FC = () => {
             if (instructorDoc.exists) {
               setInstructor({ id: instructorDoc.id, ...instructorDoc.data() } as Instructor);
             }
+          }
+
+          // Fetch graduates (if any)
+          if (courseData.graduateIds && courseData.graduateIds.length > 0) {
+            const graduateDocs = await Promise.all(
+              courseData.graduateIds.map(gid => db.collection('instructors').doc(gid).get())
+            );
+            const graduatesData = graduateDocs
+              .filter(doc => doc.exists)
+              .map(doc => ({ id: doc.id, ...doc.data() } as Instructor));
+            setGraduates(graduatesData);
           }
         }
       } catch (error) {
@@ -250,18 +262,50 @@ const CourseDetails: React.FC = () => {
               )}
 
               {activeTab === 'instructor' && instructor && (
-                <div className={`animate-fade-up flex flex-col md:flex-row gap-8 items-center md:items-start text-center ${isEnglish ? 'md:text-left' : 'md:text-right'}`}>
-                  <img src={instructor.image} alt={instructor.name} className="w-28 h-28 md:w-36 md:h-36 rounded-[2rem] object-cover shadow-xl border-4 border-white" />
-                  <div>
-                    <h3 className="text-2xl font-black text-slate-900 mb-2 italic">{instructor.name}</h3>
-                    <p className="text-emerald-600 font-bold mb-4 bg-emerald-50 px-3 py-1 rounded-lg inline-block">{instructor.roles?.[0]}</p>
-                    <p className="text-slate-600 leading-relaxed mb-6">
-                      {instructor.bio}
-                    </p>
-                    <Link to="/instructors" className="text-emerald-600 font-black hover:underline inline-flex items-center gap-2">
-                      {t('عرض ملف المدرب الكامل', 'View Full Instructor Profile')} <ChevronIcon size={16} />
-                    </Link>
+                <div className="animate-fade-up space-y-10">
+                  {/* Instructor Info */}
+                  <div className={`flex flex-col md:flex-row gap-8 items-center md:items-start text-center ${isEnglish ? 'md:text-left' : 'md:text-right'}`}>
+                    <img src={instructor.image} alt={instructor.name} className="w-28 h-28 md:w-36 md:h-36 rounded-[2rem] object-cover shadow-xl border-4 border-white" />
+                    <div>
+                      <h3 className="text-2xl font-black text-slate-900 mb-2 italic">{instructor.name}</h3>
+                      <p className="text-emerald-600 font-bold mb-4 bg-emerald-50 px-3 py-1 rounded-lg inline-block">{instructor.roles?.[0]}</p>
+                      <p className="text-slate-600 leading-relaxed mb-6">
+                        {instructor.bio}
+                      </p>
+                      <Link to="/instructors" className="text-emerald-600 font-black hover:underline inline-flex items-center gap-2">
+                        {t('عرض ملف المدرب الكامل', 'View Full Instructor Profile')} <ChevronIcon size={16} />
+                      </Link>
+                    </div>
                   </div>
+
+                  {/* Graduates Section */}
+                  {graduates.length > 0 && (
+                    <div className="pt-8 border-t border-slate-100">
+                      <h3 className="text-xl font-black text-slate-900 mb-6 flex items-center gap-3 italic">
+                        <div className="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center">
+                          <Award className="text-orange-600" size={20} />
+                        </div>
+                        {t('خريجين / مشاركين الدورة', 'Course Graduates / Participants')}
+                      </h3>
+                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        {graduates.map((grad) => (
+                          <div key={grad.id} className="bg-gradient-to-br from-orange-50 to-white p-4 rounded-2xl border border-orange-100 text-center hover:shadow-lg transition-all group">
+                            <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-orange-100 flex items-center justify-center overflow-hidden border-2 border-orange-200 group-hover:border-orange-400 transition-colors">
+                              {grad.image ? (
+                                <img src={grad.image} alt={grad.name} className="w-full h-full object-cover" />
+                              ) : (
+                                <User className="text-orange-400" size={28} />
+                              )}
+                            </div>
+                            <h4 className="font-bold text-slate-800 text-sm mb-1">{grad.name}</h4>
+                            {grad.roles?.[0] && (
+                              <p className="text-xs text-orange-600 font-medium">{grad.roles[0]}</p>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -271,10 +315,10 @@ const CourseDetails: React.FC = () => {
           <div className="lg:w-1/3 animate-fade-up delay-500">
             <div className="bg-white rounded-[2rem] shadow-xl p-8 lg:sticky lg:top-24 border border-slate-100">
               <div className="text-4xl font-black text-slate-900 mb-2 italic tracking-tight">
-                {course.price === 0 ? t('مجاناً', 'Free') : `$${course.price}`}
+                {course.price === 0 ? t('مجاناً', 'Free') : `${course.price.toLocaleString()} ${t('د.ع', 'IQD')}`}
               </div>
               {course.oldPrice && (
-                <div className="text-slate-400 line-through text-lg mb-6">${course.oldPrice}</div>
+                <div className="text-slate-400 line-through text-lg mb-6">{course.oldPrice.toLocaleString()} {t('د.ع', 'IQD')}</div>
               )}
 
               <Link
@@ -299,9 +343,7 @@ const CourseDetails: React.FC = () => {
                 </div>
               </div>
 
-              <div className="mt-8 bg-emerald-50 p-5 rounded-2xl text-sm text-emerald-700 leading-relaxed text-center font-medium border border-emerald-100">
-                ✓ {t('ضمان استرداد الأموال خلال 14 يوماً', '14-day money-back guarantee')}
-              </div>
+
             </div>
           </div>
 

@@ -8,12 +8,17 @@ import Instructors from './pages/Instructors';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import Library from './pages/Library';
+import Calendar from './pages/Calendar';
 import CourseRegister from './pages/CourseRegister';
 import Login from './pages/admin/Login';
+import VerifyCertificate from './pages/VerifyCertificate';
 import Dashboard from './pages/admin/Dashboard';
 import InstructorsAdmin from './pages/admin/InstructorsAdmin';
 import CoursesAdmin from './pages/admin/CoursesAdmin';
 import LibraryAdmin from './pages/admin/LibraryAdmin';
+import RegistrationsAdmin from './pages/admin/RegistrationsAdmin';
+import CertificatesAdmin from './pages/admin/CertificatesAdmin';
+import TestimonialsAdmin from './pages/admin/TestimonialsAdmin';
 import Settings from './pages/admin/Settings';
 import ProtectedRoute from './components/ProtectedRoute';
 import Maintenance from './components/Maintenance';
@@ -63,7 +68,9 @@ const App: React.FC = () => {
                 <Route path="/library" element={<Library />} />
                 <Route path="/instructors" element={<Instructors />} />
                 <Route path="/about" element={<About />} />
+                <Route path="/calendar" element={<Calendar />} />
                 <Route path="/contact" element={<Contact />} />
+                <Route path="/verify/:id" element={<VerifyCertificate />} />
               </Route>
 
               {/* Admin Routes - Standalone (No Public Layout) */}
@@ -99,6 +106,30 @@ const App: React.FC = () => {
                 element={
                   <ProtectedRoute>
                     <LibraryAdmin />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/registrations"
+                element={
+                  <ProtectedRoute>
+                    <RegistrationsAdmin />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/certificates"
+                element={
+                  <ProtectedRoute>
+                    <CertificatesAdmin />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/testimonials"
+                element={
+                  <ProtectedRoute>
+                    <TestimonialsAdmin />
                   </ProtectedRoute>
                 }
               />

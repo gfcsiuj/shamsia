@@ -1,129 +1,256 @@
-import React from 'react';
-import { Target, Heart, Award, ShieldCheck } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import ReactDOM from 'react-dom';
+import { Target, Heart, Award, ShieldCheck, Loader2, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
+import { db } from '../lib/firebase';
+
+interface TrainerCert { id: string; instructorId: string; instructorName: string; title: string; description: string; images: string[]; }
+interface CompanyCert { id: string; name: string; frontImage: string; backImage?: string; }
+interface Partner { name: string; logoUrl?: string; }
 
 const About: React.FC = () => {
   const { t, isEnglish } = useTheme();
+  const [trainerCerts, setTrainerCerts] = useState<TrainerCert[]>([]);
+  const [companyCerts, setCompanyCerts] = useState<CompanyCert[]>([]);
+  const [partners, setPartners] = useState<Partner[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Lightbox
+  const [lbImages, setLbImages] = useState<string[]>([]);
+  const [lbIdx, setLbIdx] = useState(0);
+  const [lbOpen, setLbOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchAll = async () => {
+      try {
+        const [tSnap, cSnap, pSnap] = await Promise.all([
+          db.collection('trainerCertificates').get(),
+          db.collection('companyCertificates').get(),
+          db.collection('partners').get(),
+        ]);
+        setTrainerCerts(tSnap.docs.map(d => ({ id: d.id, ...d.data() } as TrainerCert)));
+        setCompanyCerts(cSnap.docs.map(d => ({ id: d.id, ...d.data() } as CompanyCert)));
+        setPartners(pSnap.docs.map(d => d.data() as Partner));
+      } catch (err) { console.error(err); }
+      finally { setLoading(false); }
+    };
+    fetchAll();
+  }, []);
+
+  const openLb = useCallback((images: string[], idx = 0) => {
+    setLbImages(images);
+    setLbIdx(idx);
+    setLbOpen(true);
+    document.body.style.overflow = 'hidden';
+  }, []);
+
+  const closeLb = useCallback(() => {
+    setLbOpen(false);
+    setLbImages([]);
+    document.body.style.overflow = '';
+  }, []);
+
+  const lbNext = useCallback(() => setLbIdx(prev => (prev + 1) % lbImages.length), [lbImages.length]);
+  const lbPrev = useCallback(() => setLbIdx(prev => (prev - 1 + lbImages.length) % lbImages.length), [lbImages.length]);
+
+  // Keyboard nav
+  useEffect(() => {
+    if (!lbOpen) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') closeLb();
+      if (e.key === 'ArrowRight') lbPrev();
+      if (e.key === 'ArrowLeft') lbNext();
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [lbOpen, closeLb, lbNext, lbPrev]);
 
   const values = [
-    {
-      icon: ShieldCheck,
-      title: t('المصداقية', 'Integrity'),
-      desc: t('نلتزم بأعلى معايير الشفافية والموثوقية في كل ما نقدمه.', 'We commit to the highest standards of transparency and reliability in everything we offer.'),
-      color: 'emerald'
-    },
-    {
-      icon: Heart,
-      title: t('الشغف', 'Passion'),
-      desc: t('شغفنا بالتعليم هو الدافع الرئيسي لكل مبادرة نطلقها.', 'Our passion for education is the main driver behind every initiative we launch.'),
-      color: 'orange'
-    },
-    {
-      icon: Award,
-      title: t('التميز', 'Excellence'),
-      desc: t('لا نرضى بأقل من الجودة العالية في المحتوى والتقديم.', 'We settle for nothing less than high quality in content and delivery.'),
-      color: 'blue'
-    },
+    { icon: ShieldCheck, title: t('المصداقية', 'Integrity'), desc: t('نلتزم بأعلى معايير الشفافية والموثوقية.', 'We commit to the highest standards of transparency.'), color: 'emerald' },
+    { icon: Heart, title: t('الشغف', 'Passion'), desc: t('شغفنا بالتعليم هو الدافع الرئيسي لنا.', 'Our passion for education is our main driver.'), color: 'orange' },
+    { icon: Award, title: t('التميز', 'Excellence'), desc: t('لا نرضى بأقل من الجودة العالية.', 'We settle for nothing less than high quality.'), color: 'blue' },
   ];
 
   const missionPoints = [
     t('تقديم محتوى عربي وعراقي عالي الجودة.', 'Providing high-quality Arabic and Iraqi content.'),
-    t('سد الفجوة بين التعليم الجامعي وسوق العمل.', 'Bridging the gap between university education and the job market.'),
-    t('دعم التعلم المستمر وتحقيق أهداف التنمية المستدامة.', 'Supporting continuous learning and achieving sustainable development goals.'),
+    t('سد الفجوة بين التعليم الجامعي وسوق العمل.', 'Bridging the gap between education and the job market.'),
+    t('دعم التعلم المستمر وتحقيق أهداف التنمية المستدامة.', 'Supporting continuous learning and SDGs.'),
   ];
 
-  const partners = [
-    t('جامعة المستقبل', 'Future University'),
-    'Tech Solutions',
-    t('معهد الإدارة', 'Management Institute'),
-    'CyberGuard'
-  ];
+  /* ═══════════════════════════════════════
+     LIGHTBOX — rendered via Portal on body
+     ═══════════════════════════════════════ */
+  const renderLightbox = () => {
+    if (!lbOpen || lbImages.length === 0) return null;
+
+    const lightbox = (
+      <div
+        style={{
+          position: 'fixed',
+          top: 0, left: 0, right: 0, bottom: 0,
+          zIndex: 99999,
+          backgroundColor: 'rgba(0,0,0,0.96)',
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+        onClick={closeLb}
+      >
+        {/* Top bar */}
+        <div style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          padding: '12px 16px', flexShrink: 0,
+        }} onClick={e => e.stopPropagation()}>
+          <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: '14px', fontWeight: 700 }}>
+            {lbImages.length > 1 ? `${lbIdx + 1} / ${lbImages.length}` : ''}
+          </div>
+          <button onClick={closeLb}
+            style={{
+              width: '44px', height: '44px', borderRadius: '50%',
+              background: 'rgba(255,255,255,0.15)', border: 'none',
+              cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: '#fff', fontSize: '20px',
+            }}>
+            <X size={24} />
+          </button>
+        </div>
+
+        {/* Image area */}
+        <div style={{
+          flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
+          position: 'relative', minHeight: 0, padding: '0 8px',
+        }} onClick={e => e.stopPropagation()}>
+
+          {/* Prev arrow */}
+          {lbImages.length > 1 && (
+            <button onClick={lbPrev} style={{
+              position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)',
+              zIndex: 5, width: '44px', height: '44px', borderRadius: '50%',
+              background: 'rgba(255,255,255,0.12)', border: 'none', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff',
+            }}>
+              <ChevronRight size={24} />
+            </button>
+          )}
+
+          {/* Image */}
+          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '8px 48px' }}>
+            <img
+              key={lbIdx}
+              src={lbImages[lbIdx]}
+              alt=""
+              style={{
+                maxWidth: '100%', maxHeight: '100%', objectFit: 'contain',
+                borderRadius: '12px', userSelect: 'none',
+              }}
+              draggable={false}
+            />
+          </div>
+
+          {/* Next arrow */}
+          {lbImages.length > 1 && (
+            <button onClick={lbNext} style={{
+              position: 'absolute', left: '8px', top: '50%', transform: 'translateY(-50%)',
+              zIndex: 5, width: '44px', height: '44px', borderRadius: '50%',
+              background: 'rgba(255,255,255,0.12)', border: 'none', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff',
+            }}>
+              <ChevronLeft size={24} />
+            </button>
+          )}
+        </div>
+
+        {/* Thumbnails */}
+        {lbImages.length > 1 && (
+          <div style={{
+            flexShrink: 0, padding: '12px 16px', display: 'flex', justifyContent: 'center',
+            gap: '8px', overflowX: 'auto',
+          }} onClick={e => e.stopPropagation()}>
+            {lbImages.map((img, idx) => (
+              <button key={idx} onClick={() => setLbIdx(idx)} style={{
+                width: '52px', height: '52px', borderRadius: '10px', overflow: 'hidden',
+                flexShrink: 0, border: idx === lbIdx ? '2px solid #fff' : '2px solid transparent',
+                opacity: idx === lbIdx ? 1 : 0.4, cursor: 'pointer',
+                transform: idx === lbIdx ? 'scale(1.1)' : 'scale(1)',
+                transition: 'all 0.2s', padding: 0, background: 'none',
+              }}>
+                <img src={img} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+
+    return ReactDOM.createPortal(lightbox, document.body);
+  };
 
   return (
     <div className="bg-white min-h-screen pb-20">
-      {/* Hero - New Emerald Design */}
-      <div className="relative pt-20 pb-24 overflow-hidden">
-        {/* Background Blobs */}
+      {/* Hero */}
+      <div className="relative pt-16 md:pt-20 pb-16 md:pb-24 overflow-hidden">
         <div className="absolute inset-0 -z-10">
-          <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-emerald-100/50 rounded-full blur-[100px] animate-blob"></div>
-          <div className="absolute bottom-[-5%] left-[-5%] w-[400px] h-[400px] bg-orange-100/40 rounded-full blur-[80px] animate-blob delay-2000"></div>
+          <div className="absolute top-[-10%] right-[-10%] w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-emerald-100/50 rounded-full blur-[100px] animate-blob"></div>
+          <div className="absolute bottom-[-5%] left-[-5%] w-[250px] md:w-[400px] h-[250px] md:h-[400px] bg-orange-100/40 rounded-full blur-[80px] animate-blob delay-2000"></div>
         </div>
-
         <div className="container mx-auto px-4 text-center relative z-10">
-          <h1 className="text-5xl md:text-7xl font-black text-slate-900 mb-6 italic tracking-tight animate-fade-up">
-            {isEnglish ? (
-              <>About <span className="text-gradient">Us</span></>
-            ) : (
-              <>من <span className="text-gradient">نحن</span></>
-            )}
+          <h1 className="text-4xl md:text-7xl font-black text-slate-900 mb-4 md:mb-6 italic tracking-tight animate-fade-up">
+            {isEnglish ? (<>About <span className="text-gradient">Us</span></>) : (<>من <span className="text-gradient">نحن</span></>)}
           </h1>
-          <p className="text-slate-600 text-lg md:text-xl max-w-3xl mx-auto font-medium animate-fade-up delay-100">
-            {t(
-              'منصة شمسية الألكترونية منصة تعمل بأيادٍ عراقية وعربية، هدفها تحقيق مفهوم التنمية المستدامة (SDG).',
-              'Shamsiya is an electronic platform built by Iraqi and Arab hands, aiming to achieve the concept of Sustainable Development Goals (SDG).'
-            )}
+          <p className="text-slate-600 text-base md:text-xl max-w-3xl mx-auto font-medium animate-fade-up delay-100 px-2">
+            {t('منصة شمسية الألكترونية منصة تعمل بأيادٍ عراقية وعربية، هدفها تحقيق مفهوم التنمية المستدامة (SDG).', 'Shamsiya is an electronic platform built by Iraqi and Arab hands.')}
           </p>
         </div>
       </div>
 
       {/* Mission & Vision */}
-      <div className="py-20 container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+      <div className="py-12 md:py-20 container mx-auto px-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
           <div className="animate-fade-up">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-14 h-14 bg-emerald-100 rounded-2xl flex items-center justify-center">
-                <Target className="text-emerald-600" size={28} />
+            <div className="flex items-center gap-3 mb-5 md:mb-6">
+              <div className="w-11 h-11 md:w-14 md:h-14 bg-emerald-100 rounded-xl md:rounded-2xl flex items-center justify-center">
+                <Target className="text-emerald-600" size={22} />
               </div>
-              <h2 className="text-3xl font-black text-slate-900 italic">
-                {t('رؤيتنا ورسالتنا', 'Our Vision & Mission')}
-              </h2>
+              <h2 className="text-xl md:text-3xl font-black text-slate-900 italic">{t('رؤيتنا ورسالتنا', 'Our Vision & Mission')}</h2>
             </div>
-            <p className="text-slate-600 leading-loose text-lg mb-8">
-              {t(
-                'نسعى لأن نكون طريقك الأمثل لتحقيق الوظيفة الدائمية من خلال توفير بيئة تعليمية تفاعلية تعتمد على أحدث التقنيات وأفضل الممارسات العالمية.',
-                'We strive to be your optimal path to achieving permanent employment by providing an interactive learning environment based on the latest technologies and best global practices.'
-              )}
+            <p className="text-slate-600 leading-loose text-sm md:text-lg mb-6">
+              {t('نسعى لأن نكون طريقك الأمثل لتحقيق الوظيفة الدائمية من خلال توفير بيئة تعليمية تفاعلية.', 'We strive to be your optimal path to achieving permanent employment.')}
             </p>
-            <ul className="space-y-4">
+            <ul className="space-y-3">
               {missionPoints.map((item, idx) => (
-                <li key={idx} className="flex items-center gap-3 text-slate-700 font-medium">
-                  <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                <li key={idx} className="flex items-start gap-3 text-slate-700 font-medium text-sm md:text-base">
+                  <div className="w-2 h-2 bg-emerald-500 rounded-full mt-2 flex-shrink-0"></div>
                   {item}
                 </li>
               ))}
             </ul>
           </div>
-          <div className="grid grid-cols-2 gap-4 animate-fade-up delay-200">
-            <img src="https://images.unsplash.com/photo-1531545514256-b1400bc00f31?auto=format&fit=crop&q=80&w=400" className="rounded-[2rem] shadow-lg mt-8 hover:scale-105 transition duration-500" alt="Team" />
-            <img src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&q=80&w=400" className="rounded-[2rem] shadow-lg hover:scale-105 transition duration-500" alt="Office" />
+          <div className="grid grid-cols-2 gap-3 md:gap-4 animate-fade-up delay-200">
+            <img src="https://images.unsplash.com/photo-1531545514256-b1400bc00f31?auto=format&fit=crop&q=80&w=400" className="rounded-2xl md:rounded-[2rem] shadow-lg mt-6 hover:scale-105 transition duration-500" alt="Team" />
+            <img src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&q=80&w=400" className="rounded-2xl md:rounded-[2rem] shadow-lg hover:scale-105 transition duration-500" alt="Office" />
           </div>
         </div>
       </div>
 
-      {/* Values - With Emerald Theme */}
-      <div className="bg-slate-50 py-20">
+      {/* Values */}
+      <div className="bg-slate-50 py-12 md:py-20">
         <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-black text-center text-slate-900 mb-12 italic animate-fade-up">
-            {isEnglish ? (
-              <>Our <span className="text-emerald-600">Core Values</span></>
-            ) : (
-              <>قيمنا <span className="text-emerald-600">الجوهرية</span></>
-            )}
+          <h2 className="text-2xl md:text-4xl font-black text-center text-slate-900 mb-8 md:mb-12 italic animate-fade-up">
+            {isEnglish ? (<>Our <span className="text-emerald-600">Core Values</span></>) : (<>قيمنا <span className="text-emerald-600">الجوهرية</span></>)}
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8">
             {values.map((val, idx) => {
-              const colorMap: { [key: string]: string } = {
+              const colorMap: Record<string, string> = {
                 emerald: 'bg-emerald-100 text-emerald-600 group-hover:bg-emerald-600',
                 orange: 'bg-orange-100 text-orange-600 group-hover:bg-orange-600',
                 blue: 'bg-blue-100 text-blue-600 group-hover:bg-blue-600',
               };
               return (
-                <div key={idx} className="group bg-white p-8 rounded-[2rem] shadow-sm text-center hover:-translate-y-2 hover:shadow-xl transition duration-300 border border-slate-100 animate-fade-up" style={{ animationDelay: `${idx * 150}ms` }}>
-                  <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 ${colorMap[val.color]} group-hover:text-white transition-all duration-300`}>
-                    <val.icon size={32} />
+                <div key={idx} className="group bg-white p-6 md:p-8 rounded-2xl shadow-sm text-center hover:-translate-y-2 hover:shadow-xl transition duration-300 border border-slate-100 animate-fade-up" style={{ animationDelay: `${idx * 150}ms` }}>
+                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4 ${colorMap[val.color]} group-hover:text-white transition-all duration-300`}>
+                    <val.icon size={28} />
                   </div>
-                  <h3 className="text-xl font-black mb-3 text-slate-800 italic">{val.title}</h3>
-                  <p className="text-slate-500">{val.desc}</p>
+                  <h3 className="text-lg font-black mb-2 text-slate-800 italic">{val.title}</h3>
+                  <p className="text-slate-500 text-sm">{val.desc}</p>
                 </div>
               );
             })}
@@ -132,36 +259,111 @@ const About: React.FC = () => {
       </div>
 
       {/* Partners */}
-      <div className="py-20 container mx-auto px-4 text-center">
-        <h2 className="text-4xl font-black text-slate-900 mb-12 italic animate-fade-up">
-          {isEnglish ? (
-            <>Success <span className="text-emerald-600">Partners</span></>
-          ) : (
-            <>شركاء <span className="text-emerald-600">النجاح</span></>
-          )}
+      <div className="py-12 md:py-20 container mx-auto px-4 text-center">
+        <h2 className="text-2xl md:text-4xl font-black text-slate-900 mb-8 md:mb-12 italic animate-fade-up">
+          {isEnglish ? (<>Success <span className="text-emerald-600">Partners</span></>) : (<>شركاء <span className="text-emerald-600">النجاح</span></>)}
         </h2>
-        <div className="flex flex-wrap justify-center items-center gap-8 animate-fade-up delay-200">
-          {partners.map((partner, idx) => (
-            <div key={idx} className="text-xl font-black text-slate-400 border-2 border-slate-200 px-6 py-4 rounded-2xl hover:border-emerald-300 hover:text-emerald-600 transition duration-300 cursor-default">
-              {partner}
-            </div>
-          ))}
-        </div>
+        {loading ? (
+          <div className="flex justify-center py-10"><Loader2 className="animate-spin text-emerald-500" size={32} /></div>
+        ) : partners.length > 0 ? (
+          <div className="flex flex-wrap justify-center items-center gap-3 md:gap-5 animate-fade-up delay-200">
+            {partners.map((partner, idx) => (
+              <div key={idx} className="flex items-center gap-2 md:gap-3 bg-white border-2 border-slate-200 px-4 md:px-6 py-3 md:py-4 rounded-xl md:rounded-2xl hover:border-emerald-300 hover:shadow-lg transition duration-300 cursor-default group">
+                {partner.logoUrl && <img src={partner.logoUrl} alt={partner.name} className="w-8 h-8 md:w-10 md:h-10 object-contain rounded-lg" />}
+                <span className="text-sm md:text-lg font-black text-slate-600 group-hover:text-emerald-600 transition">{partner.name}</span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-wrap justify-center items-center gap-3 md:gap-6 animate-fade-up delay-200">
+            {[t('جامعة المستقبل', 'Future University'), 'Tech Solutions', t('معهد الإدارة', 'Management Institute')].map((p, idx) => (
+              <div key={idx} className="text-sm md:text-xl font-black text-slate-400 border-2 border-slate-200 px-4 md:px-6 py-3 md:py-4 rounded-xl md:rounded-2xl hover:border-emerald-300 hover:text-emerald-600 transition cursor-default">{p}</div>
+            ))}
+          </div>
+        )}
+      </div>
 
-        <div className="mt-16 bg-emerald-50 p-10 rounded-[2rem] inline-block max-w-4xl border border-emerald-100 animate-fade-up delay-300">
-          <h3 className="text-lg font-black text-emerald-800 mb-6 italic">
-            {t('الشهادات المعتمدة', 'Accredited Certificates')}
-          </h3>
-          <div className="flex gap-4 justify-center">
-            <div className="w-32 h-40 bg-white border border-emerald-200 shadow-sm rounded-xl flex items-center justify-center text-xs text-slate-400 hover:shadow-lg hover:border-emerald-300 transition">
-              {t('نموذج شهادة 1', 'Certificate 1')}
-            </div>
-            <div className="w-32 h-40 bg-white border border-emerald-200 shadow-sm rounded-xl flex items-center justify-center text-xs text-slate-400 hover:shadow-lg hover:border-emerald-300 transition">
-              {t('نموذج شهادة 2', 'Certificate 2')}
+      {/* ══════ Company Certificates ══════ */}
+      <div className="py-12 md:py-16 container mx-auto px-4 text-center">
+        <h2 className="text-2xl md:text-3xl font-black text-slate-900 mb-8 md:mb-10 italic animate-fade-up">
+          {isEnglish ? (<>Accredited <span className="text-emerald-600">Certificates</span></>) : (<>الشهادات <span className="text-emerald-600">المعتمدة</span></>)}
+        </h2>
+        {loading ? (
+          <div className="flex justify-center py-10"><Loader2 className="animate-spin text-emerald-500" size={32} /></div>
+        ) : companyCerts.length > 0 ? (
+          <div className="bg-emerald-50/50 rounded-2xl p-4 md:p-8 border border-emerald-100 max-w-5xl mx-auto">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5">
+              {companyCerts.map(cert => {
+                const imgs = [cert.frontImage];
+                if (cert.backImage) imgs.push(cert.backImage);
+                return (
+                  <div key={cert.id} className="cursor-pointer group" onClick={() => openLb(imgs)}>
+                    <div className="bg-white border-2 border-emerald-200 shadow-sm rounded-xl overflow-hidden hover:shadow-xl hover:border-emerald-400 hover:-translate-y-1 transition-all duration-300 aspect-[3/4] p-2 flex items-center justify-center">
+                      <img src={cert.frontImage} alt={cert.name} className="max-w-full max-h-full object-contain" />
+                    </div>
+                    <p className="text-xs md:text-sm font-black text-slate-700 mt-2 text-center truncate">{cert.name}</p>
+                    {cert.backImage && <p className="text-[10px] text-emerald-600 font-bold text-center">{t('وجهان', '2 sides')}</p>}
+                  </div>
+                );
+              })}
             </div>
           </div>
-        </div>
+        ) : (
+          <div className="bg-emerald-50 p-8 rounded-2xl inline-block border border-emerald-100">
+            <div className="flex gap-3 justify-center">
+              <div className="w-28 h-36 bg-white border border-emerald-200 rounded-xl flex items-center justify-center text-xs text-slate-400">{t('نموذج 1', 'Cert 1')}</div>
+              <div className="w-28 h-36 bg-white border border-emerald-200 rounded-xl flex items-center justify-center text-xs text-slate-400">{t('نموذج 2', 'Cert 2')}</div>
+            </div>
+          </div>
+        )}
       </div>
+
+      {/* ══════ Trainer Certificates ══════ */}
+      <div className="py-12 md:py-16 container mx-auto px-4">
+        <h2 className="text-2xl md:text-3xl font-black text-center text-slate-900 mb-8 md:mb-10 italic animate-fade-up">
+          {isEnglish ? (<>Trainer <span className="text-emerald-600">Certificates</span></>) : (<>شهادات <span className="text-emerald-600">المدربين</span></>)}
+        </h2>
+        {loading ? (
+          <div className="flex justify-center py-10"><Loader2 className="animate-spin text-emerald-500" size={32} /></div>
+        ) : trainerCerts.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 max-w-6xl mx-auto">
+            {trainerCerts.map(tc => (
+              <div key={tc.id} className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group text-right">
+                {tc.images.length > 0 && (
+                  <div className="relative h-44 md:h-52 overflow-hidden bg-slate-100 cursor-pointer" onClick={() => openLb(tc.images, 0)}>
+                    <img src={tc.images[0]} alt={tc.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    {tc.images.length > 1 && (
+                      <div className="absolute top-2 left-2 bg-black/60 backdrop-blur-sm text-white px-2 py-1 rounded-lg text-[11px] font-bold">
+                        📷 {tc.images.length}
+                      </div>
+                    )}
+                  </div>
+                )}
+                <div className="p-4 md:p-5">
+                  <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-teal-100 text-teal-700 mb-2 inline-block">{tc.instructorName}</span>
+                  <h4 className="font-black text-slate-800 text-sm md:text-base mb-1">{tc.title}</h4>
+                  {tc.description && <p className="text-xs text-slate-400 line-clamp-2">{tc.description}</p>}
+                  {tc.images.length > 1 && (
+                    <div className="flex gap-1.5 mt-3 overflow-x-auto pb-1">
+                      {tc.images.map((img, i) => (
+                        <img key={i} src={img} alt=""
+                          className={`w-10 h-10 md:w-11 md:h-11 rounded-lg object-cover border-2 cursor-pointer hover:scale-110 transition flex-shrink-0 ${i === 0 ? 'border-teal-300' : 'border-slate-200'}`}
+                          onClick={(e) => { e.stopPropagation(); openLb(tc.images, i); }}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-slate-400 font-medium text-center">{t('سيتم إضافة شهادات المدربين قريباً', 'Trainer certificates coming soon')}</p>
+        )}
+      </div>
+
+      {/* Portal-rendered lightbox */}
+      {renderLightbox()}
     </div>
   );
 };

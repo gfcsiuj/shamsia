@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Mail, Phone, MapPin, Send, MessageCircle } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, MessageCircle, Loader2, CheckCircle } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
+import { db } from '../lib/firebase';
 
 const Contact: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -10,10 +11,29 @@ const Contact: React.FC = () => {
     message: ''
   });
   const { settings, t, isEnglish } = useTheme();
+  const [submitLoading, setSubmitLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert(t('تم إرسال طلبك بنجاح! سيقوم فريقنا بالتواصل معك قريباً.', 'Your request has been sent successfully! Our team will contact you soon.'));
+    setSubmitLoading(true);
+    try {
+      await db.collection('registrations').add({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        message: formData.message,
+        type: 'contact',
+        status: 'new',
+        createdAt: new Date().toISOString(),
+      });
+      setSubmitted(true);
+    } catch (error) {
+      console.error('Error sending message:', error);
+      alert(t('حدث خطأ، يرجى المحاولة مرة أخرى.', 'An error occurred. Please try again.'));
+    } finally {
+      setSubmitLoading(false);
+    }
   };
 
   const contactInfo = [
@@ -149,13 +169,31 @@ const Contact: React.FC = () => {
                 ></textarea>
               </div>
 
-              <button
-                type="submit"
-                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-4 rounded-xl transition shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 transform hover:scale-[1.02] active:scale-95"
-              >
-                {t('إرسال الرسالة', 'Send Message')}
-                <Send size={18} />
-              </button>
+              {submitted ? (
+                <div className="text-center py-12">
+                  <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <CheckCircle className="w-10 h-10 text-emerald-600" />
+                  </div>
+                  <h3 className="text-2xl font-black text-slate-900 mb-3 italic">
+                    {t('تم إرسال رسالتك بنجاح!', 'Message Sent Successfully!')}
+                  </h3>
+                  <p className="text-slate-500">
+                    {t('سيقوم فريقنا بالتواصل معك قريباً.', 'Our team will contact you soon.')}
+                  </p>
+                </div>
+              ) : (
+                <button
+                  type="submit"
+                  disabled={submitLoading}
+                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-4 rounded-xl transition shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 transform hover:scale-[1.02] active:scale-95 disabled:opacity-50"
+                >
+                  {submitLoading ? (
+                    <><Loader2 className="w-5 h-5 animate-spin" /> {t('جاري الإرسال...', 'Sending...')}</>
+                  ) : (
+                    <>{t('إرسال الرسالة', 'Send Message')} <Send size={18} /></>
+                  )}
+                </button>
+              )}
             </form>
           </div>
         </div>

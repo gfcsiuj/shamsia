@@ -35,20 +35,27 @@ export interface Course {
   studentsCountMode: 'auto' | 'manual';
   tags: string[];
   description: string;
-  longDescription?: string; 
+  longDescription?: string;
   objectives: string[];
   targetAudience: string[];
   syllabus: { week: string; topic: string }[];
   startDate: string;
+  endDate?: string;
+  lecturesCount?: number;
   certifications?: string[];
+  graduateIds?: string[]; // IDs of instructors who are graduates
 }
 
 export interface Testimonial {
   id: string;
   name: string;
   role: string;
-  content: string;
+  text: string;
+  content?: string; // legacy alias for text
   image: string;
+  rating: number;
+  isVisible: boolean;
+  createdAt?: string;
 }
 
 export interface Resource {
@@ -84,12 +91,12 @@ export interface SiteSettings {
   backgroundColor?: string;
   surfaceColor?: string;
   textColor?: string;
-  
+
   // Contact
   contactPhone: string;
   contactEmail: string;
   contactAddress?: string;
-  
+
   // Social Media
   facebookUrl?: string;
   instagramUrl?: string;
@@ -106,4 +113,43 @@ export interface SiteSettings {
   enableRegistration: boolean;
   maintenanceMode: boolean;
   maintenanceMessage?: string;
+
+  // Course Settings
+  showPrices?: boolean;
+  enableCourseRegistration?: boolean;
+  showStudentCount?: boolean;
+  courseCardStyle?: 'default' | 'minimal' | 'detailed';
+
+  // SEO & Analytics
+  googleAnalyticsId?: string;
+  facebookPixelId?: string;
+  ogImage?: string;
+  ogTitle?: string;
+  metaKeywords?: string;
+
+  // Notifications
+  adminEmail?: string;
+  enableEmailNotifications?: boolean;
+  registrationEmailSubject?: string;
+  welcomeMessage?: string;
+
+  // Telegram Integration
+  telegramUrl?: string;
+
+  // Language
+  defaultLanguage?: 'ar' | 'en';
 }
+
+export interface Certificate {
+  id: string;
+  studentName: string;
+  courseId: string;
+  courseTitle: string;
+  issueDate: string;
+  certificateNumber: string;
+  qrCode?: string;
+  templateUrl?: string;
+  status: 'issued' | 'revoked';
+}
+
+

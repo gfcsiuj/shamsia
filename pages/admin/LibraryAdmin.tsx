@@ -33,9 +33,9 @@ const LibraryAdmin: React.FC = () => {
     try {
       setLoading(true);
       const querySnapshot = await db.collection('resources').get();
-      const data = querySnapshot.docs.map(doc => ({ 
-          id: doc.id, 
-          ...doc.data() 
+      const data = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
       } as Resource));
       setResources(data);
     } catch (error) {
@@ -74,10 +74,10 @@ const LibraryAdmin: React.FC = () => {
 
     try {
       let resourceUrl = formData.url;
-      
+
       // If user uploaded a file and it's a PDF type (or we allow uploads for others)
       if (uploadFile) {
-          resourceUrl = await handleFileUpload(uploadFile);
+        resourceUrl = await handleFileUpload(uploadFile);
       }
 
       const dataToSave = {
@@ -107,80 +107,83 @@ const LibraryAdmin: React.FC = () => {
   };
 
   const getIcon = (type: string) => {
-      switch(type) {
-          case 'pdf': return <Book size={20} />;
-          case 'video': return <PlayCircle size={20} />;
-          case 'article': return <FileText size={20} />;
-          default: return <FileText size={20} />;
-      }
+    switch (type) {
+      case 'pdf': return <Book size={20} />;
+      case 'video': return <PlayCircle size={20} />;
+      case 'article': return <FileText size={20} />;
+      default: return <FileText size={20} />;
+    }
   };
 
   const getIconClass = (type: string) => {
-      switch(type) {
-          case 'pdf': return 'la-icon-pdf';
-          case 'video': return 'la-icon-video';
-          case 'article': return 'la-icon-article';
-          default: return 'la-icon-article';
-      }
+    switch (type) {
+      case 'pdf': return 'la-icon-pdf';
+      case 'video': return 'la-icon-video';
+      case 'article': return 'la-icon-article';
+      default: return 'la-icon-article';
+    }
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 p-6 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-green-50/20 to-orange-50/20 p-6 md:p-8">
       <div className="max-w-7xl mx-auto">
-        {/* Page Header */}
-        <div className="flex items-center justify-between mb-8 bg-white p-4 rounded-xl shadow-sm border border-slate-100">
+        {/* Enhanced Header with Gradient */}
+        <div className="relative bg-gradient-to-r from-purple-600 to-purple-800 p-10 rounded-[3rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.15)] overflow-hidden mb-8">
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDE0aDRtLTQgNGg0bS00IDRoNE00MCAxNGg0bS00IDRoNG0tNCA0aDQiLz48L2c+PC9nPjwvc3ZnPg==')] opacity-30"></div>
+          <div className="flex items-center justify-between relative z-10">
             <div className="flex items-center gap-4">
-                <Link to="/admin/dashboard" className="p-2 bg-slate-50 rounded-lg border border-slate-200 hover:bg-slate-100 transition text-slate-500">
-                    <ArrowRight size={20} />
-                </Link>
-                <div>
-                  <h1 className="text-2xl font-bold text-slate-800">إدارة المكتبة</h1>
-                  <p className="text-sm text-slate-500">إضافة وتعديل المصادر التعليمية والمقالات</p>
-                </div>
+              <Link to="/admin/dashboard" className="p-2.5 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 hover:bg-white/20 transition text-white">
+                <ArrowRight size={20} />
+              </Link>
+              <div>
+                <h1 className="text-3xl md:text-4xl font-black text-white mb-2 italic tracking-tight">📚 إدارة المكتبة</h1>
+                <p className="text-purple-100 text-base md:text-lg font-medium">إضافة وتعديل المصادر التعليمية والمقالات</p>
+              </div>
             </div>
-            <button 
-                onClick={() => { setFormData(initialFormState); setIsEditing(true); setUploadFile(null); }}
-                className="bg-primary-600 hover:bg-primary-700 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 font-bold transition shadow-lg shadow-primary-200"
+            <button
+              onClick={() => { setFormData(initialFormState); setIsEditing(true); setUploadFile(null); }}
+              className="bg-white text-purple-700 px-5 py-2.5 rounded-xl flex items-center gap-2 font-bold transition shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
             >
-                <Plus size={20} />
-                إضافة مصدر
+              <Plus size={20} />
+              إضافة مصدر
             </button>
+          </div>
         </div>
 
         {loading ? (
           <div className="flex justify-center py-20"><Loader2 className="animate-spin text-primary-600" size={40} /></div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {resources.map((resource) => (
-                <div key={resource.id} className="la-resource-card group p-6 flex flex-col h-full">
-                    <div className="flex justify-between items-start mb-4">
-                        <div className={`la-icon-wrapper ${getIconClass(resource.type)}`}>
-                            {getIcon(resource.type)}
-                        </div>
-                        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button onClick={() => handleEdit(resource)} className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition"><Pencil size={16} /></button>
-                            <button onClick={() => handleDelete(resource.id)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition"><Trash2 size={16} /></button>
-                        </div>
-                    </div>
-                    
-                    <span className="text-xs font-bold text-slate-400 mb-2 block uppercase tracking-wider">{resource.category}</span>
-                    <h3 className="text-lg font-bold text-slate-800 mb-2 line-clamp-2">{resource.title}</h3>
-                    <p className="text-sm text-slate-500 line-clamp-3 mb-4 flex-grow">{resource.description}</p>
-                    
-                    <div className="pt-4 border-t border-slate-50 flex items-center justify-between mt-auto">
-                        <span className="text-xs text-slate-400 font-medium bg-slate-50 px-2 py-1 rounded">{resource.date}</span>
-                        <a href={resource.url} target="_blank" rel="noreferrer" className="text-primary-600 hover:text-primary-700 text-sm font-bold flex items-center gap-1">
-                            عرض <ExternalLink size={14}/>
-                        </a>
-                    </div>
+              <div key={resource.id} className="la-resource-card group p-8 flex flex-col h-full rounded-[3rem] shadow-sm hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] transition-all duration-500 hover:-translate-y-3">
+                <div className="flex justify-between items-start mb-4">
+                  <div className={`la-icon-wrapper ${getIconClass(resource.type)}`}>
+                    {getIcon(resource.type)}
+                  </div>
+                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button onClick={() => handleEdit(resource)} className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition"><Pencil size={16} /></button>
+                    <button onClick={() => handleDelete(resource.id)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition"><Trash2 size={16} /></button>
+                  </div>
                 </div>
+
+                <span className="text-xs font-black text-slate-400 mb-3 block uppercase tracking-widest italic">{resource.category}</span>
+                <h3 className="text-xl font-black text-slate-900 mb-3 line-clamp-2 leading-tight italic tracking-tight">{resource.title}</h3>
+                <p className="text-sm text-slate-500 line-clamp-3 mb-5 flex-grow leading-relaxed">{resource.description}</p>
+
+                <div className="pt-5 border-t border-slate-100 flex items-center justify-between mt-auto">
+                  <span className="text-xs text-slate-400 font-bold bg-slate-50 px-3 py-1.5 rounded-xl">{resource.date}</span>
+                  <a href={resource.url} target="_blank" rel="noreferrer" className="text-purple-600 hover:text-purple-700 text-sm font-black flex items-center gap-1.5 hover:gap-2 transition-all">
+                    عرض <ExternalLink size={14} />
+                  </a>
+                </div>
+              </div>
             ))}
-            
+
             {resources.length === 0 && (
-                <div className="col-span-full py-16 text-center text-slate-400 bg-white rounded-xl border border-dashed border-slate-200">
-                    <Book size={48} className="mx-auto mb-4 opacity-50" />
-                    <p>المكتبة فارغة حالياً. ابدأ بإضافة مصادر مفيدة.</p>
-                </div>
+              <div className="col-span-full py-16 text-center text-slate-400 bg-white rounded-xl border border-dashed border-slate-200">
+                <Book size={48} className="mx-auto mb-4 opacity-50" />
+                <p>المكتبة فارغة حالياً. ابدأ بإضافة مصادر مفيدة.</p>
+              </div>
             )}
           </div>
         )}
@@ -189,159 +192,159 @@ const LibraryAdmin: React.FC = () => {
         {isEditing && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 la-modal-overlay">
             <div className="la-modal-content w-full max-w-3xl max-h-[90vh] rounded-2xl flex flex-col overflow-hidden">
-              
+
               {/* Header */}
               <div className="px-8 py-5 border-b border-slate-100 flex justify-between items-center bg-white shrink-0">
                 <div className="flex items-center gap-4">
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${formData.id ? 'bg-blue-50 text-blue-600' : 'bg-green-50 text-green-600'}`}>
-                        {formData.id ? <Pencil size={20} /> : <Plus size={24} />}
-                    </div>
-                    <div>
-                         <h2 className="text-xl font-bold text-slate-800">
-                            {formData.id ? 'تعديل المصدر' : 'إضافة مصدر جديد'}
-                        </h2>
-                        <p className="text-xs text-slate-500">أدخل تفاصيل الكتاب، المقال، أو الفيديو</p>
-                    </div>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${formData.id ? 'bg-blue-50 text-blue-600' : 'bg-green-50 text-green-600'}`}>
+                    {formData.id ? <Pencil size={20} /> : <Plus size={24} />}
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold text-slate-800">
+                      {formData.id ? 'تعديل المصدر' : 'إضافة مصدر جديد'}
+                    </h2>
+                    <p className="text-xs text-slate-500">أدخل تفاصيل الكتاب، المقال، أو الفيديو</p>
+                  </div>
                 </div>
-                <button onClick={() => setIsEditing(false)} className="w-10 h-10 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400 transition"><X size={24}/></button>
+                <button onClick={() => setIsEditing(false)} className="w-10 h-10 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400 transition"><X size={24} /></button>
               </div>
-              
+
               <div className="overflow-y-auto p-8 bg-slate-50/50 flex-1 la-scrollable">
-                  <form id="libraryForm" onSubmit={handleSubmit} className="space-y-8">
-                    
-                    {/* Type Selection */}
-                    <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
-                        <label className="la-label mb-4">نوع المصدر</label>
-                        <div className="grid grid-cols-3 gap-4">
-                            <div 
-                                onClick={() => setFormData({...formData, type: 'article'})}
-                                className={`la-type-card ${formData.type === 'article' ? 'active' : ''}`}
-                            >
-                                <FileText size={24} />
-                                <span className="font-bold text-sm">مقال</span>
-                            </div>
-                            <div 
-                                onClick={() => setFormData({...formData, type: 'pdf'})}
-                                className={`la-type-card ${formData.type === 'pdf' ? 'active' : ''}`}
-                            >
-                                <Book size={24} />
-                                <span className="font-bold text-sm">كتاب (PDF)</span>
-                            </div>
-                            <div 
-                                onClick={() => setFormData({...formData, type: 'video'})}
-                                className={`la-type-card ${formData.type === 'video' ? 'active' : ''}`}
-                            >
-                                <PlayCircle size={24} />
-                                <span className="font-bold text-sm">فيديو</span>
-                            </div>
+                <form id="libraryForm" onSubmit={handleSubmit} className="space-y-8">
+
+                  {/* Type Selection */}
+                  <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+                    <label className="la-label mb-4">نوع المصدر</label>
+                    <div className="grid grid-cols-3 gap-4">
+                      <div
+                        onClick={() => setFormData({ ...formData, type: 'article' })}
+                        className={`la-type-card ${formData.type === 'article' ? 'active' : ''}`}
+                      >
+                        <FileText size={24} />
+                        <span className="font-bold text-sm">مقال</span>
+                      </div>
+                      <div
+                        onClick={() => setFormData({ ...formData, type: 'pdf' })}
+                        className={`la-type-card ${formData.type === 'pdf' ? 'active' : ''}`}
+                      >
+                        <Book size={24} />
+                        <span className="font-bold text-sm">كتاب (PDF)</span>
+                      </div>
+                      <div
+                        onClick={() => setFormData({ ...formData, type: 'video' })}
+                        className={`la-type-card ${formData.type === 'video' ? 'active' : ''}`}
+                      >
+                        <PlayCircle size={24} />
+                        <span className="font-bold text-sm">فيديو</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Main Info */}
+                    <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm space-y-4 h-full">
+                      <div>
+                        <label className="la-label">عنوان المصدر</label>
+                        <input
+                          type="text"
+                          required
+                          value={formData.title}
+                          onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                          className="la-input font-bold"
+                          placeholder="مثال: مقدمة في الذكاء الاصطناعي"
+                        />
+                      </div>
+                      <div>
+                        <label className="la-label">التصنيف</label>
+                        <select
+                          className="la-input"
+                          value={formData.category}
+                          onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                        >
+                          <option value="General">عام</option>
+                          <option value="Tech">التقنية والبرمجة</option>
+                          <option value="Cyber Security">الأمن السيبراني</option>
+                          <option value="Human Development">التنمية البشرية</option>
+                          <option value="Admin Skills">المهارات الإدارية</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="la-label">تاريخ النشر</label>
+                        <div className="relative">
+                          <input
+                            type="date"
+                            className="la-input pl-10"
+                            value={formData.date}
+                            onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                          />
+                          <Calendar size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                         </div>
+                      </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {/* Main Info */}
-                        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm space-y-4 h-full">
-                            <div>
-                                <label className="la-label">عنوان المصدر</label>
-                                <input 
-                                    type="text" 
-                                    required
-                                    value={formData.title}
-                                    onChange={(e) => setFormData({...formData, title: e.target.value})}
-                                    className="la-input font-bold"
-                                    placeholder="مثال: مقدمة في الذكاء الاصطناعي"
-                                />
-                            </div>
-                            <div>
-                                <label className="la-label">التصنيف</label>
-                                <select 
-                                    className="la-input"
-                                    value={formData.category}
-                                    onChange={(e) => setFormData({...formData, category: e.target.value})}
-                                >
-                                    <option value="General">عام</option>
-                                    <option value="Tech">التقنية والبرمجة</option>
-                                    <option value="Cyber Security">الأمن السيبراني</option>
-                                    <option value="Human Development">التنمية البشرية</option>
-                                    <option value="Admin Skills">المهارات الإدارية</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label className="la-label">تاريخ النشر</label>
-                                <div className="relative">
-                                    <input 
-                                        type="date" 
-                                        className="la-input pl-10"
-                                        value={formData.date}
-                                        onChange={(e) => setFormData({...formData, date: e.target.value})}
-                                    />
-                                    <Calendar size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"/>
-                                </div>
-                            </div>
-                        </div>
+                    {/* File/Link & Description */}
+                    <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm space-y-4 h-full">
+                      <div>
+                        <label className="la-label">
+                          {formData.type === 'pdf' ? 'ملف الكتاب (أو رابط)' : formData.type === 'video' ? 'رابط الفيديو (YouTube/Vimeo)' : 'رابط المقال'}
+                        </label>
 
-                        {/* File/Link & Description */}
-                        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm space-y-4 h-full">
-                            <div>
-                                <label className="la-label">
-                                    {formData.type === 'pdf' ? 'ملف الكتاب (أو رابط)' : formData.type === 'video' ? 'رابط الفيديو (YouTube/Vimeo)' : 'رابط المقال'}
-                                </label>
-                                
-                                <div className="flex flex-col gap-3">
-                                    <div className="relative">
-                                        <input 
-                                            type="text" 
-                                            className="la-input pl-10 text-sm"
-                                            value={formData.url}
-                                            onChange={(e) => setFormData({...formData, url: e.target.value})}
-                                            placeholder="https://..."
-                                            disabled={!!uploadFile}
-                                        />
-                                        <LinkIcon size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"/>
-                                    </div>
-                                    
-                                    {formData.type === 'pdf' && (
-                                        <div className="text-center">
-                                            <span className="text-xs text-slate-400 mb-2 block">- أو -</span>
-                                            <label className="cursor-pointer bg-slate-50 border-2 border-dashed border-slate-200 hover:border-primary-400 hover:bg-primary-50 rounded-xl p-4 flex flex-col items-center justify-center transition group">
-                                                <Upload size={24} className="text-slate-400 group-hover:text-primary-500 mb-2"/>
-                                                <span className="text-xs font-bold text-slate-500 group-hover:text-primary-700">
-                                                    {uploadFile ? uploadFile.name : 'اضغط لرفع ملف PDF'}
-                                                </span>
-                                                <input type="file" accept="application/pdf" className="hidden" onChange={(e) => e.target.files && setUploadFile(e.target.files[0])} />
-                                            </label>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
+                        <div className="flex flex-col gap-3">
+                          <div className="relative">
+                            <input
+                              type="text"
+                              className="la-input pl-10 text-sm"
+                              value={formData.url}
+                              onChange={(e) => setFormData({ ...formData, url: e.target.value })}
+                              placeholder="https://..."
+                              disabled={!!uploadFile}
+                            />
+                            <LinkIcon size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                          </div>
 
-                            <div>
-                                <label className="la-label">وصف مختصر</label>
-                                <textarea 
-                                    className="la-input" 
-                                    rows={3}
-                                    value={formData.description}
-                                    onChange={(e) => setFormData({...formData, description: e.target.value})}
-                                    placeholder="نبذة عن المحتوى..."
-                                ></textarea>
+                          {formData.type === 'pdf' && (
+                            <div className="text-center">
+                              <span className="text-xs text-slate-400 mb-2 block">- أو -</span>
+                              <label className="cursor-pointer bg-slate-50 border-2 border-dashed border-slate-200 hover:border-primary-400 hover:bg-primary-50 rounded-xl p-4 flex flex-col items-center justify-center transition group">
+                                <Upload size={24} className="text-slate-400 group-hover:text-primary-500 mb-2" />
+                                <span className="text-xs font-bold text-slate-500 group-hover:text-primary-700">
+                                  {uploadFile ? uploadFile.name : 'اضغط لرفع ملف PDF'}
+                                </span>
+                                <input type="file" accept="application/pdf" className="hidden" onChange={(e) => e.target.files && setUploadFile(e.target.files[0])} />
+                              </label>
                             </div>
+                          )}
                         </div>
+                      </div>
+
+                      <div>
+                        <label className="la-label">وصف مختصر</label>
+                        <textarea
+                          className="la-input"
+                          rows={3}
+                          value={formData.description}
+                          onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                          placeholder="نبذة عن المحتوى..."
+                        ></textarea>
+                      </div>
                     </div>
+                  </div>
 
-                  </form>
+                </form>
               </div>
 
               {/* Footer */}
               <div className="px-8 py-5 border-t border-slate-100 bg-white flex justify-end gap-4 shrink-0 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-10">
-                    <button type="button" onClick={() => setIsEditing(false)} className="px-8 py-3 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 font-bold transition">إلغاء</button>
-                    <button 
-                        type="submit"
-                        form="libraryForm"
-                        disabled={saveLoading}
-                        className="px-10 py-3 rounded-xl bg-primary-600 text-white hover:bg-primary-700 font-bold transition flex items-center gap-2 disabled:opacity-70 shadow-lg shadow-primary-200 transform hover:-translate-y-1"
-                    >
-                        {saveLoading ? <Loader2 className="animate-spin" size={20} /> : <Save size={20} />}
-                        حفظ البيانات
-                    </button>
+                <button type="button" onClick={() => setIsEditing(false)} className="px-8 py-3 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 font-bold transition">إلغاء</button>
+                <button
+                  type="submit"
+                  form="libraryForm"
+                  disabled={saveLoading}
+                  className="px-10 py-3 rounded-xl bg-primary-600 text-white hover:bg-primary-700 font-bold transition flex items-center gap-2 disabled:opacity-70 shadow-lg shadow-primary-200 transform hover:-translate-y-1"
+                >
+                  {saveLoading ? <Loader2 className="animate-spin" size={20} /> : <Save size={20} />}
+                  حفظ البيانات
+                </button>
               </div>
             </div>
           </div>

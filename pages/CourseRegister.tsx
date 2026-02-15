@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { CheckCircle, BookOpen, ExternalLink, AlertCircle, ChevronLeft, ChevronRight } from 'lucide-react';
+import { CheckCircle, BookOpen, ExternalLink, AlertCircle, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import { db } from '../lib/firebase';
 import { Course } from '../types';
 import { useTheme } from '../context/ThemeContext';
@@ -46,20 +46,70 @@ const CourseRegister: React.FC = () => {
 
   const selectedCourse = courses.find(c => c.id === selectedCourseId);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [submitLoading, setSubmitLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedCourseId) {
       alert(t('يرجى اختيار دورة تدريبية أولاً.', 'Please select a course first.'));
       return;
     }
-    const paymentMethodText = formData.paymentMethod === 'zaincash'
-      ? t('زين كاش', 'ZainCash')
-      : t('الكاش', 'Cash');
-    alert(t(
-      `شكراً لك ${formData.name}! تم استلام طلب تسجيلك في دورة "${selectedCourse?.title}". سيتم التواصل معك قريباً لإتمام الدفع عبر ${paymentMethodText}.`,
-      `Thank you ${formData.name}! Your registration request for "${selectedCourse?.title}" has been received. We will contact you soon to complete the payment via ${paymentMethodText}.`
-    ));
+    setSubmitLoading(true);
+    try {
+      // Save registration to Firebase
+      await db.collection('registrations').add({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        jobTitle: formData.jobTitle,
+        paymentMethod: formData.paymentMethod,
+        courseId: selectedCourseId,
+        courseTitle: selectedCourse?.title || '',
+        status: 'pending',
+        type: 'course',
+        createdAt: new Date().toISOString(),
+      });
+
+      // Auto-increment student count if mode is 'auto'
+      if (selectedCourse && selectedCourse.studentsCountMode === 'auto') {
+        await db.collection('courses').doc(selectedCourseId).update({
+          studentsCount: (selectedCourse.studentsCount || 0) + 1
+        });
+      }
+
+      setSubmitted(true);
+    } catch (error) {
+      console.error('Error saving registration:', error);
+      alert(t('حدث خطأ أثناء التسجيل، يرجى المحاولة مرة أخرى.', 'An error occurred. Please try again.'));
+    } finally {
+      setSubmitLoading(false);
+    }
   };
+
+  if (submitted) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto px-4">
+          <div className="w-24 h-24 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <CheckCircle className="w-12 h-12 text-emerald-600" />
+          </div>
+          <h1 className="text-3xl font-black text-slate-900 mb-4 italic">
+            {t('تم التسجيل بنجاح!', 'Registration Successful!')}
+          </h1>
+          <p className="text-slate-600 mb-8 leading-relaxed">
+            {t(
+              `شكراً لك ${formData.name}! تم استلام طلب تسجيلك في دورة "${selectedCourse?.title}". سيتم التواصل معك قريباً.`,
+              `Thank you ${formData.name}! Your registration for "${selectedCourse?.title}" has been received. We will contact you soon.`
+            )}
+          </p>
+          <Link to="/courses" className="inline-block bg-emerald-600 hover:bg-emerald-700 text-white font-black px-8 py-4 rounded-2xl transition shadow-xl">
+            {t('تصفح الدورات', 'Browse Courses')}
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 pb-24">
@@ -226,10 +276,14 @@ const CourseRegister: React.FC = () => {
 
                 <button
                   type="submit"
-                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-5 rounded-2xl shadow-xl shadow-emerald-500/20 transition duration-300 mt-8 disabled:opacity-50 disabled:cursor-not-allowed text-lg transform hover:scale-[1.02] active:scale-95"
-                  disabled={!selectedCourseId}
+                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-5 rounded-2xl shadow-xl shadow-emerald-500/20 transition duration-300 mt-8 disabled:opacity-50 disabled:cursor-not-allowed text-lg transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-3"
+                  disabled={!selectedCourseId || submitLoading}
                 >
-                  {t('إتمام التسجيل', 'Complete Registration')}
+                  {submitLoading ? (
+                    <><Loader2 className="w-5 h-5 animate-spin" /> {t('جاري التسجيل...', 'Registering...')}</>
+                  ) : (
+                    t('إتمام التسجيل', 'Complete Registration')
+                  )}
                 </button>
               </form>
             </div>
@@ -267,17 +321,17 @@ const CourseRegister: React.FC = () => {
                   <div className="border-t border-emerald-500/30 pt-6 mt-6">
                     <div className="flex justify-between items-center mb-2">
                       <span className="text-emerald-200">{t('سعر الدورة', 'Course Price')}</span>
-                      <span className="font-bold">${selectedCourse.price}</span>
+                      <span className="font-bold">{selectedCourse.price.toLocaleString()} {t('د.ع', 'IQD')}</span>
                     </div>
                     {selectedCourse.oldPrice && (
                       <div className="flex justify-between items-center mb-4 text-xs text-emerald-300/60 line-through">
                         <span>{t('السعر الأصلي', 'Original Price')}</span>
-                        <span>${selectedCourse.oldPrice}</span>
+                        <span>{selectedCourse.oldPrice.toLocaleString()} {t('د.ع', 'IQD')}</span>
                       </div>
                     )}
                     <div className="flex justify-between items-center text-2xl font-black mt-4 bg-white/10 p-4 rounded-xl">
                       <span>{t('الإجمالي', 'Total')}</span>
-                      <span>${selectedCourse.price}</span>
+                      <span>{selectedCourse.price.toLocaleString()} {t('د.ع', 'IQD')}</span>
                     </div>
                   </div>
                 </div>

@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { db, storage } from '../../lib/firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { Course, Instructor, MediaItem } from '../../types';
-import { Plus, Pencil, Trash2, X, Upload, Loader2, Save, ArrowRight, Minus, Image as ImageIcon, Video, Link as LinkIcon, Users, Tag, CheckSquare, Layers, Award } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Plus, Pencil, Trash2, X, Upload, Loader2, Save, ArrowRight, Minus, Image as ImageIcon, Video, Link as LinkIcon, Users, Tag, CheckSquare, Layers, Award, Search } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
 import './CoursesAdmin.css';
 
 const CoursesAdmin: React.FC = () => {
@@ -13,6 +13,14 @@ const CoursesAdmin: React.FC = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [saveLoading, setSaveLoading] = useState(false);
     const [activeTab, setActiveTab] = useState<'basic' | 'details' | 'syllabus'>('basic');
+    const [searchQuery, setSearchQuery] = useState('');
+    const location = useLocation();
+
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const q = params.get('q');
+        if (q) setSearchQuery(q);
+    }, [location.search]);
 
     // Custom states for UI logic
     const [customLevel, setCustomLevel] = useState('');
@@ -38,12 +46,15 @@ const CoursesAdmin: React.FC = () => {
         studentsCountMode: 'auto',
         tags: [],
         startDate: '',
+        endDate: '',
+        lecturesCount: 0,
         description: '',
         longDescription: '',
         objectives: [''],
         targetAudience: [''],
         syllabus: [{ week: 'الأسبوع 1', topic: '' }],
         certifications: [],
+        graduateIds: [],
     };
 
     const [formData, setFormData] = useState<Course>(initialFormState);
@@ -237,39 +248,58 @@ const CoursesAdmin: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 p-6 md:p-8">
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-green-50/20 to-orange-50/20 p-6 md:p-8">
             <div className="max-w-7xl mx-auto">
-                <div className="flex items-center justify-between mb-8 bg-white p-4 rounded-xl shadow-sm border border-slate-100">
-                    <div className="flex items-center gap-4">
-                        <Link to="/admin/dashboard" className="p-2 bg-slate-50 rounded-lg border border-slate-200 hover:bg-slate-100 transition text-slate-500">
-                            <ArrowRight size={20} />
-                        </Link>
-                        <div>
-                            <h1 className="text-2xl font-bold text-slate-800">إدارة الدورات</h1>
-                            <p className="text-sm text-slate-500">إضافة وتعديل الدورات التدريبية ومحتواها</p>
+                {/* Enhanced Header with Gradient */}
+                {/* Enhanced Header with Gradient */}
+                {/* Enhanced Header with Gradient */}
+                <div className="relative bg-gradient-to-r from-orange-500 to-orange-700 p-10 rounded-[3rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.15)] overflow-hidden mb-8">
+                    <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48cGF0aCBkPSJNMzYgMTRoNG0tNCA0aDRtLTQgNGg0TTQwIDE0aDRtLTQgNGg0bS00IDRoNCIvPjwvZz48L2c+PC9zdmc+')] opacity-20"></div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
+                    <div className="flex items-center justify-between relative z-10">
+                        <div className="flex items-center gap-4">
+                            <Link to="/admin/dashboard" className="p-2.5 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 hover:bg-white/20 transition text-white">
+                                <ArrowRight size={20} />
+                            </Link>
+                            <div>
+                                <h1 className="text-3xl md:text-4xl font-black text-white mb-2 italic tracking-tight">📖 إدارة الدورات</h1>
+                                <p className="text-orange-100 text-base md:text-lg font-medium">إضافة وتعديل الدورات التدريبية ومحتواها</p>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-4">
+                            <div className="relative hidden md:block">
+                                <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-orange-100" size={20} />
+                                <input
+                                    type="text"
+                                    placeholder="بحث عن دورة..."
+                                    className="pl-4 pr-10 py-2.5 rounded-xl border-0 bg-white/10 text-white placeholder-orange-100/70 focus:bg-white/20 transition w-64 backdrop-blur-md outline-none font-medium"
+                                    value={searchQuery}
+                                    onChange={e => setSearchQuery(e.target.value)}
+                                />
+                            </div>
+                            <button
+                                onClick={() => { setFormData(initialFormState); setIsEditing(true); setMediaFile(null); setActiveTab('basic'); }}
+                                className="bg-white text-orange-700 px-5 py-2.5 rounded-xl flex items-center gap-2 font-bold transition shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                            >
+                                <Plus size={20} />
+                                إضافة دورة
+                            </button>
                         </div>
                     </div>
-                    <button
-                        onClick={() => { setFormData(initialFormState); setIsEditing(true); setMediaFile(null); setActiveTab('basic'); }}
-                        className="bg-primary-600 hover:bg-primary-700 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 font-bold transition shadow-lg shadow-primary-200"
-                    >
-                        <Plus size={20} />
-                        إضافة دورة
-                    </button>
                 </div>
 
                 {loading ? (
                     <div className="flex justify-center py-20"><Loader2 className="animate-spin text-primary-600" size={40} /></div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {courses.map((course) => (
-                            <div key={course.id} className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition group">
-                                <div className="h-44 relative">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {courses.filter(c => c.title.toLowerCase().includes(searchQuery.toLowerCase()) || c.category.toLowerCase().includes(searchQuery.toLowerCase())).map((course) => (
+                            <div key={course.id} className="bg-white rounded-[3rem] shadow-sm border border-slate-100 overflow-hidden hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] transition-all duration-500 hover:-translate-y-3 group">
+                                <div className="h-52 lg:h-56 relative">
                                     {course.media && course.media[0] ? (
                                         course.media[0].type === 'video' ? (
                                             <div className="w-full h-full bg-slate-900 flex items-center justify-center text-white"><Video size={32} /></div>
                                         ) : (
-                                            <img src={course.media[0].url} alt={course.title} className="w-full h-full object-cover" />
+                                            <img src={course.media[0].url} alt={course.title} className="w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-110" />
                                         )
                                     ) : (
                                         <div className="w-full h-full bg-slate-100 flex items-center justify-center text-slate-300"><ImageIcon size={32} /></div>
@@ -277,18 +307,18 @@ const CoursesAdmin: React.FC = () => {
                                     <span className="absolute top-2 right-2 bg-white/90 px-2 py-1 rounded text-xs font-bold text-primary-700 shadow-sm">{course.category}</span>
                                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition duration-300"></div>
                                 </div>
-                                <div className="p-5">
-                                    <h3 className="font-bold text-slate-800 mb-2 line-clamp-1 text-lg">{course.title}</h3>
-                                    <div className="flex items-center gap-2 text-xs text-slate-500 mb-4 bg-slate-50 p-2 rounded-lg">
+                                <div className="p-7">
+                                    <h3 className="font-black text-slate-900 mb-3 line-clamp-2 text-xl leading-tight italic tracking-tight">{course.title}</h3>
+                                    <div className="flex items-center gap-2 text-xs text-slate-500 mb-5 bg-slate-50 p-3 rounded-xl">
                                         <span className="font-semibold text-primary-600">{course.price > 0 ? course.price.toLocaleString() + ' د.ع' : 'مجاناً'}</span>
                                         <span className="w-px h-3 bg-slate-300"></span>
                                         <span>{course.studentsCount} طالب</span>
                                         <span className="w-px h-3 bg-slate-300"></span>
                                         <span>{course.level}</span>
                                     </div>
-                                    <div className="flex gap-2 mt-auto">
-                                        <button onClick={() => handleEdit(course)} className="flex-1 py-2.5 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-xl transition font-bold text-sm flex items-center justify-center gap-2 border border-blue-100"><Pencil size={16} /> تعديل</button>
-                                        <button onClick={() => handleDelete(course.id)} className="px-4 py-2.5 text-red-600 bg-red-50 hover:bg-red-100 rounded-xl transition border border-red-100"><Trash2 size={16} /></button>
+                                    <div className="flex gap-3 mt-auto">
+                                        <button onClick={() => handleEdit(course)} className="flex-1 py-3 text-blue-600 bg-blue-50 hover:bg-blue-600 hover:text-white rounded-[1.5rem] transition-all duration-300 font-black text-sm flex items-center justify-center gap-2 border border-blue-200 shadow-sm hover:shadow-lg hover:-translate-y-0.5"><Pencil size={18} /> تعديل</button>
+                                        <button onClick={() => handleDelete(course.id)} className="px-5 py-3 text-red-600 bg-red-50 hover:bg-red-600 hover:text-white rounded-[1.5rem] transition-all duration-300 border border-red-200 shadow-sm hover:shadow-lg hover:-translate-y-0.5"><Trash2 size={18} /></button>
                                     </div>
                                 </div>
                             </div>
@@ -330,17 +360,17 @@ const CoursesAdmin: React.FC = () => {
                             </div>
 
                             {/* Body */}
-                            <div className="flex-1 overflow-y-auto p-8 ca-scrollable bg-slate-50/50">
-                                <div className="max-w-6xl mx-auto space-y-8">
+                            <div className="flex-1 overflow-y-auto p-6 ca-scrollable bg-slate-50/50">
+                                <div className="max-w-6xl mx-auto space-y-4">
 
                                     {/* Basic Info Tab */}
                                     {activeTab === 'basic' && (
-                                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-fade-in">
+                                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 animate-fade-in">
                                             {/* Left Column */}
-                                            <div className="lg:col-span-2 space-y-8">
+                                            <div className="lg:col-span-2 space-y-4">
                                                 <div className="ca-card">
                                                     <h3 className="ca-section-title">المعلومات الأساسية</h3>
-                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                         <div className="md:col-span-2">
                                                             <label className="ca-label">عنوان الدورة</label>
                                                             <input type="text" className="ca-input text-lg font-semibold" value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} placeholder="أدخل عنواناً مميزاً..." />
@@ -363,7 +393,13 @@ const CoursesAdmin: React.FC = () => {
                                                                     <option value="Human Development">التنمية البشرية</option>
                                                                     <option value="Cyber Security">الأمن السيبراني</option>
                                                                     <option value="Admin Skills">المهارات الإدارية</option>
-                                                                    <option value="Student Skills">المهارات الطلابية</option>
+                                                                    <option value="Solar Energy">الطاقة الشمسية</option>
+                                                                    <option value="Electricity">الكهرباء</option>
+                                                                    <option value="Generators">المولدات الكهربائية</option>
+                                                                    <option value="Mechanics">الميكانيك</option>
+                                                                    <option value="Barbering">الحلاقة</option>
+                                                                    <option value="Languages">لغات</option>
+                                                                    <option value="Electrical Installations">تأسيسات كهربائية</option>
                                                                     <option value="custom" className="font-bold text-primary-600">+ تصنيف مخصص</option>
                                                                 </select>
                                                             ) : (
@@ -436,6 +472,57 @@ const CoursesAdmin: React.FC = () => {
                                                                     <span className="text-sm font-bold text-slate-700">{inst.name}</span>
                                                                 </div>
                                                             ))}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                {/* Graduates Section - Select from Instructors */}
+                                                <div className="ca-card ca-card-orange">
+                                                    <h3 className="ca-section-title text-orange-800 border-orange-100">خريجين / مشاركين الدورة</h3>
+                                                    <div className="flex flex-wrap gap-2 mb-4">
+                                                        {formData.graduateIds?.map(id => {
+                                                            const inst = instructors.find(i => i.id === id);
+                                                            return inst ? (
+                                                                <div key={id} className="flex items-center gap-2 bg-white text-orange-700 px-4 py-2 rounded-full text-sm font-bold border border-orange-200 shadow-sm animate-pop-in">
+                                                                    <img src={inst.image} className="w-6 h-6 rounded-full object-cover" />
+                                                                    {inst.name}
+                                                                    <button onClick={() => {
+                                                                        const currentIds = formData.graduateIds || [];
+                                                                        setFormData({ ...formData, graduateIds: currentIds.filter(gid => gid !== id) });
+                                                                    }} className="hover:text-red-500 bg-orange-50 rounded-full p-0.5"><X size={14} /></button>
+                                                                </div>
+                                                            ) : null;
+                                                        })}
+                                                    </div>
+                                                    <div className="relative group">
+                                                        <button type="button" className="ca-input text-start text-slate-400 flex justify-between items-center bg-white hover:border-orange-300">
+                                                            <span>اختر خريج من المدربين...</span>
+                                                            <Award size={18} className="text-slate-400" />
+                                                        </button>
+                                                        <div className="absolute top-full left-0 right-0 bg-white border border-slate-200 shadow-xl rounded-xl mt-2 max-h-60 overflow-y-auto hidden group-hover:block hover:block z-20">
+                                                            {instructors.map(inst => {
+                                                                const isSelected = formData.graduateIds?.includes(inst.id);
+                                                                return (
+                                                                    <div
+                                                                        key={inst.id}
+                                                                        onClick={() => {
+                                                                            const currentIds = formData.graduateIds || [];
+                                                                            if (isSelected) {
+                                                                                setFormData({ ...formData, graduateIds: currentIds.filter(gid => gid !== inst.id) });
+                                                                            } else {
+                                                                                setFormData({ ...formData, graduateIds: [...currentIds, inst.id] });
+                                                                            }
+                                                                        }}
+                                                                        className={`p-3 flex items-center gap-3 hover:bg-slate-50 cursor-pointer border-b border-slate-50 last:border-0 ${isSelected ? 'bg-orange-50' : ''}`}
+                                                                    >
+                                                                        <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-colors ${isSelected ? 'bg-orange-500 border-orange-500' : 'border-slate-300'}`}>
+                                                                            {isSelected && <CheckSquare size={14} className="text-white" />}
+                                                                        </div>
+                                                                        <img src={inst.image} className="w-8 h-8 rounded-full object-cover" />
+                                                                        <span className="text-sm font-bold text-slate-700">{inst.name}</span>
+                                                                    </div>
+                                                                );
+                                                            })}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -532,6 +619,14 @@ const CoursesAdmin: React.FC = () => {
                                                         <div>
                                                             <label className="ca-label">تاريخ/أيام البدء</label>
                                                             <input type="text" className="ca-input" placeholder="مثال: كل خميس وجمعة" value={formData.startDate} onChange={e => setFormData({ ...formData, startDate: e.target.value })} />
+                                                        </div>
+                                                        <div>
+                                                            <label className="ca-label">تاريخ الانتهاء</label>
+                                                            <input type="text" className="ca-input" placeholder="مثال: 2026/03/15" value={formData.endDate || ''} onChange={e => setFormData({ ...formData, endDate: e.target.value })} />
+                                                        </div>
+                                                        <div>
+                                                            <label className="ca-label">عدد المحاضرات</label>
+                                                            <input type="number" className="ca-input" placeholder="0" value={formData.lecturesCount || 0} onChange={e => setFormData({ ...formData, lecturesCount: Number(e.target.value) })} />
                                                         </div>
                                                     </div>
                                                 </div>

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Facebook, Instagram, MessageCircle, MapPin, Phone, Mail, Search, Send, ChevronLeft, Moon, Sun, Globe } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Menu, X, Facebook, Instagram, MessageCircle, MapPin, Phone, Mail, Search, Send, ChevronLeft, Moon, Sun, Globe, BookOpen } from 'lucide-react';
 import MobileBottomNav from './MobileBottomNav';
 import { useTheme } from '../context/ThemeContext';
+import { db } from '../lib/firebase';
+import { Course, Instructor } from '../types';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -14,6 +16,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [email, setEmail] = useState('');
   const location = useLocation();
 
+  const navigate = useNavigate();
+  const [headerSearch, setHeaderSearch] = useState('');
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [instructors, setInstructors] = useState<Instructor[]>([]);
+  const [searchResults, setSearchResults] = useState<{ courses: Course[], instructors: Instructor[] }>({ courses: [], instructors: [] });
+  const [showResults, setShowResults] = useState(false);
+
   // Use global theme context
   const { settings, isDarkMode, setIsDarkMode, isEnglish, setIsEnglish, t } = useTheme();
 
@@ -22,8 +31,50 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       setIsScrolled(window.scrollY > 40);
     };
     window.addEventListener('scroll', handleScroll);
+
+    // Fetch data for search
+    const fetchData = async () => {
+      try {
+        const [coursesSnap, instructorsSnap] = await Promise.all([
+          db.collection('courses').get(),
+          db.collection('instructors').get()
+        ]);
+
+        const coursesData = coursesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Course));
+        const instructorsData = instructorsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Instructor));
+
+        setCourses(coursesData);
+        setInstructors(instructorsData);
+      } catch (error) {
+        console.error("Error fetching search data:", error);
+      }
+    };
+    fetchData();
+
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const handleSearch = (query: string) => {
+    setHeaderSearch(query);
+    if (!query.trim()) {
+      setSearchResults({ courses: [], instructors: [] });
+      setShowResults(false);
+      return;
+    }
+
+    const lowerQuery = query.toLowerCase();
+    const filteredCourses = courses.filter(c =>
+      c.title.toLowerCase().includes(lowerQuery) ||
+      c.category.toLowerCase().includes(lowerQuery) ||
+      c.tags?.some(tag => tag.toLowerCase().includes(lowerQuery))
+    );
+    const filteredInstructors = instructors.filter(i =>
+      i.name.toLowerCase().includes(lowerQuery)
+    );
+
+    setSearchResults({ courses: filteredCourses, instructors: filteredInstructors });
+    setShowResults(true);
+  };
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -31,6 +82,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const navLinks = [
     { name: t('الرئيسية', 'Home'), path: '/' },
     { name: t('الدورات', 'Courses'), path: '/courses' },
+    { name: t('التقويم', 'Calendar'), path: '/calendar' },
     { name: t('المكتبة', 'Library'), path: '/library' },
     { name: t('المدربون', 'Instructors'), path: '/instructors' },
     { name: t('من نحن', 'About'), path: '/about' },
@@ -87,13 +139,76 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
           <div className="flex items-center gap-2 lg:gap-3">
             {/* Search Bar */}
-            <div className="hidden md:flex items-center rounded-xl px-3 py-2.5 border focus-within:border-emerald-500 focus-within:ring-4 focus-within:ring-emerald-500/10 transition-all group w-40 lg:w-48 bg-slate-50 border-slate-200">
-              <Search className="w-4 h-4 group-focus-within:text-emerald-600 ml-2 text-slate-400" />
-              <input
-                type="text"
-                placeholder={t("بحث...", "Search...")}
-                className="bg-transparent border-none outline-none text-sm w-full font-medium placeholder:text-slate-400"
-              />
+            <div className="hidden md:block relative group">
+              <div className="flex items-center rounded-xl px-3 py-2.5 border focus-within:border-emerald-500 focus-within:ring-4 focus-within:ring-emerald-500/10 transition-all w-40 lg:w-48 bg-slate-50 border-slate-200 relative z-[100]">
+                <Search className="w-4 h-4 group-focus-within:text-emerald-600 ml-2 text-slate-400" />
+                <input
+                  type="text"
+                  value={headerSearch}
+                  onChange={(e) => handleSearch(e.target.value)}
+                  onFocus={() => { if (headerSearch) setShowResults(true); }}
+                  onBlur={() => setTimeout(() => setShowResults(false), 200)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && headerSearch.trim()) {
+                      navigate(`/courses?q=${encodeURIComponent(headerSearch.trim())}`);
+                      setShowResults(false);
+                    }
+                  }}
+                  placeholder={t("بحث...", "Search...")}
+                  className="bg-transparent border-none outline-none text-sm w-full font-medium placeholder:text-slate-400"
+                />
+              </div>
+
+              {/* Live Search Results Dropdown */}
+              {showResults && (searchResults.courses.length > 0 || searchResults.instructors.length > 0) && (
+                <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-xl overflow-hidden z-[101] animate-fade-in border border-slate-100 max-h-96 overflow-y-auto w-64 -translate-x-8 lg:-translate-x-0">
+                  {searchResults.courses.length > 0 && (
+                    <div className="p-2">
+                      <h3 className="text-xs font-bold text-slate-400 px-3 py-2 uppercase tracking-wider">{t('الدورات', 'Courses')}</h3>
+                      {searchResults.courses.slice(0, 3).map(course => (
+                        <div
+                          key={course.id}
+                          onClick={() => navigate(`/courses?q=${course.title}`)}
+                          className="flex items-center gap-3 p-3 hover:bg-slate-50 rounded-xl cursor-pointer transition group"
+                        >
+                          <div className="w-10 h-10 rounded-lg bg-slate-100 overflow-hidden shrink-0 relative">
+                            {course.media && course.media[0] && course.media[0].type === 'image' ? (
+                              <img src={course.media[0].url} className="w-full h-full object-cover" alt="" />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-slate-400"><BookOpen size={16} /></div>
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-bold text-slate-800 text-xs truncate group-hover:text-emerald-600 transition-colors">{course.title}</h4>
+                            <p className="text-[10px] text-slate-500 truncate">{course.category}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {searchResults.courses.length > 0 && searchResults.instructors.length > 0 && <div className="h-px bg-slate-100 mx-4"></div>}
+
+                  {searchResults.instructors.length > 0 && (
+                    <div className="p-2">
+                      <h3 className="text-xs font-bold text-slate-400 px-3 py-2 uppercase tracking-wider">{t('المدربون', 'Instructors')}</h3>
+                      {searchResults.instructors.slice(0, 3).map(inst => (
+                        <div
+                          key={inst.id}
+                          onClick={() => navigate(`/instructors?q=${inst.name}`)}
+                          className="flex items-center gap-3 p-3 hover:bg-slate-50 rounded-xl cursor-pointer transition group"
+                        >
+                          <img src={inst.image} className="w-8 h-8 rounded-full object-cover border border-slate-100" alt="" />
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-bold text-slate-800 text-xs truncate group-hover:text-emerald-600 transition-colors">{inst.name}</h4>
+                            <p className="text-[10px] text-slate-500 truncate">{inst.specialization || t('مدرب', 'Instructor')}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Theme Toggle Button */}

@@ -5,13 +5,15 @@ import { TESTIMONIALS } from '../constants';
 import CourseCard from '../components/CourseCard';
 import { useTheme } from '../context/ThemeContext';
 import { db } from '../lib/firebase';
-import { Course } from '../types';
+import { Course, Testimonial } from '../types';
 
-// Category constants
+// Category constants - matching the Courses page
 const Category = {
-  TECH: 'TECH',
-  BUSINESS: 'BUSINESS',
-  DESIGN: 'DESIGN'
+  TECH: 'Tech',
+  HUMAN_DEV: 'Human Development',
+  CYBER: 'Cyber Security',
+  ADMIN: 'Admin Skills',
+  STUDENT: 'Student Skills'
 };
 
 const Home: React.FC = () => {
@@ -20,11 +22,50 @@ const Home: React.FC = () => {
   const [activeTab, setActiveTab] = useState('all');
   const { settings, t, isEnglish } = useTheme();
 
-  // Stats data with translation
+  const [coursesCount, setCoursesCount] = useState(0);
+  const [instructorsCount, setInstructorsCount] = useState(0);
+  const [studentsCount, setStudentsCount] = useState(0);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>(TESTIMONIALS);
+  const [activeTestimonialIndex, setActiveTestimonialIndex] = useState(0);
+
+  // Auto-rotate testimonials
+  useEffect(() => {
+    if (testimonials.length <= 1) return;
+    const interval = setInterval(() => {
+      setActiveTestimonialIndex(prev => (prev + 1) % testimonials.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [testimonials.length]);
+
+  // Fetch real stats from Firebase
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const [coursesSnap, instructorsSnap] = await Promise.all([
+          db.collection('courses').get(),
+          db.collection('instructors').get()
+        ]);
+        setCoursesCount(coursesSnap.size);
+        setInstructorsCount(instructorsSnap.size);
+        // Sum up all students from courses
+        let totalStudents = 0;
+        coursesSnap.docs.forEach(doc => {
+          const data = doc.data();
+          totalStudents += data.studentsCount || 0;
+        });
+        setStudentsCount(totalStudents);
+      } catch (error) {
+        console.error('Error fetching stats:', error);
+      }
+    };
+    fetchStats();
+  }, []);
+
+  // Stats data with real values from database
   const STATS = [
-    { id: 1, value: '50+', label: t('مسار تعليمي تخصصي', 'Specialized Learning Paths'), icon: Play, color: 'emerald' },
-    { id: 2, value: '1.2K', label: t('طالب حقق حلمه', 'Students Achieved Dreams'), icon: Heart, color: 'orange' },
-    { id: 3, value: '30+', label: t('خبير من سوق العمل', 'Industry Experts'), icon: UserCheck, color: 'blue' },
+    { id: 1, value: `${coursesCount}+`, label: t('دورة تدريبية', 'Training Courses'), icon: Play, color: 'emerald' },
+    { id: 2, value: `${studentsCount}+`, label: t('متدرب', 'Trainees'), icon: Heart, color: 'orange' },
+    { id: 3, value: `${instructorsCount}+`, label: t('مدرب معتمد', 'Certified Trainers'), icon: UserCheck, color: 'blue' },
     { id: 4, value: '15', label: t('شريك توظيف استراتيجي', 'Strategic Partners'), icon: Rocket, color: 'purple' },
   ];
 
@@ -49,35 +90,39 @@ const Home: React.FC = () => {
     fetchFeaturedCourses();
   }, []);
 
+  // Fetch testimonials from Firebase, fallback to constants
+  useEffect(() => {
+    const fetchTestimonials = async () => {
+      try {
+        const snap = await db.collection('testimonials').where('isVisible', '==', true).get();
+        if (snap.size > 0) {
+          setTestimonials(snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Testimonial)));
+        }
+      } catch (error) {
+        console.error('Error fetching testimonials:', error);
+      }
+    };
+    fetchTestimonials();
+  }, []);
+
   // Filter courses by category
   const getFilteredCourses = () => {
     if (activeTab === 'all') return featuredCourses;
-    return featuredCourses.filter(course => {
-      const category = course.category?.toLowerCase() || '';
-      if (activeTab === Category.TECH) return category.includes('تقني') || category.includes('برمج') || category.includes('أمن') || category.includes('tech');
-      if (activeTab === Category.BUSINESS) return category.includes('إدار') || category.includes('تسويق') || category.includes('أعمال') || category.includes('business');
-      if (activeTab === Category.DESIGN) return category.includes('تصميم') || category.includes('واجه') || category.includes('design');
-      return true;
-    });
+    return featuredCourses.filter(course => course.category === activeTab);
   };
 
-  const getIndicatorPosition = () => {
-    if (isEnglish) {
-      switch (activeTab) {
-        case 'all': return '0%';
-        case Category.TECH: return '25%';
-        case Category.BUSINESS: return '50%';
-        case Category.DESIGN: return '75%';
-        default: return '0%';
-      }
-    }
-    switch (activeTab) {
-      case 'all': return '0%';
-      case Category.TECH: return '25%';
-      case Category.BUSINESS: return '50%';
-      case Category.DESIGN: return '75%';
-      default: return '0%';
-    }
+  const categoryTabs = [
+    { id: 'all', label: t('الكل', 'All') },
+    { id: Category.TECH, label: t('تقنية', 'Tech') },
+    { id: Category.CYBER, label: t('أمن سيبراني', 'Cyber Security') },
+    { id: Category.HUMAN_DEV, label: t('تنمية بشرية', 'Human Dev') },
+    { id: Category.ADMIN, label: t('مهارات إدارية', 'Admin Skills') },
+    { id: Category.STUDENT, label: t('مهارات طلابية', 'Student Skills') },
+  ];
+
+  const getIndicatorIndex = () => {
+    const idx = categoryTabs.findIndex(tab => tab.id === activeTab);
+    return idx >= 0 ? idx : 0;
   };
 
   const ArrowIcon = isEnglish ? ArrowRight : ArrowLeft;
@@ -177,7 +222,7 @@ const Home: React.FC = () => {
       </section>
 
       {/* Stats Section - New Design */}
-      <section className="py-16 lg:py-32 bg-white border-y border-slate-50 px-6 relative z-20">
+      <section className="py-16 lg:py-32 bg-white dark:bg-slate-900 border-y border-slate-50 dark:border-slate-800 px-6 relative z-20">
         <div className="container mx-auto max-w-7xl">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
             {STATS.map((stat) => {
@@ -191,15 +236,15 @@ const Home: React.FC = () => {
               return (
                 <div
                   key={stat.id}
-                  className="p-8 lg:p-10 rounded-[2.5rem] bg-[#fafafa] border border-slate-100 flex flex-col items-center text-center transition-all duration-300 hover:bg-white hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.08)] hover:-translate-y-2 group"
+                  className="p-8 lg:p-10 rounded-[2.5rem] bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex flex-col items-center text-center transition-all duration-300 hover:bg-white dark:hover:bg-slate-700 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.08)] hover:-translate-y-2 group"
                 >
-                  <div className={`w-16 h-16 lg:w-20 lg:h-20 bg-white rounded-[1.2rem] flex items-center justify-center mb-6 lg:mb-8 shadow-md ${colors[stat.color]} group-hover:text-white transition-all duration-500 ring-4 ring-slate-50 group-hover:ring-offset-2`}>
+                  <div className={`w-16 h-16 lg:w-20 lg:h-20 bg-white dark:bg-slate-900 rounded-[1.2rem] flex items-center justify-center mb-6 lg:mb-8 shadow-md ${colors[stat.color]} group-hover:text-white transition-all duration-500 ring-4 ring-slate-50 dark:ring-slate-700 group-hover:ring-offset-2 dark:group-hover:ring-offset-slate-800`}>
                     <stat.icon className="w-8 h-8 lg:w-9 lg:h-9 fill-current" />
                   </div>
-                  <h3 className="text-4xl lg:text-5xl font-black mb-3 text-slate-900 tracking-tighter italic">
+                  <h3 className="text-4xl lg:text-5xl font-black mb-3 text-slate-900 dark:text-white tracking-tighter italic">
                     {stat.value}
                   </h3>
-                  <p className="text-xs lg:text-sm font-bold text-slate-500 uppercase tracking-wide leading-snug">
+                  <p className="text-xs lg:text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide leading-snug">
                     {stat.label}
                   </p>
                 </div>
@@ -230,23 +275,14 @@ const Home: React.FC = () => {
 
           {/* Tabs Header */}
           <div className="flex flex-col items-center mb-16 lg:mb-20">
-            <div className={`relative flex bg-white p-2 rounded-[3rem] border border-slate-200 overflow-hidden w-full max-w-4xl shadow-lg ${isEnglish ? 'dir-ltr' : 'dir-rtl'}`}>
-              {/* Sliding Indicator */}
-              <div
-                className="absolute top-2 bottom-2 w-[calc(25%-5px)] bg-slate-900 shadow-xl rounded-[2.5rem] transition-all duration-500 ease-[cubic-bezier(0.65,0,0.35,1)] z-0"
-                style={{ [isEnglish ? 'left' : 'right']: getIndicatorPosition() }}
-              ></div>
-
-              {[
-                { id: 'all', label: t('الكل', 'All') },
-                { id: Category.TECH, label: t('التقنية والذكاء', 'Tech & AI') },
-                { id: Category.BUSINESS, label: t('إدارة الأعمال', 'Business') },
-                { id: Category.DESIGN, label: t('التصميم', 'Design') }
-              ].map((tab) => (
+            <div className="flex flex-wrap gap-3 justify-center">
+              {categoryTabs.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex-1 py-4 lg:py-6 text-sm md:text-lg font-black relative z-10 transition-colors duration-500 italic tracking-wide ${activeTab === tab.id ? 'text-white' : 'text-slate-500 hover:text-slate-800'
+                  className={`px-6 py-3 lg:px-8 lg:py-4 rounded-2xl text-sm md:text-base font-black transition-all duration-300 italic ${activeTab === tab.id
+                    ? 'bg-slate-900 text-white shadow-xl'
+                    : 'bg-white text-slate-500 hover:text-slate-800 border border-slate-200 hover:border-slate-300'
                     }`}
                 >
                   {tab.label}
@@ -336,25 +372,70 @@ const Home: React.FC = () => {
               </div>
             </div>
 
-            {/* Testimonial */}
-            <div className="lg:w-1/2 w-full">
-              {TESTIMONIALS.length > 0 && (
-                <div className="relative p-10 lg:p-16 bg-white/5 border border-white/10 rounded-[3rem] lg:rounded-[4.5rem] backdrop-blur-[20px] group hover:border-emerald-500/40 transition-all duration-1000 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)]">
-                  <div className={`absolute -top-5 ${isEnglish ? '-left-5 lg:-left-6' : '-right-5 lg:-right-6'} w-20 h-20 lg:w-24 lg:h-24 bg-emerald-600 rounded-[2rem] flex items-center justify-center shadow-2xl group-hover:rotate-12 transition-transform duration-700`}>
-                    <Star fill="white" className="w-8 h-8 lg:w-10 lg:h-10 text-white" />
-                  </div>
-                  <p className={`text-xl md:text-3xl font-medium leading-relaxed mb-12 lg:mb-16 relative z-10 italic text-slate-100 ${isEnglish ? 'text-left' : 'text-right'}`}>
-                    "{TESTIMONIALS[0].content}"
-                  </p>
-                  <div className={`flex items-center gap-6 ${isEnglish ? 'justify-start text-left' : 'justify-end text-right'}`}>
-                    <div>
-                      <h5 className="text-xl lg:text-2xl font-black italic tracking-tighter">{TESTIMONIALS[0].name}</h5>
-                      <p className="text-emerald-400 text-[10px] lg:text-xs font-black tracking-[0.2em] uppercase italic">{TESTIMONIALS[0].role}</p>
+            {/* Testimonial Carousel */}
+            <div className="lg:w-1/2 w-full relative">
+              {testimonials.length > 0 && (
+                <div className="relative">
+                  {/* Carousel Content */}
+                  <div className="relative p-10 lg:p-16 bg-white/5 border border-white/10 rounded-[3rem] lg:rounded-[4.5rem] backdrop-blur-[20px] group hover:border-emerald-500/40 transition-all duration-1000 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] min-h-[400px] flex flex-col justify-center">
+
+                    {/* Decorative Icon */}
+                    <div className={`absolute -top-5 ${isEnglish ? '-left-5 lg:-left-6' : '-right-5 lg:-right-6'} w-20 h-20 lg:w-24 lg:h-24 bg-emerald-600 rounded-[2rem] flex items-center justify-center shadow-2xl group-hover:rotate-12 transition-transform duration-700 z-20`}>
+                      <Star fill="white" className="w-8 h-8 lg:w-10 lg:h-10 text-white" />
                     </div>
-                    <div className="relative">
-                      <img src={TESTIMONIALS[0].image} alt={TESTIMONIALS[0].name} className="w-16 h-16 lg:w-20 lg:h-20 rounded-[2.2rem] border-2 border-emerald-500 shadow-2xl object-cover ring-4 ring-emerald-500/20" />
-                      <div className={`absolute bottom-1 ${isEnglish ? '-left-1' : '-right-1'} w-4 h-4 lg:w-5 lg:h-5 bg-green-500 border-4 border-slate-900 rounded-full`}></div>
+
+                    {/* Testimonial Text */}
+                    <div key={activeTestimonialIndex} className="animate-fade-in">
+                      <p className={`text-xl md:text-3xl font-medium leading-relaxed mb-12 lg:mb-16 relative z-10 italic text-slate-100 ${isEnglish ? 'text-left' : 'text-right'}`}>
+                        "{testimonials[activeTestimonialIndex].text}"
+                      </p>
+
+                      <div className={`flex items-center gap-6 ${isEnglish ? 'justify-start text-left' : 'justify-end text-right'}`}>
+                        <div>
+                          <h5 className="text-xl lg:text-2xl font-black italic tracking-tighter">{testimonials[activeTestimonialIndex].name}</h5>
+                          <p className="text-emerald-400 text-[10px] lg:text-xs font-black tracking-[0.2em] uppercase italic">{testimonials[activeTestimonialIndex].role}</p>
+                        </div>
+                        <div className="relative">
+                          <img src={testimonials[activeTestimonialIndex].image || `https://ui-avatars.com/api/?name=${testimonials[activeTestimonialIndex].name}&background=10b981&color=fff`} alt={testimonials[activeTestimonialIndex].name} className="w-16 h-16 lg:w-20 lg:h-20 rounded-[2.2rem] border-2 border-emerald-500 shadow-2xl object-cover ring-4 ring-emerald-500/20" />
+                          <div className={`absolute bottom-1 ${isEnglish ? '-left-1' : '-right-1'} w-4 h-4 lg:w-5 lg:h-5 bg-green-500 border-4 border-slate-900 rounded-full`}></div>
+                        </div>
+                      </div>
                     </div>
+
+                    {/* Navigation Controls */}
+                    {testimonials.length > 1 && (
+                      <div className={`absolute bottom-8 ${isEnglish ? 'right-8' : 'left-8'} flex gap-3 z-20`}>
+                        <button
+                          onClick={() => {
+                            setActiveTestimonialIndex(prev => prev === 0 ? testimonials.length - 1 : prev - 1);
+                          }}
+                          className="w-10 h-10 rounded-full bg-white/10 hover:bg-emerald-500 hover:text-white text-white/50 border border-white/10 flex items-center justify-center transition-all"
+                        >
+                          <ChevronLeft className={`w-5 h-5 ${isEnglish ? '' : 'rotate-180'}`} />
+                        </button>
+                        <button
+                          onClick={() => {
+                            setActiveTestimonialIndex(prev => (prev + 1) % testimonials.length);
+                          }}
+                          className="w-10 h-10 rounded-full bg-white/10 hover:bg-emerald-500 hover:text-white text-white/50 border border-white/10 flex items-center justify-center transition-all"
+                        >
+                          <ChevronLeft className={`w-5 h-5 ${isEnglish ? 'rotate-180' : ''}`} />
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Progress Indicators */}
+                    {testimonials.length > 1 && (
+                      <div className={`absolute top-10 ${isEnglish ? 'right-10' : 'left-10'} flex gap-1.5`}>
+                        {testimonials.map((_, idx) => (
+                          <div
+                            key={idx}
+                            onClick={() => setActiveTestimonialIndex(idx)}
+                            className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${idx === activeTestimonialIndex ? 'w-8 bg-emerald-500' : 'w-2 bg-white/20 hover:bg-white/40'}`}
+                          ></div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
