@@ -115,7 +115,7 @@ const CourseDetails: React.FC = () => {
               <div className="flex flex-wrap gap-6 text-sm md:text-base animate-fade-up delay-300">
                 <div className="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-xl border border-slate-100">
                   <User className="text-emerald-600" size={18} />
-                  <span className="font-bold text-slate-700">{instructor?.name || t('غير محدد', 'Not specified')}</span>
+                  <span className="font-bold text-slate-700">{course.instructorText || instructor?.name || t('غير محدد', 'Not specified')}</span>
                 </div>
                 <div className="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-xl border border-slate-100">
                   <BarChart className="text-orange-500" size={18} />
@@ -299,22 +299,34 @@ const CourseDetails: React.FC = () => {
                 </div>
               )}
 
-              {activeTab === 'instructor' && instructor && (
+              {activeTab === 'instructor' && (
                 <div className="animate-fade-up space-y-10">
                   {/* Instructor Info */}
-                  <div className={`flex flex-col md:flex-row gap-8 items-center md:items-start text-center ${isEnglish ? 'md:text-left' : 'md:text-right'}`}>
-                    <img src={instructor.image} alt={instructor.name} className="w-28 h-28 md:w-36 md:h-36 rounded-[2rem] object-cover shadow-xl border-4 border-white" />
-                    <div>
-                      <h3 className="text-2xl font-black text-slate-900 mb-2 italic">{instructor.name}</h3>
-                      <p className="text-emerald-600 font-bold mb-4 bg-emerald-50 px-3 py-1 rounded-lg inline-block">{instructor.roles?.[0]}</p>
-                      <p className="text-slate-600 leading-relaxed mb-6">
-                        {instructor.bio}
-                      </p>
-                      <Link to="/instructors" className="text-emerald-600 font-black hover:underline inline-flex items-center gap-2">
-                        {t('عرض ملف المدرب الكامل', 'View Full Instructor Profile')} <ChevronIcon size={16} />
-                      </Link>
+                  {course.instructorText && !instructor ? (
+                    <div className="bg-gradient-to-br from-emerald-50 to-white p-8 rounded-2xl border border-emerald-100 text-center">
+                      <div className="w-20 h-20 bg-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <User className="text-emerald-600" size={36} />
+                      </div>
+                      <h3 className="text-2xl font-black text-slate-900 mb-2 italic">{t('المدربون', 'Instructors')}</h3>
+                      <p className="text-emerald-700 font-bold text-lg bg-emerald-50 px-4 py-2 rounded-xl inline-block">{course.instructorText}</p>
                     </div>
-                  </div>
+                  ) : instructor ? (
+                    <div className={`flex flex-col md:flex-row gap-8 items-center md:items-start text-center ${isEnglish ? 'md:text-left' : 'md:text-right'}`}>
+                      <img src={instructor.image} alt={instructor.name} className="w-28 h-28 md:w-36 md:h-36 rounded-[2rem] object-cover shadow-xl border-4 border-white" />
+                      <div>
+                        <h3 className="text-2xl font-black text-slate-900 mb-2 italic">{instructor.name}</h3>
+                        <p className="text-emerald-600 font-bold mb-4 bg-emerald-50 px-3 py-1 rounded-lg inline-block">{instructor.roles?.[0]}</p>
+                        <p className="text-slate-600 leading-relaxed mb-6">
+                          {instructor.bio}
+                        </p>
+                        <Link to="/instructors" className="text-emerald-600 font-black hover:underline inline-flex items-center gap-2">
+                          {t('عرض ملف المدرب الكامل', 'View Full Instructor Profile')} <ChevronIcon size={16} />
+                        </Link>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-slate-400 text-center font-medium">{t('لا توجد معلومات عن المدرب', 'No instructor information available')}</p>
+                  )}
 
                   {/* Graduates Section */}
                   {graduates.length > 0 && (

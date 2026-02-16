@@ -30,6 +30,7 @@ export interface Course {
   oldPrice?: number;
   media: MediaItem[];
   instructorIds: string[];
+  instructorText?: string;
   duration: string;
   rating: number;
   studentsCount: number;

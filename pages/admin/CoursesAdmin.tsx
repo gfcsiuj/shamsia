@@ -40,6 +40,7 @@ const CoursesAdmin: React.FC = () => {
         oldPrice: 0,
         media: [],
         instructorIds: [],
+        instructorText: '',
         duration: '',
         rating: 5,
         studentsCount: 0,
@@ -182,7 +183,8 @@ const CoursesAdmin: React.FC = () => {
                 certifications: formData.certifications?.filter(item => item.trim() !== '') || [],
                 notes: formData.notes?.filter(item => item.trim() !== '') || [],
                 syllabus: formData.syllabus.filter(item => item.title.trim() !== '' || item.topic.trim() !== '').map(item => ({ ...item, points: item.points?.filter(p => p.trim() !== '') || [] })),
-                tags: formData.tags
+                tags: formData.tags,
+                instructorText: formData.instructorText || ''
             };
 
             const { id, ...payload } = dataToSave;
@@ -466,40 +468,73 @@ const CoursesAdmin: React.FC = () => {
                                                 </div>
 
                                                 <div className="ca-card ca-card-primary">
-                                                    <h3 className="ca-section-title text-primary-800 border-primary-100">فريق التدريب</h3>
-                                                    <div className="flex flex-wrap gap-2 mb-4">
-                                                        {formData.instructorIds?.map(id => {
-                                                            const inst = instructors.find(i => i.id === id);
-                                                            return inst ? (
-                                                                <div key={id} className="flex items-center gap-2 bg-white text-primary-700 px-4 py-2 rounded-full text-sm font-bold border border-primary-200 shadow-sm animate-pop-in">
-                                                                    <img src={inst.image} className="w-6 h-6 rounded-full object-cover" />
-                                                                    {inst.name}
-                                                                    <button onClick={() => toggleInstructor(id)} className="hover:text-red-500 bg-primary-50 rounded-full p-0.5"><X size={14} /></button>
-                                                                </div>
-                                                            ) : null;
-                                                        })}
+                                                    <div className="flex items-center justify-between mb-4">
+                                                        <h3 className="ca-section-title text-primary-800 border-primary-100 mb-0 border-none">فريق التدريب</h3>
+                                                        <label className="flex items-center gap-2 cursor-pointer select-none">
+                                                            <span className="text-xs font-bold text-slate-400">{formData.instructorText ? 'نص مخصص' : 'اختيار مدربين'}</span>
+                                                            <div
+                                                                onClick={() => {
+                                                                    if (formData.instructorText) {
+                                                                        setFormData({ ...formData, instructorText: '' });
+                                                                    } else {
+                                                                        setFormData({ ...formData, instructorText: 'كادر المركز المتخصص' });
+                                                                    }
+                                                                }}
+                                                                className={`w-10 h-5 rounded-full transition-all relative cursor-pointer ${formData.instructorText ? 'bg-primary-500' : 'bg-slate-200'}`}
+                                                            >
+                                                                <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-all ${formData.instructorText ? 'left-5' : 'left-0.5'}`}></div>
+                                                            </div>
+                                                        </label>
                                                     </div>
-                                                    <div className="relative group">
-                                                        <button type="button" className="ca-input text-start text-slate-400 flex justify-between items-center bg-white hover:border-primary-300">
-                                                            <span>ابحث عن مدرب...</span>
-                                                            <Users size={18} className="text-slate-400" />
-                                                        </button>
-                                                        <div className="absolute top-full left-0 right-0 bg-white border border-slate-200 shadow-xl rounded-xl mt-2 max-h-60 overflow-y-auto hidden group-hover:block hover:block z-20">
-                                                            {instructors.map(inst => (
-                                                                <div
-                                                                    key={inst.id}
-                                                                    onClick={() => toggleInstructor(inst.id)}
-                                                                    className={`p-3 flex items-center gap-3 hover:bg-slate-50 cursor-pointer border-b border-slate-50 last:border-0 ${formData.instructorIds?.includes(inst.id) ? 'bg-primary-50' : ''}`}
-                                                                >
-                                                                    <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-colors ${formData.instructorIds?.includes(inst.id) ? 'bg-primary-500 border-primary-500' : 'border-slate-300'}`}>
-                                                                        {formData.instructorIds?.includes(inst.id) && <CheckSquare size={14} className="text-white" />}
-                                                                    </div>
-                                                                    <img src={inst.image} className="w-8 h-8 rounded-full object-cover" />
-                                                                    <span className="text-sm font-bold text-slate-700">{inst.name}</span>
-                                                                </div>
-                                                            ))}
+
+                                                    {formData.instructorText ? (
+                                                        <div>
+                                                            <label className="ca-label">نص المدربين</label>
+                                                            <input
+                                                                type="text"
+                                                                className="ca-input text-base font-bold text-primary-700"
+                                                                placeholder="مثال: كادر المركز الكندي العراقي المتخصص"
+                                                                value={formData.instructorText}
+                                                                onChange={e => setFormData({ ...formData, instructorText: e.target.value })}
+                                                            />
                                                         </div>
-                                                    </div>
+                                                    ) : (
+                                                        <>
+                                                            <div className="flex flex-wrap gap-2 mb-4">
+                                                                {formData.instructorIds?.map(id => {
+                                                                    const inst = instructors.find(i => i.id === id);
+                                                                    return inst ? (
+                                                                        <div key={id} className="flex items-center gap-2 bg-white text-primary-700 px-4 py-2 rounded-full text-sm font-bold border border-primary-200 shadow-sm animate-pop-in">
+                                                                            <img src={inst.image} className="w-6 h-6 rounded-full object-cover" />
+                                                                            {inst.name}
+                                                                            <button onClick={() => toggleInstructor(id)} className="hover:text-red-500 bg-primary-50 rounded-full p-0.5"><X size={14} /></button>
+                                                                        </div>
+                                                                    ) : null;
+                                                                })}
+                                                            </div>
+                                                            <div className="relative group">
+                                                                <button type="button" className="ca-input text-start text-slate-400 flex justify-between items-center bg-white hover:border-primary-300">
+                                                                    <span>ابحث عن مدرب...</span>
+                                                                    <Users size={18} className="text-slate-400" />
+                                                                </button>
+                                                                <div className="absolute top-full left-0 right-0 bg-white border border-slate-200 shadow-xl rounded-xl mt-2 max-h-60 overflow-y-auto hidden group-hover:block hover:block z-20">
+                                                                    {instructors.map(inst => (
+                                                                        <div
+                                                                            key={inst.id}
+                                                                            onClick={() => toggleInstructor(inst.id)}
+                                                                            className={`p-3 flex items-center gap-3 hover:bg-slate-50 cursor-pointer border-b border-slate-50 last:border-0 ${formData.instructorIds?.includes(inst.id) ? 'bg-primary-50' : ''}`}
+                                                                        >
+                                                                            <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-colors ${formData.instructorIds?.includes(inst.id) ? 'bg-primary-500 border-primary-500' : 'border-slate-300'}`}>
+                                                                                {formData.instructorIds?.includes(inst.id) && <CheckSquare size={14} className="text-white" />}
+                                                                            </div>
+                                                                            <img src={inst.image} className="w-8 h-8 rounded-full object-cover" />
+                                                                            <span className="text-sm font-bold text-slate-700">{inst.name}</span>
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
+                                                            </div>
+                                                        </>
+                                                    )}
                                                 </div>
 
                                                 {/* Graduates Section - Select from Instructors */}

@@ -20,6 +20,10 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, instructor: propInstruc
       setInstructorName(propInstructor.name);
       return;
     }
+    if (course.instructorText) {
+      setInstructorName(course.instructorText);
+      return;
+    }
     const instId = course.instructorIds?.[0];
     if (instId) {
       db.collection('instructors').doc(instId).get().then(doc => {
@@ -28,7 +32,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, instructor: propInstruc
         }
       }).catch(() => { });
     }
-  }, [course.instructorIds, propInstructor]);
+  }, [course.instructorIds, course.instructorText, propInstructor]);
 
   // Handle media (use first image or placeholder)
   const imageUrl = course.media && course.media.length > 0 ? course.media[0].url : 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=600';
