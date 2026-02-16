@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import ReactDOM from 'react-dom';
-import { Target, Heart, Award, ShieldCheck, Loader2, ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { Target, Heart, Award, ShieldCheck, Loader2, ChevronLeft, ChevronRight, X, User } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { db } from '../lib/firebase';
+import { Instructor } from '../types';
 
 interface TrainerCert { id: string; instructorId: string; instructorName: string; title: string; description: string; images: string[]; }
 interface CompanyCert { id: string; name: string; frontImage: string; backImage?: string; }
@@ -13,24 +14,31 @@ const About: React.FC = () => {
   const [trainerCerts, setTrainerCerts] = useState<TrainerCert[]>([]);
   const [companyCerts, setCompanyCerts] = useState<CompanyCert[]>([]);
   const [partners, setPartners] = useState<Partner[]>([]);
+  const [instructors, setInstructors] = useState<Instructor[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Lightbox
+  // Lightbox (company certs)
   const [lbImages, setLbImages] = useState<string[]>([]);
   const [lbIdx, setLbIdx] = useState(0);
   const [lbOpen, setLbOpen] = useState(false);
 
+  // Trainer cert modal
+  const [selectedCert, setSelectedCert] = useState<TrainerCert | null>(null);
+  const [certImgIdx, setCertImgIdx] = useState(0);
+
   useEffect(() => {
     const fetchAll = async () => {
       try {
-        const [tSnap, cSnap, pSnap] = await Promise.all([
+        const [tSnap, cSnap, pSnap, iSnap] = await Promise.all([
           db.collection('trainerCertificates').get(),
           db.collection('companyCertificates').get(),
           db.collection('partners').get(),
+          db.collection('instructors').get(),
         ]);
         setTrainerCerts(tSnap.docs.map(d => ({ id: d.id, ...d.data() } as TrainerCert)));
         setCompanyCerts(cSnap.docs.map(d => ({ id: d.id, ...d.data() } as CompanyCert)));
         setPartners(pSnap.docs.map(d => d.data() as Partner));
+        setInstructors(iSnap.docs.map(d => ({ id: d.id, ...d.data() } as Instructor)));
       } catch (err) { console.error(err); }
       finally { setLoading(false); }
     };
@@ -53,17 +61,34 @@ const About: React.FC = () => {
   const lbNext = useCallback(() => setLbIdx(prev => (prev + 1) % lbImages.length), [lbImages.length]);
   const lbPrev = useCallback(() => setLbIdx(prev => (prev - 1 + lbImages.length) % lbImages.length), [lbImages.length]);
 
+  const openCertModal = useCallback((cert: TrainerCert) => {
+    setSelectedCert(cert);
+    setCertImgIdx(0);
+    document.body.style.overflow = 'hidden';
+  }, []);
+
+  const closeCertModal = useCallback(() => {
+    setSelectedCert(null);
+    document.body.style.overflow = '';
+  }, []);
+
   // Keyboard nav
   useEffect(() => {
-    if (!lbOpen) return;
+    if (!lbOpen && !selectedCert) return;
     const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') closeLb();
-      if (e.key === 'ArrowRight') lbPrev();
-      if (e.key === 'ArrowLeft') lbNext();
+      if (e.key === 'Escape') { if (selectedCert) closeCertModal(); else closeLb(); }
+      if (lbOpen) {
+        if (e.key === 'ArrowRight') lbPrev();
+        if (e.key === 'ArrowLeft') lbNext();
+      }
+      if (selectedCert && selectedCert.images.length > 1) {
+        if (e.key === 'ArrowRight') setCertImgIdx(prev => (prev - 1 + selectedCert.images.length) % selectedCert.images.length);
+        if (e.key === 'ArrowLeft') setCertImgIdx(prev => (prev + 1) % selectedCert.images.length);
+      }
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [lbOpen, closeLb, lbNext, lbPrev]);
+  }, [lbOpen, selectedCert, closeLb, closeCertModal, lbNext, lbPrev]);
 
   const values = [
     { icon: ShieldCheck, title: t('المصداقية', 'Integrity'), desc: t('نلتزم بأعلى معايير الشفافية والموثوقية.', 'We commit to the highest standards of transparency.'), color: 'emerald' },
@@ -77,25 +102,19 @@ const About: React.FC = () => {
     t('دعم التعلم المستمر وتحقيق أهداف التنمية المستدامة.', 'Supporting continuous learning and SDGs.'),
   ];
 
-  /* ═══════════════════════════════════════
-     LIGHTBOX — rendered via Portal on body
-     ═══════════════════════════════════════ */
+  /* ═══════════ LIGHTBOX (company certs) ═══════════ */
   const renderLightbox = () => {
     if (!lbOpen || lbImages.length === 0) return null;
 
     const lightbox = (
       <div
         style={{
-          position: 'fixed',
-          top: 0, left: 0, right: 0, bottom: 0,
-          zIndex: 99999,
-          backgroundColor: 'rgba(0,0,0,0.96)',
-          display: 'flex',
-          flexDirection: 'column',
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          zIndex: 99999, backgroundColor: 'rgba(0,0,0,0.96)',
+          display: 'flex', flexDirection: 'column',
         }}
         onClick={closeLb}
       >
-        {/* Top bar */}
         <div style={{
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           padding: '12px 16px', flexShrink: 0,
@@ -103,63 +122,42 @@ const About: React.FC = () => {
           <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: '14px', fontWeight: 700 }}>
             {lbImages.length > 1 ? `${lbIdx + 1} / ${lbImages.length}` : ''}
           </div>
-          <button onClick={closeLb}
-            style={{
-              width: '44px', height: '44px', borderRadius: '50%',
-              background: 'rgba(255,255,255,0.15)', border: 'none',
-              cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: '#fff', fontSize: '20px',
-            }}>
-            <X size={24} />
-          </button>
+          <button onClick={closeLb} style={{
+            width: '44px', height: '44px', borderRadius: '50%',
+            background: 'rgba(255,255,255,0.15)', border: 'none',
+            cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+            color: '#fff',
+          }}><X size={24} /></button>
         </div>
 
-        {/* Image area */}
         <div style={{
           flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
           position: 'relative', minHeight: 0, padding: '0 8px',
         }} onClick={e => e.stopPropagation()}>
-
-          {/* Prev arrow */}
           {lbImages.length > 1 && (
             <button onClick={lbPrev} style={{
               position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)',
               zIndex: 5, width: '44px', height: '44px', borderRadius: '50%',
               background: 'rgba(255,255,255,0.12)', border: 'none', cursor: 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff',
-            }}>
-              <ChevronRight size={24} />
-            </button>
+            }}><ChevronRight size={24} /></button>
           )}
-
-          {/* Image */}
           <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '8px 48px' }}>
-            <img
-              key={lbIdx}
-              src={lbImages[lbIdx]}
-              alt=""
-              style={{
-                maxWidth: '100%', maxHeight: '100%', objectFit: 'contain',
-                borderRadius: '12px', userSelect: 'none',
-              }}
-              draggable={false}
-            />
+            <img key={lbIdx} src={lbImages[lbIdx]} alt="" style={{
+              maxWidth: '100%', maxHeight: '100%', objectFit: 'contain',
+              borderRadius: '12px', userSelect: 'none',
+            }} draggable={false} />
           </div>
-
-          {/* Next arrow */}
           {lbImages.length > 1 && (
             <button onClick={lbNext} style={{
               position: 'absolute', left: '8px', top: '50%', transform: 'translateY(-50%)',
               zIndex: 5, width: '44px', height: '44px', borderRadius: '50%',
               background: 'rgba(255,255,255,0.12)', border: 'none', cursor: 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff',
-            }}>
-              <ChevronLeft size={24} />
-            </button>
+            }}><ChevronLeft size={24} /></button>
           )}
         </div>
 
-        {/* Thumbnails */}
         {lbImages.length > 1 && (
           <div style={{
             flexShrink: 0, padding: '12px 16px', display: 'flex', justifyContent: 'center',
@@ -182,6 +180,153 @@ const About: React.FC = () => {
     );
 
     return ReactDOM.createPortal(lightbox, document.body);
+  };
+
+  /* ═══════════ CERT DETAIL MODAL (trainer certs) ═══════════ */
+  const renderCertModal = () => {
+    if (!selectedCert) return null;
+    const instructor = instructors.find(i => i.id === selectedCert.instructorId);
+    const images = selectedCert.images;
+
+    const modal = (
+      <div
+        style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          zIndex: 99999, backgroundColor: 'rgba(0,0,0,0.7)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          padding: '16px', backdropFilter: 'blur(8px)',
+        }}
+        onClick={closeCertModal}
+      >
+        <div
+          onClick={e => e.stopPropagation()}
+          style={{
+            background: '#fff', borderRadius: '24px', maxWidth: '900px', width: '100%',
+            maxHeight: '90vh', overflow: 'auto', position: 'relative',
+            boxShadow: '0 40px 80px rgba(0,0,0,0.3)',
+          }}
+        >
+          {/* Close */}
+          <button onClick={closeCertModal} style={{
+            position: 'absolute', top: '16px', left: '16px', zIndex: 20,
+            width: '40px', height: '40px', borderRadius: '50%',
+            background: 'rgba(0,0,0,0.06)', border: 'none', cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#475569',
+          }}><X size={20} /></button>
+
+          {/* Certificate Image */}
+          <div style={{
+            position: 'relative', background: '#f8fafc', borderRadius: '24px 24px 0 0',
+            padding: '32px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center',
+            justifyContent: 'center', minHeight: '280px',
+          }}>
+            {images.length > 0 && (
+              <>
+                <img
+                  key={certImgIdx}
+                  src={images[certImgIdx]}
+                  alt={selectedCert.title}
+                  style={{
+                    maxWidth: '100%', maxHeight: '380px', objectFit: 'contain',
+                    borderRadius: '16px', boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
+                  }}
+                />
+                {images.length > 1 && (
+                  <>
+                    <button onClick={() => setCertImgIdx(prev => (prev - 1 + images.length) % images.length)} style={{
+                      position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)',
+                      width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(0,0,0,0.06)',
+                      border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#475569',
+                    }}><ChevronRight size={20} /></button>
+                    <button onClick={() => setCertImgIdx(prev => (prev + 1) % images.length)} style={{
+                      position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)',
+                      width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(0,0,0,0.06)',
+                      border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#475569',
+                    }}><ChevronLeft size={20} /></button>
+                  </>
+                )}
+              </>
+            )}
+
+            {/* Dots */}
+            {images.length > 1 && (
+              <div style={{ display: 'flex', gap: '6px', marginTop: '16px' }}>
+                {images.map((_, idx) => (
+                  <button key={idx} onClick={() => setCertImgIdx(idx)} style={{
+                    width: idx === certImgIdx ? '24px' : '8px', height: '8px',
+                    borderRadius: '4px', border: 'none', cursor: 'pointer',
+                    background: idx === certImgIdx ? '#10b981' : '#cbd5e1',
+                    transition: 'all 0.3s', padding: 0,
+                  }} />
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Info section */}
+          <div style={{ padding: '24px 28px 28px' }}>
+            {/* Cert details */}
+            <div style={{ marginBottom: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+                <div style={{
+                  width: '36px', height: '36px', borderRadius: '10px', background: '#ecfdf5',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  <Award size={18} style={{ color: '#10b981' }} />
+                </div>
+                <h3 style={{ fontSize: '20px', fontWeight: 900, color: '#0f172a', fontStyle: 'italic', margin: 0 }}>
+                  {selectedCert.title}
+                </h3>
+              </div>
+              {selectedCert.description && (
+                <p style={{ color: '#64748b', fontSize: '14px', lineHeight: '1.8', margin: 0, paddingRight: '46px' }}>
+                  {selectedCert.description}
+                </p>
+              )}
+            </div>
+
+            <div style={{ height: '1px', background: '#f1f5f9', margin: '16px 0' }}></div>
+
+            {/* Trainer info */}
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: '16px',
+              background: '#f8fafc', borderRadius: '16px', padding: '16px 20px',
+              border: '1px solid #e2e8f0',
+            }}>
+              {instructor?.image ? (
+                <img src={instructor.image} alt={instructor.name} style={{
+                  width: '56px', height: '56px', borderRadius: '16px', objectFit: 'cover',
+                  border: '3px solid #fff', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', flexShrink: 0,
+                }} />
+              ) : (
+                <div style={{
+                  width: '56px', height: '56px', borderRadius: '16px', background: '#e2e8f0',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                }}><User size={24} style={{ color: '#94a3b8' }} /></div>
+              )}
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <h4 style={{ fontSize: '16px', fontWeight: 900, color: '#0f172a', margin: '0 0 4px 0', fontStyle: 'italic' }}>
+                  {instructor?.name || selectedCert.instructorName}
+                </h4>
+                {instructor?.roles && instructor.roles.length > 0 && (
+                  <span style={{
+                    fontSize: '11px', fontWeight: 700, background: '#ecfdf5', color: '#059669',
+                    padding: '3px 10px', borderRadius: '8px', display: 'inline-block',
+                  }}>{instructor.roles[0]}</span>
+                )}
+                {instructor?.shortBio && (
+                  <p style={{ fontSize: '12px', color: '#94a3b8', margin: '6px 0 0', lineHeight: '1.5' }}>
+                    {instructor.shortBio}
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+
+    return ReactDOM.createPortal(modal, document.body);
   };
 
   return (
@@ -327,43 +472,48 @@ const About: React.FC = () => {
           <div className="flex justify-center py-10"><Loader2 className="animate-spin text-emerald-500" size={32} /></div>
         ) : trainerCerts.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 max-w-6xl mx-auto">
-            {trainerCerts.map(tc => (
-              <div key={tc.id} className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group text-right">
-                {tc.images.length > 0 && (
-                  <div className="relative h-44 md:h-52 overflow-hidden bg-slate-100 cursor-pointer" onClick={() => openLb(tc.images, 0)}>
-                    <img src={tc.images[0]} alt={tc.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                    {tc.images.length > 1 && (
-                      <div className="absolute top-2 left-2 bg-black/60 backdrop-blur-sm text-white px-2 py-1 rounded-lg text-[11px] font-bold">
-                        📷 {tc.images.length}
-                      </div>
-                    )}
-                  </div>
-                )}
-                <div className="p-4 md:p-5">
-                  <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-teal-100 text-teal-700 mb-2 inline-block">{tc.instructorName}</span>
-                  <h4 className="font-black text-slate-800 text-sm md:text-base mb-1">{tc.title}</h4>
-                  {tc.description && <p className="text-xs text-slate-400 line-clamp-2">{tc.description}</p>}
-                  {tc.images.length > 1 && (
-                    <div className="flex gap-1.5 mt-3 overflow-x-auto pb-1">
-                      {tc.images.map((img, i) => (
-                        <img key={i} src={img} alt=""
-                          className={`w-10 h-10 md:w-11 md:h-11 rounded-lg object-cover border-2 cursor-pointer hover:scale-110 transition flex-shrink-0 ${i === 0 ? 'border-teal-300' : 'border-slate-200'}`}
-                          onClick={(e) => { e.stopPropagation(); openLb(tc.images, i); }}
-                        />
-                      ))}
+            {trainerCerts.map(tc => {
+              const instructor = instructors.find(i => i.id === tc.instructorId);
+              return (
+                <div key={tc.id}
+                  className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group text-right cursor-pointer"
+                  onClick={() => openCertModal(tc)}
+                >
+                  {tc.images.length > 0 && (
+                    <div className="relative h-44 md:h-52 overflow-hidden bg-slate-100">
+                      <img src={tc.images[0]} alt={tc.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      {tc.images.length > 1 && (
+                        <div className="absolute top-2 left-2 bg-black/60 backdrop-blur-sm text-white px-2 py-1 rounded-lg text-[11px] font-bold">
+                          📷 {tc.images.length}
+                        </div>
+                      )}
                     </div>
                   )}
+                  <div className="p-4 md:p-5">
+                    <div className="flex items-center gap-2 mb-2">
+                      {instructor?.image ? (
+                        <img src={instructor.image} alt={instructor.name} className="w-7 h-7 rounded-lg object-cover border border-slate-200" />
+                      ) : (
+                        <div className="w-7 h-7 rounded-lg bg-teal-100 flex items-center justify-center">
+                          <User size={14} className="text-teal-600" />
+                        </div>
+                      )}
+                      <span className="text-[11px] font-bold text-teal-700">{tc.instructorName}</span>
+                    </div>
+                    <h4 className="font-black text-slate-800 text-sm md:text-base mb-1">{tc.title}</h4>
+                    {tc.description && <p className="text-xs text-slate-400 line-clamp-2">{tc.description}</p>}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         ) : (
           <p className="text-slate-400 font-medium text-center">{t('سيتم إضافة شهادات المدربين قريباً', 'Trainer certificates coming soon')}</p>
         )}
       </div>
 
-      {/* Portal-rendered lightbox */}
       {renderLightbox()}
+      {renderCertModal()}
     </div>
   );
 };
