@@ -52,7 +52,7 @@ const CoursesAdmin: React.FC = () => {
         longDescription: '',
         objectives: [''],
         targetAudience: [''],
-        syllabus: [{ week: 'الأسبوع 1', topic: '' }],
+        syllabus: [{ title: '', week: '', topic: '', points: [] }],
         certifications: [],
         graduateIds: [],
         notes: [],
@@ -99,7 +99,7 @@ const CoursesAdmin: React.FC = () => {
             ...course,
             objectives: course.objectives?.length ? course.objectives : [''],
             targetAudience: course.targetAudience?.length ? course.targetAudience : [''],
-            syllabus: course.syllabus?.length ? course.syllabus : [{ week: 'الأسبوع 1', topic: '' }],
+            syllabus: course.syllabus?.length ? course.syllabus.map(s => ({ title: s.title || '', week: s.week || '', topic: s.topic || '', points: s.points || [] })) : [{ title: '', week: '', topic: '', points: [] }],
             certifications: course.certifications?.length ? course.certifications : [],
             tags: course.tags || [],
             notes: course.notes?.length ? course.notes : [],
@@ -181,7 +181,7 @@ const CoursesAdmin: React.FC = () => {
                 targetAudience: formData.targetAudience.filter(item => item.trim() !== ''),
                 certifications: formData.certifications?.filter(item => item.trim() !== '') || [],
                 notes: formData.notes?.filter(item => item.trim() !== '') || [],
-                syllabus: formData.syllabus.filter(item => item.topic.trim() !== ''),
+                syllabus: formData.syllabus.filter(item => item.title.trim() !== '' || item.topic.trim() !== '').map(item => ({ ...item, points: item.points?.filter(p => p.trim() !== '') || [] })),
                 tags: formData.tags
             };
 
@@ -240,14 +240,37 @@ const CoursesAdmin: React.FC = () => {
         setFormData({ ...formData, tags: formData.tags.filter(t => t !== tag) });
     };
 
-    const handleSyllabusChange = (index: number, field: 'week' | 'topic', value: string) => {
+    const handleSyllabusChange = (index: number, field: 'title' | 'week' | 'topic', value: string) => {
         const newSyllabus = [...formData.syllabus];
         newSyllabus[index] = { ...newSyllabus[index], [field]: value };
         setFormData({ ...formData, syllabus: newSyllabus });
     };
 
+    const handleSyllabusPointChange = (syllabusIndex: number, pointIndex: number, value: string) => {
+        const newSyllabus = [...formData.syllabus];
+        const points = [...(newSyllabus[syllabusIndex].points || [])];
+        points[pointIndex] = value;
+        newSyllabus[syllabusIndex] = { ...newSyllabus[syllabusIndex], points };
+        setFormData({ ...formData, syllabus: newSyllabus });
+    };
+
+    const addSyllabusPoint = (syllabusIndex: number) => {
+        const newSyllabus = [...formData.syllabus];
+        const points = [...(newSyllabus[syllabusIndex].points || []), ''];
+        newSyllabus[syllabusIndex] = { ...newSyllabus[syllabusIndex], points };
+        setFormData({ ...formData, syllabus: newSyllabus });
+    };
+
+    const removeSyllabusPoint = (syllabusIndex: number, pointIndex: number) => {
+        const newSyllabus = [...formData.syllabus];
+        const points = [...(newSyllabus[syllabusIndex].points || [])];
+        points.splice(pointIndex, 1);
+        newSyllabus[syllabusIndex] = { ...newSyllabus[syllabusIndex], points };
+        setFormData({ ...formData, syllabus: newSyllabus });
+    };
+
     const addSyllabusItem = () => {
-        setFormData({ ...formData, syllabus: [...formData.syllabus, { week: '', topic: '' }] });
+        setFormData({ ...formData, syllabus: [...formData.syllabus, { title: '', week: '', topic: '', points: [] }] });
     };
 
     return (
@@ -790,28 +813,44 @@ const CoursesAdmin: React.FC = () => {
                                                     <p className="text-sm text-blue-500">قم ببناء هيكل الدورة وتقسيم المحاضرات</p>
                                                 </div>
                                                 <button type="button" onClick={addSyllabusItem} className="bg-blue-600 text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-blue-700 shadow-lg shadow-blue-200 transition flex items-center gap-2 transform hover:scale-105">
-                                                    <Plus size={18} /> إضافة أسبوع/محور
+                                                    <Plus size={18} /> إضافة محور
                                                 </button>
                                             </div>
 
-                                            <div className="space-y-4">
+                                            <div className="space-y-6">
                                                 {formData.syllabus.map((item, i) => (
-                                                    <div key={i} className="flex flex-col md:flex-row gap-4 items-start bg-white p-5 rounded-2xl border border-blue-100 shadow-sm relative group hover:border-blue-300 transition-all">
+                                                    <div key={i} className="bg-white p-6 rounded-2xl border border-blue-100 shadow-sm relative group hover:border-blue-300 transition-all">
                                                         <div className="absolute -right-3 top-6 w-8 h-8 bg-white border-2 border-blue-500 rounded-full flex items-center justify-center font-bold text-blue-600 text-xs shadow-sm z-10">
                                                             {i + 1}
                                                         </div>
-                                                        <div className="w-full md:w-1/4 pt-1">
-                                                            <label className="text-xs font-bold text-slate-400 mb-1 block">العنوان الفرعي</label>
+
+                                                        {/* Title (المحور) */}
+                                                        <div className="mb-4">
+                                                            <label className="text-xs font-bold text-blue-600 mb-1 block">المحور</label>
                                                             <input
                                                                 type="text"
-                                                                placeholder="الأسبوع 1"
-                                                                className="ca-input bg-slate-50 border-slate-200 focus:bg-white font-bold text-slate-700"
-                                                                value={item.week}
-                                                                onChange={e => handleSyllabusChange(i, 'week', e.target.value)}
+                                                                placeholder="مثال: أساسيات الكهرباء والتوليد"
+                                                                className="ca-input bg-blue-50/50 border-blue-200 focus:bg-white font-bold text-slate-800"
+                                                                value={item.title || ''}
+                                                                onChange={e => handleSyllabusChange(i, 'title', e.target.value)}
                                                             />
                                                         </div>
-                                                        <div className="w-full md:w-3/4 flex gap-3 pt-1">
-                                                            <div className="flex-1">
+
+                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                                            {/* Subtitle (العنوان الفرعي) */}
+                                                            <div>
+                                                                <label className="text-xs font-bold text-slate-400 mb-1 block">العنوان الفرعي</label>
+                                                                <input
+                                                                    type="text"
+                                                                    placeholder="مثال: الأيام 1-2 (المفاهيم النظرية)"
+                                                                    className="ca-input bg-slate-50 border-slate-200 focus:bg-white font-bold text-slate-700"
+                                                                    value={item.week}
+                                                                    onChange={e => handleSyllabusChange(i, 'week', e.target.value)}
+                                                                />
+                                                            </div>
+
+                                                            {/* Topic (موضوع المحاضرة) */}
+                                                            <div>
                                                                 <label className="text-xs font-bold text-slate-400 mb-1 block">موضوع المحاضرة</label>
                                                                 <input
                                                                     type="text"
@@ -821,12 +860,40 @@ const CoursesAdmin: React.FC = () => {
                                                                     onChange={e => handleSyllabusChange(i, 'topic', e.target.value)}
                                                                 />
                                                             </div>
-                                                            <button type="button" onClick={() => {
-                                                                const newS = [...formData.syllabus];
-                                                                newS.splice(i, 1);
-                                                                setFormData({ ...formData, syllabus: newS });
-                                                            }} className="text-slate-300 hover:text-red-500 hover:bg-red-50 p-3 rounded-xl mt-6 transition"><Trash2 size={20} /></button>
                                                         </div>
+
+                                                        {/* Points (نقاط الموضوع) */}
+                                                        <div className="mt-3 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                                            <div className="flex justify-between items-center mb-3">
+                                                                <label className="text-xs font-bold text-emerald-600">نقاط الموضوع</label>
+                                                                <button type="button" onClick={() => addSyllabusPoint(i)} className="text-emerald-600 bg-white border border-emerald-200 hover:bg-emerald-50 p-1.5 rounded-lg transition"><Plus size={14} /></button>
+                                                            </div>
+                                                            <div className="space-y-2">
+                                                                {item.points?.map((point, pi) => (
+                                                                    <div key={pi} className="flex gap-2 items-center">
+                                                                        <span className="text-emerald-500 text-sm font-bold">•</span>
+                                                                        <input
+                                                                            type="text"
+                                                                            className="ca-input py-2 text-sm flex-1 bg-white"
+                                                                            value={point}
+                                                                            onChange={e => handleSyllabusPointChange(i, pi, e.target.value)}
+                                                                            placeholder="أدخل نقطة..."
+                                                                        />
+                                                                        <button type="button" onClick={() => removeSyllabusPoint(i, pi)} className="text-slate-300 hover:text-red-500 transition p-1"><Minus size={14} /></button>
+                                                                    </div>
+                                                                ))}
+                                                                {(!item.points || item.points.length === 0) && (
+                                                                    <p className="text-xs text-slate-400 text-center py-2">لا توجد نقاط. اضغط + لإضافة نقطة.</p>
+                                                                )}
+                                                            </div>
+                                                        </div>
+
+                                                        {/* Delete button */}
+                                                        <button type="button" onClick={() => {
+                                                            const newS = [...formData.syllabus];
+                                                            newS.splice(i, 1);
+                                                            setFormData({ ...formData, syllabus: newS });
+                                                        }} className="absolute top-4 left-4 text-slate-300 hover:text-red-500 hover:bg-red-50 p-2 rounded-xl transition"><Trash2 size={18} /></button>
                                                     </div>
                                                 ))}
                                             </div>

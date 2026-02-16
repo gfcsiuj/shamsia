@@ -266,15 +266,32 @@ const CourseDetails: React.FC = () => {
                   <h3 className="text-2xl font-black text-slate-900 mb-6 italic">
                     {t('محتوى الدورة', 'Course Content')}
                   </h3>
-                  {course.syllabus.map((week, i) => (
+                  {course.syllabus.map((item, i) => (
                     <div key={i} className="border border-slate-100 rounded-2xl p-5 hover:border-emerald-200 hover:bg-emerald-50/30 transition-all group">
-                      <div className="flex items-center gap-4">
+                      <div className="flex items-start gap-4">
                         <div className="bg-emerald-100 text-emerald-700 w-12 h-12 rounded-xl flex items-center justify-center font-black text-lg flex-shrink-0 group-hover:bg-emerald-600 group-hover:text-white transition-all">
                           {i + 1}
                         </div>
-                        <div>
-                          <h4 className="font-black text-slate-800 italic">{week.week}</h4>
-                          <p className="text-slate-500 text-sm">{week.topic}</p>
+                        <div className="flex-1 min-w-0">
+                          {item.title && (
+                            <h4 className="font-black text-slate-800 text-lg italic mb-1">{item.title}</h4>
+                          )}
+                          {item.week && (
+                            <p className="text-emerald-600 text-sm font-bold mb-1">{item.week}</p>
+                          )}
+                          {item.topic && (
+                            <p className="text-slate-500 text-sm">{item.topic}</p>
+                          )}
+                          {item.points && item.points.length > 0 && (
+                            <ul className="mt-3 space-y-2 border-t border-slate-100 pt-3">
+                              {item.points.map((point, pi) => (
+                                <li key={pi} className="flex items-start gap-2 text-slate-600 text-sm">
+                                  <span className="text-emerald-500 font-bold mt-0.5">•</span>
+                                  <span>{point}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
                         </div>
                       </div>
                     </div>

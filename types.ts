@@ -38,7 +38,7 @@ export interface Course {
   longDescription?: string;
   objectives: string[];
   targetAudience: string[];
-  syllabus: { week: string; topic: string }[];
+  syllabus: { title: string; week: string; topic: string; points?: string[] }[];
   startDate: string;
   endDate?: string;
   lecturesCount?: number;
