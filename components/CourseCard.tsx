@@ -130,7 +130,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, instructor: propInstruc
             )}
             <span className={`text-2xl lg:text-3xl font-black tracking-tighter italic ${isDarkMode ? 'text-white' : 'text-slate-900'
               }`}>
-              {course.price === 0 ? t('مجاناً', 'Free') : `${course.price.toLocaleString()} ${t('د.ع', 'IQD')}`}
+              {course.priceText || (course.price === 0 ? t('مجاناً', 'Free') : `${course.price.toLocaleString()} ${t('د.ع', 'IQD')}`)}
             </span>
           </div>
           <Link

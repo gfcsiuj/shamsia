@@ -321,7 +321,7 @@ const CourseRegister: React.FC = () => {
                   <div className="border-t border-emerald-500/30 pt-6 mt-6">
                     <div className="flex justify-between items-center mb-2">
                       <span className="text-emerald-200">{t('سعر الدورة', 'Course Price')}</span>
-                      <span className="font-bold">{selectedCourse.price.toLocaleString()} {t('د.ع', 'IQD')}</span>
+                      <span className="font-bold">{selectedCourse.priceText || `${selectedCourse.price.toLocaleString()} ${t('د.ع', 'IQD')}`}</span>
                     </div>
                     {selectedCourse.oldPrice && (
                       <div className="flex justify-between items-center mb-4 text-xs text-emerald-300/60 line-through">
@@ -331,7 +331,7 @@ const CourseRegister: React.FC = () => {
                     )}
                     <div className="flex justify-between items-center text-2xl font-black mt-4 bg-white/10 p-4 rounded-xl">
                       <span>{t('الإجمالي', 'Total')}</span>
-                      <span>{selectedCourse.price.toLocaleString()} {t('د.ع', 'IQD')}</span>
+                      <span>{selectedCourse.priceText || `${selectedCourse.price.toLocaleString()} ${t('د.ع', 'IQD')}`}</span>
                     </div>
                   </div>
                 </div>

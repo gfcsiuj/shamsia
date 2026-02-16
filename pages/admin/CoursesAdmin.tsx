@@ -336,7 +336,7 @@ const CoursesAdmin: React.FC = () => {
                                 <div className="p-7">
                                     <h3 className="font-black text-slate-900 mb-3 line-clamp-2 text-xl leading-tight italic tracking-tight">{course.title}</h3>
                                     <div className="flex items-center gap-2 text-xs text-slate-500 mb-5 bg-slate-50 p-3 rounded-xl">
-                                        <span className="font-semibold text-primary-600">{course.price > 0 ? course.price.toLocaleString() + ' د.ع' : 'مجاناً'}</span>
+                                        <span className="font-semibold text-primary-600">{course.priceText || (course.price > 0 ? course.price.toLocaleString() + ' د.ع' : 'مجاناً')}</span>
                                         <span className="w-px h-3 bg-slate-300"></span>
                                         <span>{course.studentsCount} طالب</span>
                                         <span className="w-px h-3 bg-slate-300"></span>
@@ -631,8 +631,29 @@ const CoursesAdmin: React.FC = () => {
                                                     <h3 className="ca-section-title text-orange-800 border-orange-100">التسعير والوقت</h3>
                                                     <div className="space-y-4">
                                                         <div>
-                                                            <label className="ca-label">السعر الحالي (د.ع)</label>
-                                                            <input type="number" className="ca-input text-lg font-bold text-slate-800" value={formData.price} onChange={e => setFormData({ ...formData, price: Number(e.target.value) })} />
+                                                            <div className="flex items-center justify-between mb-2">
+                                                                <label className="ca-label mb-0">السعر</label>
+                                                                <label className="flex items-center gap-2 cursor-pointer select-none">
+                                                                    <span className="text-xs font-bold text-slate-400">{formData.priceText !== undefined && formData.priceText !== '' ? 'نص بديل' : 'سعر رقمي'}</span>
+                                                                    <div
+                                                                        onClick={() => {
+                                                                            if (formData.priceText !== undefined && formData.priceText !== '') {
+                                                                                setFormData({ ...formData, priceText: '' });
+                                                                            } else {
+                                                                                setFormData({ ...formData, priceText: 'تواصل معنا' });
+                                                                            }
+                                                                        }}
+                                                                        className={`w-10 h-5 rounded-full transition-all relative cursor-pointer ${formData.priceText ? 'bg-orange-500' : 'bg-slate-200'}`}
+                                                                    >
+                                                                        <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-all ${formData.priceText ? 'left-5' : 'left-0.5'}`}></div>
+                                                                    </div>
+                                                                </label>
+                                                            </div>
+                                                            {formData.priceText ? (
+                                                                <input type="text" className="ca-input text-lg font-bold text-orange-700" placeholder="مثال: تواصل معنا، يحدد لاحقاً" value={formData.priceText} onChange={e => setFormData({ ...formData, priceText: e.target.value })} />
+                                                            ) : (
+                                                                <input type="number" className="ca-input text-lg font-bold text-slate-800" value={formData.price} onChange={e => setFormData({ ...formData, price: Number(e.target.value) })} />
+                                                            )}
                                                         </div>
                                                         <div>
                                                             <label className="ca-label">السعر السابق (اختياري)</label>

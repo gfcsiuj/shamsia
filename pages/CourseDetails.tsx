@@ -353,7 +353,7 @@ const CourseDetails: React.FC = () => {
           <div className="lg:w-1/3 animate-fade-up delay-500">
             <div className="bg-white rounded-[2rem] shadow-xl p-8 lg:sticky lg:top-24 border border-slate-100">
               <div className="text-4xl font-black text-slate-900 mb-2 italic tracking-tight">
-                {course.price === 0 ? t('مجاناً', 'Free') : `${course.price.toLocaleString()} ${t('د.ع', 'IQD')}`}
+                {course.priceText || (course.price === 0 ? t('مجاناً', 'Free') : `${course.price.toLocaleString()} ${t('د.ع', 'IQD')}`)}
               </div>
               {course.oldPrice && (
                 <div className="text-slate-400 line-through text-lg mb-6">{course.oldPrice.toLocaleString()} {t('د.ع', 'IQD')}</div>

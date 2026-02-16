@@ -146,7 +146,7 @@ const Calendar: React.FC = () => {
                                                 {/* Footer */}
                                                 <div className="flex items-center justify-between pt-4 border-t border-slate-100">
                                                     <span className="text-lg font-black text-primary-600">
-                                                        {course.price > 0 ? `${course.price.toLocaleString()} ${t('د.ع', 'IQD')}` : t('مجاناً', 'Free')}
+                                                        {course.priceText || (course.price > 0 ? `${course.price.toLocaleString()} ${t('د.ع', 'IQD')}` : t('مجاناً', 'Free'))}
                                                     </span>
                                                     <Link to={`/courses/${course.id}`} className="flex items-center gap-1 text-sm font-bold text-emerald-600 hover:text-emerald-700 transition group/link">
                                                         {t('التفاصيل', 'Details')}
@@ -187,7 +187,7 @@ const Calendar: React.FC = () => {
                                     {course.description && <p className="text-xs text-slate-400 line-clamp-2 mb-4">{course.description}</p>}
                                     <div className="flex items-center justify-between pt-3 border-t border-slate-100">
                                         <span className="font-black text-primary-600">
-                                            {course.price > 0 ? `${course.price.toLocaleString()} ${t('د.ع', 'IQD')}` : t('مجاناً', 'Free')}
+                                            {course.priceText || (course.price > 0 ? `${course.price.toLocaleString()} ${t('د.ع', 'IQD')}` : t('مجاناً', 'Free'))}
                                         </span>
                                         <Link to={`/courses/${course.id}`} className="text-xs font-bold text-emerald-600 hover:text-emerald-700 transition flex items-center gap-1">
                                             {t('سجّل الآن', 'Register Now')}

@@ -26,6 +26,7 @@ export interface Course {
   category: string;
   level: string;
   price: number;
+  priceText?: string;
   oldPrice?: number;
   media: MediaItem[];
   instructorIds: string[];
