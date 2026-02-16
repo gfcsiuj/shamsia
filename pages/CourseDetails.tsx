@@ -223,6 +223,27 @@ const CourseDetails: React.FC = () => {
                       ))}
                     </ul>
                   </div>
+
+                  {course.notes && course.notes.length > 0 && (
+                    <div className="bg-orange-50 p-6 rounded-2xl border border-orange-100">
+                      <h3 className="text-xl font-black text-slate-900 mb-4 flex items-center gap-3 italic">
+                        <div className="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center">
+                          <FileText size={20} className="text-orange-600" />
+                        </div>
+                        {t('ملاحظات', 'Notes')}
+                      </h3>
+                      <ul className="grid grid-cols-1 gap-3">
+                        {course.notes.map((note, i) => (
+                          <li key={i} className="flex items-start gap-3 text-slate-700 font-medium bg-white p-3 rounded-xl border border-orange-100">
+                            <div className="w-6 h-6 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                              <span className="text-orange-600 text-xs font-black">{i + 1}</span>
+                            </div>
+                            {note}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </div>
               )}
 

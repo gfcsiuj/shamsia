@@ -16,6 +16,13 @@ const Courses: React.FC = () => {
     { id: 'Cyber Security', label: t('أمن سيبراني', 'Cyber Security') },
     { id: 'Admin Skills', label: t('مهارات إدارية', 'Admin Skills') },
     { id: 'Student Skills', label: t('مهارات طلابية', 'Student Skills') },
+    { id: 'Solar Energy', label: t('الطاقة الشمسية', 'Solar Energy') },
+    { id: 'Electricity', label: t('الكهرباء', 'Electricity') },
+    { id: 'Generators', label: t('المولدات الكهربائية', 'Generators') },
+    { id: 'Mechanics', label: t('الميكانيك', 'Mechanics') },
+    { id: 'Barbering', label: t('الحلاقة', 'Barbering') },
+    { id: 'Languages', label: t('لغات', 'Languages') },
+    { id: 'Electrical Installations', label: t('تأسيسات كهربائية', 'Electrical Installations') },
   ];
 
   const [courses, setCourses] = useState<Course[]>([]);

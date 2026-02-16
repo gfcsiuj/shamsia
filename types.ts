@@ -44,6 +44,7 @@ export interface Course {
   lecturesCount?: number;
   certifications?: string[];
   graduateIds?: string[]; // IDs of instructors who are graduates
+  notes?: string[];
 }
 
 export interface Testimonial {

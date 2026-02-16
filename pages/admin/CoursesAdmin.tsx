@@ -55,6 +55,7 @@ const CoursesAdmin: React.FC = () => {
         syllabus: [{ week: 'الأسبوع 1', topic: '' }],
         certifications: [],
         graduateIds: [],
+        notes: [],
     };
 
     const [formData, setFormData] = useState<Course>(initialFormState);
@@ -100,7 +101,8 @@ const CoursesAdmin: React.FC = () => {
             targetAudience: course.targetAudience?.length ? course.targetAudience : [''],
             syllabus: course.syllabus?.length ? course.syllabus : [{ week: 'الأسبوع 1', topic: '' }],
             certifications: course.certifications?.length ? course.certifications : [],
-            tags: course.tags || []
+            tags: course.tags || [],
+            notes: course.notes?.length ? course.notes : [],
         });
         setIsEditing(true);
         setMediaFile(null);
@@ -178,6 +180,7 @@ const CoursesAdmin: React.FC = () => {
                 objectives: formData.objectives.filter(item => item.trim() !== ''),
                 targetAudience: formData.targetAudience.filter(item => item.trim() !== ''),
                 certifications: formData.certifications?.filter(item => item.trim() !== '') || [],
+                notes: formData.notes?.filter(item => item.trim() !== '') || [],
                 syllabus: formData.syllabus.filter(item => item.topic.trim() !== ''),
                 tags: formData.tags
             };
@@ -202,17 +205,17 @@ const CoursesAdmin: React.FC = () => {
     };
 
     // Helper functions...
-    const handleArrayChange = (field: 'objectives' | 'targetAudience' | 'certifications', index: number, value: string) => {
+    const handleArrayChange = (field: 'objectives' | 'targetAudience' | 'certifications' | 'notes', index: number, value: string) => {
         const newArray = [...(formData[field] || [])];
         newArray[index] = value;
         setFormData({ ...formData, [field]: newArray });
     };
 
-    const addArrayItem = (field: 'objectives' | 'targetAudience' | 'certifications') => {
+    const addArrayItem = (field: 'objectives' | 'targetAudience' | 'certifications' | 'notes') => {
         setFormData({ ...formData, [field]: [...(formData[field] || []), ''] });
     };
 
-    const removeArrayItem = (field: 'objectives' | 'targetAudience' | 'certifications', index: number) => {
+    const removeArrayItem = (field: 'objectives' | 'targetAudience' | 'certifications' | 'notes', index: number) => {
         const newArray = [...(formData[field] || [])];
         newArray.splice(index, 1);
         setFormData({ ...formData, [field]: newArray });
@@ -751,6 +754,28 @@ const CoursesAdmin: React.FC = () => {
                                                             <button type="button" onClick={() => removeArrayItem('certifications', i)} className="text-slate-300 hover:text-red-500 transition"><Minus size={18} /></button>
                                                         </div>
                                                     ))}
+                                                </div>
+                                            </div>
+
+                                            {/* Notes Section */}
+                                            <div className="ca-card md:col-span-2 ca-card-orange">
+                                                <div className="flex justify-between items-center mb-6 border-b border-orange-200 pb-3">
+                                                    <h3 className="ca-section-title mb-0 border-none text-orange-900">📝 ملاحظات الدورة</h3>
+                                                    <button type="button" onClick={() => addArrayItem('notes')} className="text-orange-600 bg-white border border-orange-200 hover:bg-orange-50 p-2 rounded-lg transition shadow-sm"><Plus size={18} /></button>
+                                                </div>
+                                                <div className="space-y-3">
+                                                    {formData.notes?.map((note, i) => (
+                                                        <div key={i} className="flex gap-2 group">
+                                                            <div className="flex-1 relative">
+                                                                <input type="text" className="ca-input py-2.5 text-sm pr-8" value={note} onChange={e => handleArrayChange('notes', i, e.target.value)} placeholder="أدخل ملاحظة..." />
+                                                                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-orange-400 font-bold text-xs">{i + 1}.</span>
+                                                            </div>
+                                                            <button type="button" onClick={() => removeArrayItem('notes', i)} className="text-slate-300 hover:text-red-500 transition px-1"><Minus size={18} /></button>
+                                                        </div>
+                                                    ))}
+                                                    {(!formData.notes || formData.notes.length === 0) && (
+                                                        <p className="text-sm text-slate-400 text-center py-4">لا توجد ملاحظات. اضغط + لإضافة ملاحظة.</p>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>

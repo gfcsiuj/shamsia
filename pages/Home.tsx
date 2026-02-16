@@ -13,7 +13,14 @@ const Category = {
   HUMAN_DEV: 'Human Development',
   CYBER: 'Cyber Security',
   ADMIN: 'Admin Skills',
-  STUDENT: 'Student Skills'
+  STUDENT: 'Student Skills',
+  SOLAR: 'Solar Energy',
+  ELECTRICITY: 'Electricity',
+  GENERATORS: 'Generators',
+  MECHANICS: 'Mechanics',
+  BARBERING: 'Barbering',
+  LANGUAGES: 'Languages',
+  ELECTRICAL_INST: 'Electrical Installations',
 };
 
 const Home: React.FC = () => {
@@ -117,7 +124,13 @@ const Home: React.FC = () => {
     { id: Category.CYBER, label: t('أمن سيبراني', 'Cyber Security') },
     { id: Category.HUMAN_DEV, label: t('تنمية بشرية', 'Human Dev') },
     { id: Category.ADMIN, label: t('مهارات إدارية', 'Admin Skills') },
-    { id: Category.STUDENT, label: t('مهارات طلابية', 'Student Skills') },
+    { id: Category.SOLAR, label: t('الطاقة الشمسية', 'Solar Energy') },
+    { id: Category.ELECTRICITY, label: t('الكهرباء', 'Electricity') },
+    { id: Category.GENERATORS, label: t('المولدات', 'Generators') },
+    { id: Category.MECHANICS, label: t('الميكانيك', 'Mechanics') },
+    { id: Category.BARBERING, label: t('الحلاقة', 'Barbering') },
+    { id: Category.LANGUAGES, label: t('لغات', 'Languages') },
+    { id: Category.ELECTRICAL_INST, label: t('تأسيسات كهربائية', 'Electrical Inst.') },
   ];
 
   const getIndicatorIndex = () => {
