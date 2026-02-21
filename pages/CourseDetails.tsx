@@ -364,11 +364,21 @@ const CourseDetails: React.FC = () => {
           {/* Sidebar */}
           <div className="lg:w-1/3 animate-fade-up delay-500">
             <div className="bg-white dark:bg-slate-800 rounded-[2rem] shadow-xl p-8 lg:sticky lg:top-24 border border-slate-100 dark:border-slate-700">
-              <div className="text-4xl font-black text-slate-900 dark:text-white mb-2 italic tracking-tight">
-                {course.priceText || (course.price === 0 ? t('مجاناً', 'Free') : `${course.price.toLocaleString()} ${t('د.ع', 'IQD')}`)}
-              </div>
-              {course.oldPrice && (
-                <div className="text-slate-400 dark:text-slate-500 line-through text-lg mb-6">{course.oldPrice.toLocaleString()} {t('د.ع', 'IQD')}</div>
+              {course.hidePrice ? (
+                <div className="text-3xl font-black text-slate-500 dark:text-slate-400 mb-6 italic tracking-tight">
+                  {t('مخفي', 'Hidden')}
+                </div>
+              ) : (
+                <>
+                  <div className="text-4xl font-black text-slate-900 dark:text-white mb-2 italic tracking-tight">
+                    {course.priceText || (course.price === 0 ? t('مجاناً', 'Free') : `${course.price.toLocaleString()} ${t('د.ع', 'IQD')}`)}
+                  </div>
+                  {course.oldPrice && (
+                    <div className="text-slate-500 dark:text-slate-400 line-through mb-6 font-medium">
+                      {course.oldPrice.toLocaleString()} {t('د.ع', 'IQD')}
+                    </div>
+                  )}
+                </>
               )}
 
               <Link

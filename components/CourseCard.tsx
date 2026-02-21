@@ -126,16 +126,25 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, instructor: propInstruc
               }`}>
               {t('سعر الكورس', 'Course Price')}
             </span>
-            {Number(course.oldPrice) > 0 && (
-              <span className={`text-xs line-through ${isDarkMode ? 'text-slate-500 decoration-slate-600' : 'text-slate-400 decoration-slate-300'
+            {course.hidePrice ? (
+              <span className={`text-xl lg:text-2xl font-black tracking-tighter italic ${isDarkMode ? 'text-slate-500' : 'text-slate-400'
                 }`}>
-                {course.oldPrice.toLocaleString()} {t('د.ع', 'IQD')}
+                {t('مخفي', 'Hidden')}
               </span>
+            ) : (
+              <>
+                {Number(course.oldPrice) > 0 && (
+                  <span className={`text-xs line-through ${isDarkMode ? 'text-slate-500 decoration-slate-600' : 'text-slate-400 decoration-slate-300'
+                    }`}>
+                    {course.oldPrice.toLocaleString()} {t('د.ع', 'IQD')}
+                  </span>
+                )}
+                <span className={`text-2xl lg:text-3xl font-black tracking-tighter italic ${isDarkMode ? 'text-white' : 'text-slate-900'
+                  }`}>
+                  {course.priceText || (course.price === 0 ? t('مجاناً', 'Free') : `${course.price.toLocaleString()} ${t('د.ع', 'IQD')}`)}
+                </span>
+              </>
             )}
-            <span className={`text-2xl lg:text-3xl font-black tracking-tighter italic ${isDarkMode ? 'text-white' : 'text-slate-900'
-              }`}>
-              {course.priceText || (course.price === 0 ? t('مجاناً', 'Free') : `${course.price.toLocaleString()} ${t('د.ع', 'IQD')}`)}
-            </span>
           </div>
           <Link
             to={`/courses/${course.id}`}

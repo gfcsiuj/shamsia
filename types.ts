@@ -28,6 +28,7 @@ export interface Course {
   category: string;
   level: string;
   price: number;
+  hidePrice?: boolean;
   priceText?: string;
   oldPrice?: number;
   media: MediaItem[];

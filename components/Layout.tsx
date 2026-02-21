@@ -109,154 +109,158 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         {/* Animated Gradient Border */}
         <div className={`absolute bottom-0 left-0 h-[1px] bg-gradient-to-r from-transparent via-emerald-500/50 dark:via-emerald-400/30 to-transparent transition-all duration-1000 ${isScrolled ? 'w-full opacity-100' : 'w-0 opacity-0'}`}></div>
         <div className="container mx-auto px-4 lg:px-8 max-w-7xl flex justify-between items-center">
-          <div className="flex items-center gap-6 lg:gap-12">
-            {/* Logo */}
-            <Link to="/" className="flex items-center gap-2 group">
-              <img
-                src="https://k.top4top.io/p_3662fca071.png"
-                alt="شمسية"
-                className="w-10 h-10 lg:w-12 lg:h-12 rounded-xl lg:rounded-2xl object-contain shadow-lg group-hover:rotate-[15deg] transition-all duration-500 shadow-emerald-200 dark:shadow-emerald-900/20 bg-white"
-              />
-              <span className="text-xl lg:text-2xl font-black tracking-tighter italic text-slate-900 dark:text-white">
-                {settings.siteName || 'شمسية'}
-              </span>
-            </Link>
-
-            {/* Desktop Navigation - All tabs */}
-            <div className="hidden lg:flex items-center gap-6 xl:gap-8">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  className={`text-sm xl:text-base font-bold transition-colors relative group py-2 ${isActive(link.path) ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400'
-                    }`}
-                >
-                  {link.name}
-                  <span className={`absolute bottom-0 right-0 h-0.5 bg-emerald-600 dark:bg-emerald-400 transition-all duration-300 ${isActive(link.path) ? 'w-full' : 'w-0 group-hover:w-full'
-                    }`}></span>
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 lg:gap-3">
-            {/* Search Bar */}
-            <div className="hidden md:block relative group">
-              <div className="flex items-center rounded-xl px-3 py-2.5 border focus-within:border-emerald-500 focus-within:ring-4 focus-within:ring-emerald-500/10 dark:focus-within:ring-emerald-900/30 transition-all w-40 lg:w-48 bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 relative z-[100]">
-                <Search className="w-4 h-4 group-focus-within:text-emerald-600 dark:group-focus-within:text-emerald-400 ml-2 text-slate-400 dark:text-slate-500" />
-                <input
-                  type="text"
-                  value={headerSearch}
-                  onChange={(e) => handleSearch(e.target.value)}
-                  onFocus={() => { if (headerSearch) setShowResults(true); }}
-                  onBlur={() => setTimeout(() => setShowResults(false), 200)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && headerSearch.trim()) {
-                      navigate(`/courses?q=${encodeURIComponent(headerSearch.trim())}`);
-                      setShowResults(false);
-                    }
-                  }}
-                  placeholder={t("بحث...", "Search...")}
-                  className="bg-transparent border-none outline-none text-sm w-full font-medium dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500"
+          <div className="flex items-center justify-between w-full">
+            {/* Right Side: Logo & Main Nav */}
+            <div className="flex items-center gap-6 lg:gap-10">
+              {/* Logo */}
+              <Link to="/" className="flex items-center gap-2 group shrink-0">
+                <img
+                  src="https://k.top4top.io/p_3662fca071.png"
+                  alt="شمسية"
+                  className="w-10 h-10 lg:w-12 lg:h-12 rounded-xl lg:rounded-2xl object-contain shadow-lg group-hover:rotate-[15deg] transition-all duration-500 shadow-emerald-200 dark:shadow-emerald-900/20 bg-white"
                 />
+                <span className="text-xl lg:text-3xl font-black tracking-tighter italic text-slate-900 dark:text-white">
+                  {settings.siteName || 'شمسية'}
+                </span>
+              </Link>
+
+              {/* Desktop Navigation */}
+              <div className="hidden lg:flex items-center gap-4 xl:gap-6">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.path}
+                    to={link.path}
+                    className={`text-sm xl:text-base font-bold transition-colors relative group py-2 whitespace-nowrap ${isActive(link.path) ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400'
+                      }`}
+                  >
+                    {link.name}
+                    <span className={`absolute bottom-0 right-0 h-0.5 bg-emerald-600 dark:bg-emerald-400 transition-all duration-300 ${isActive(link.path) ? 'w-full' : 'w-0 group-hover:w-full'
+                      }`}></span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {/* Left Side: Search, Theme, Lang, Buttons */}
+            <div className="flex items-center gap-3 lg:gap-4 justify-end">
+              {/* Search Bar */}
+              <div className="hidden lg:block relative group">
+                <div className="flex items-center rounded-xl px-3 py-2 border focus-within:border-emerald-500 focus-within:ring-4 focus-within:ring-emerald-500/10 dark:focus-within:ring-emerald-900/30 transition-all w-48 xl:w-64 bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 relative z-[100]">
+                  <Search className="w-4 h-4 group-focus-within:text-emerald-600 dark:group-focus-within:text-emerald-400 ml-2 text-slate-400 dark:text-slate-500 shrink-0" />
+                  <input
+                    type="text"
+                    value={headerSearch}
+                    onChange={(e) => handleSearch(e.target.value)}
+                    onFocus={() => { if (headerSearch) setShowResults(true); }}
+                    onBlur={() => setTimeout(() => setShowResults(false), 200)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && headerSearch.trim()) {
+                        navigate(`/courses?q=${encodeURIComponent(headerSearch.trim())}`);
+                        setShowResults(false);
+                      }
+                    }}
+                    placeholder={t("بحث...", "Search...")}
+                    className="bg-transparent border-none outline-none text-sm w-full font-medium dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                  />
+                </div>
+
+                {/* Live Search Results Dropdown */}
+                {showResults && (searchResults.courses.length > 0 || searchResults.instructors.length > 0) && (
+                  <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-slate-800 rounded-2xl shadow-xl overflow-hidden z-[101] animate-fade-in border border-slate-100 dark:border-slate-700 max-h-96 overflow-y-auto w-64 -translate-x-8 lg:-translate-x-0">
+                    {searchResults.courses.length > 0 && (
+                      <div className="p-2">
+                        <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 px-3 py-2 uppercase tracking-wider">{t('الدورات', 'Courses')}</h3>
+                        {searchResults.courses.slice(0, 3).map(course => (
+                          <div
+                            key={course.id}
+                            onClick={() => navigate(`/courses?q=${course.title}`)}
+                            className="flex items-center gap-3 p-3 hover:bg-slate-50 dark:hover:bg-slate-700/50 rounded-xl cursor-pointer transition group"
+                          >
+                            <div className="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-900/50 overflow-hidden shrink-0 relative">
+                              {course.media && course.media[0] && course.media[0].type === 'image' ? (
+                                <img src={course.media[0].url} className="w-full h-full object-cover" alt="" />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center text-slate-400 dark:text-slate-500"><BookOpen size={16} /></div>
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h4 className="font-bold text-slate-800 dark:text-slate-200 text-xs truncate group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">{course.title}</h4>
+                              <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate">{course.category}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {searchResults.courses.length > 0 && searchResults.instructors.length > 0 && <div className="h-px bg-slate-100 dark:bg-slate-700 mx-4"></div>}
+
+                    {searchResults.instructors.length > 0 && (
+                      <div className="p-2">
+                        <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 px-3 py-2 uppercase tracking-wider">{t('المدربون والخريجون', 'Instructors & Graduates')}</h3>
+                        {searchResults.instructors.slice(0, 3).map(inst => (
+                          <div
+                            key={inst.id}
+                            onClick={() => navigate(`/instructors?q=${inst.name}`)}
+                            className="flex items-center gap-3 p-3 hover:bg-slate-50 dark:hover:bg-slate-700/50 rounded-xl cursor-pointer transition group"
+                          >
+                            <img src={inst.image} className="w-8 h-8 rounded-full object-cover border border-slate-100 dark:border-slate-700" alt="" />
+                            <div className="flex-1 min-w-0">
+                              <h4 className="font-bold text-slate-800 dark:text-slate-200 text-xs truncate group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">{inst.name}</h4>
+                              <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate">{inst.specialization || t('مدرب', 'Instructor')}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
-              {/* Live Search Results Dropdown */}
-              {showResults && (searchResults.courses.length > 0 || searchResults.instructors.length > 0) && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-slate-800 rounded-2xl shadow-xl overflow-hidden z-[101] animate-fade-in border border-slate-100 dark:border-slate-700 max-h-96 overflow-y-auto w-64 -translate-x-8 lg:-translate-x-0">
-                  {searchResults.courses.length > 0 && (
-                    <div className="p-2">
-                      <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 px-3 py-2 uppercase tracking-wider">{t('الدورات', 'Courses')}</h3>
-                      {searchResults.courses.slice(0, 3).map(course => (
-                        <div
-                          key={course.id}
-                          onClick={() => navigate(`/courses?q=${course.title}`)}
-                          className="flex items-center gap-3 p-3 hover:bg-slate-50 dark:hover:bg-slate-700/50 rounded-xl cursor-pointer transition group"
-                        >
-                          <div className="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-900/50 overflow-hidden shrink-0 relative">
-                            {course.media && course.media[0] && course.media[0].type === 'image' ? (
-                              <img src={course.media[0].url} className="w-full h-full object-cover" alt="" />
-                            ) : (
-                              <div className="w-full h-full flex items-center justify-center text-slate-400 dark:text-slate-500"><BookOpen size={16} /></div>
-                            )}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <h4 className="font-bold text-slate-800 dark:text-slate-200 text-xs truncate group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">{course.title}</h4>
-                            <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate">{course.category}</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+              {/* Theme Toggle Button */}
+              <button
+                onClick={() => setIsDarkMode(!isDarkMode)}
+                className={`p-2.5 rounded-xl transition-all duration-300 ${isDarkMode
+                  ? 'bg-slate-800 text-yellow-400 hover:bg-slate-700'
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  }`}
+                aria-label="Toggle Theme"
+                title={t("تغيير المظهر", "Toggle Theme")}
+              >
+                {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
+              </button>
 
-                  {searchResults.courses.length > 0 && searchResults.instructors.length > 0 && <div className="h-px bg-slate-100 dark:bg-slate-700 mx-4"></div>}
+              {/* Language Toggle Button */}
+              <button
+                onClick={() => setIsEnglish(!isEnglish)}
+                className={`p-2.5 rounded-xl transition-all duration-300 flex items-center gap-1.5 ${isDarkMode
+                  ? 'bg-slate-800 text-emerald-400 hover:bg-slate-700'
+                  : 'bg-slate-100 text-emerald-600 hover:bg-slate-200'
+                  }`}
+                aria-label="Toggle Language"
+                title={t("تغيير اللغة", "Change Language")}
+              >
+                <Globe size={16} />
+                <span className="text-xs font-black">{isEnglish ? 'AR' : 'EN'}</span>
+              </button>
 
-                  {searchResults.instructors.length > 0 && (
-                    <div className="p-2">
-                      <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 px-3 py-2 uppercase tracking-wider">{t('المدربون والخريجون', 'Instructors & Graduates')}</h3>
-                      {searchResults.instructors.slice(0, 3).map(inst => (
-                        <div
-                          key={inst.id}
-                          onClick={() => navigate(`/instructors?q=${inst.name}`)}
-                          className="flex items-center gap-3 p-3 hover:bg-slate-50 dark:hover:bg-slate-700/50 rounded-xl cursor-pointer transition group"
-                        >
-                          <img src={inst.image} className="w-8 h-8 rounded-full object-cover border border-slate-100 dark:border-slate-700" alt="" />
-                          <div className="flex-1 min-w-0">
-                            <h4 className="font-bold text-slate-800 dark:text-slate-200 text-xs truncate group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">{inst.name}</h4>
-                            <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate">{inst.specialization || t('مدرب', 'Instructor')}</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
+              {/* CTA Button */}
+              <Link
+                to="/register"
+                className="hidden sm:block px-4 lg:px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-sm shadow-[0_8px_20px_-6px_rgba(16,185,129,0.5)] hover:shadow-[0_12px_25px_-4px_rgba(16,185,129,0.6)] hover:-translate-y-0.5 transition-all active:scale-95 border border-emerald-500/50 relative overflow-hidden group/btn"
+              >
+                <div className="absolute inset-0 -translate-x-full group-hover/btn:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+                <span className="relative z-10">{t('سجل الآن', 'Register')}</span>
+              </Link>
+
+              {/* Mobile Menu Button */}
+              <button
+                className="lg:hidden p-1.5 rounded-lg transition hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300"
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                aria-label="Toggle Menu"
+              >
+                {isMenuOpen ? <X size={26} /> : <Menu size={26} />}
+              </button>
             </div>
-
-            {/* Theme Toggle Button */}
-            <button
-              onClick={() => setIsDarkMode(!isDarkMode)}
-              className={`p-2.5 rounded-xl transition-all duration-300 ${isDarkMode
-                ? 'bg-slate-800 text-yellow-400 hover:bg-slate-700'
-                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                }`}
-              aria-label="Toggle Theme"
-              title={t("تغيير المظهر", "Toggle Theme")}
-            >
-              {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
-            </button>
-
-            {/* Language Toggle Button */}
-            <button
-              onClick={() => setIsEnglish(!isEnglish)}
-              className={`p-2.5 rounded-xl transition-all duration-300 flex items-center gap-1.5 ${isDarkMode
-                ? 'bg-slate-800 text-emerald-400 hover:bg-slate-700'
-                : 'bg-slate-100 text-emerald-600 hover:bg-slate-200'
-                }`}
-              aria-label="Toggle Language"
-              title={t("تغيير اللغة", "Change Language")}
-            >
-              <Globe size={16} />
-              <span className="text-xs font-black">{isEnglish ? 'AR' : 'EN'}</span>
-            </button>
-
-            {/* CTA Button */}
-            <Link
-              to="/register"
-              className="hidden sm:block px-4 lg:px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-sm shadow-[0_8px_20px_-6px_rgba(16,185,129,0.5)] hover:shadow-[0_12px_25px_-4px_rgba(16,185,129,0.6)] hover:-translate-y-0.5 transition-all active:scale-95 border border-emerald-500/50 relative overflow-hidden group/btn"
-            >
-              <div className="absolute inset-0 -translate-x-full group-hover/btn:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
-              <span className="relative z-10">{t('سجل الآن', 'Register')}</span>
-            </Link>
-
-            {/* Mobile Menu Button */}
-            <button
-              className="lg:hidden p-1.5 rounded-lg transition hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              aria-label="Toggle Menu"
-            >
-              {isMenuOpen ? <X size={26} /> : <Menu size={26} />}
-            </button>
           </div>
         </div>
 

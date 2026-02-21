@@ -37,6 +37,7 @@ const CoursesAdmin: React.FC = () => {
         category: 'Tech',
         level: 'مبتدئ',
         price: 0,
+        hidePrice: false,
         oldPrice: 0,
         media: [],
         instructorIds: [],
@@ -175,6 +176,7 @@ const CoursesAdmin: React.FC = () => {
                 level: finalLevel,
                 category: finalCategory,
                 price: Number(formData.price),
+                hidePrice: Boolean(formData.hidePrice),
                 oldPrice: Number(formData.oldPrice),
                 studentsCount: Number(formData.studentsCount),
                 rating: Number(formData.rating),
@@ -689,6 +691,18 @@ const CoursesAdmin: React.FC = () => {
                                                             ) : (
                                                                 <input type="number" className="ca-input text-lg font-bold text-slate-800" value={formData.price} onChange={e => setFormData({ ...formData, price: Number(e.target.value) })} />
                                                             )}
+                                                        </div>
+                                                        <div className="flex items-center justify-between bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                                            <div className="flex flex-col">
+                                                                <span className="text-sm font-bold text-slate-700">إخفاء السعر</span>
+                                                                <span className="text-xs text-slate-500">عند تفعيل هذا الخيار لن يظهر أي سعر للدورة</span>
+                                                            </div>
+                                                            <div
+                                                                onClick={() => setFormData({ ...formData, hidePrice: !formData.hidePrice })}
+                                                                className={`w-12 h-6 rounded-full transition-all relative cursor-pointer ${formData.hidePrice ? 'bg-orange-500' : 'bg-slate-300'}`}
+                                                            >
+                                                                <div className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-all ${formData.hidePrice ? 'left-7' : 'left-1'}`}></div>
+                                                            </div>
                                                         </div>
                                                         <div>
                                                             <label className="ca-label">السعر السابق (اختياري)</label>

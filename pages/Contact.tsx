@@ -46,7 +46,7 @@ const Contact: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-50 pb-24">
       {/* Hero */}
-      <div className="relative pt-20 pb-16 overflow-hidden">
+      <div className="relative pt-32 pb-16 overflow-hidden">
         <div className="absolute inset-0 -z-10">
           <div className="absolute top-[-10%] right-[-10%] w-[400px] h-[400px] bg-emerald-100/50 rounded-full blur-[100px] animate-blob"></div>
           <div className="absolute bottom-[-5%] left-[-5%] w-[300px] h-[300px] bg-orange-100/40 rounded-full blur-[80px] animate-blob delay-2000"></div>
