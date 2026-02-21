@@ -84,7 +84,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { name: t('الدورات', 'Courses'), path: '/courses' },
     { name: t('التقويم', 'Calendar'), path: '/calendar' },
     { name: t('المكتبة', 'Library'), path: '/library' },
-    { name: t('المدربون والخريجون', 'Instructors & Graduates'), path: '/instructors' },
+    { name: t('أعضاؤنا', 'Instructors & Graduates'), path: '/instructors' },
     { name: t('من نحن', 'About'), path: '/about' },
     { name: t('اتصل بنا', 'Contact'), path: '/contact' },
   ];
