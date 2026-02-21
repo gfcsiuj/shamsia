@@ -277,12 +277,8 @@ const GraduatesAdmin: React.FC = () => {
 
                                 <div className="flex items-center gap-6 text-sm text-slate-500 border-t border-slate-100 pt-4 mt-4">
                                     <div className="flex items-center gap-1">
-                                        <Briefcase size={14} />
-                                        <span>{getCourseCount(graduate.id)} دورات (كمدرب)</span>
-                                    </div>
-                                    <div className="flex items-center gap-1">
-                                        <Award size={14} />
-                                        <span>{graduate.certifications?.length || 0} شهادات</span>
+                                        <Award size={14} className="text-orange-500" />
+                                        <span>خريج من شمسية</span>
                                     </div>
                                 </div>
                             </div>
@@ -377,7 +373,7 @@ const GraduatesAdmin: React.FC = () => {
                                     {/* Section 1: Basic Info */}
                                     <div className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm">
                                         <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-6 border-b border-slate-50 pb-2 flex items-center gap-2">
-                                            <User size={18} /> المعلومات الشخصية
+                                            <User size={18} /> بيانات الخريج
                                         </h3>
                                         <div className="flex flex-col md:flex-row gap-10">
                                             <div className="flex flex-col items-center gap-6">
@@ -415,7 +411,7 @@ const GraduatesAdmin: React.FC = () => {
 
                                             <div className="flex-1 space-y-5">
                                                 <div>
-                                                    <label className="ia-label">الاسم الكامل</label>
+                                                    <label className="ia-label">اسم الخريج</label>
                                                     <input
                                                         type="text"
                                                         required
@@ -426,122 +422,18 @@ const GraduatesAdmin: React.FC = () => {
                                                     />
                                                 </div>
 
-                                                <div className="grid grid-cols-1 gap-5">
-                                                    <div>
-                                                        <label className="ia-label">نبذة مختصرة (للبطاقة التعريفية)</label>
-                                                        <textarea
-                                                            rows={2}
-                                                            value={formData.shortBio}
-                                                            onChange={(e) => setFormData({ ...formData, shortBio: e.target.value })}
-                                                            className="ia-input resize-none"
-                                                            placeholder="نبذة مختصرة جداً تظهر في بطاقة الخريج..."
-                                                        ></textarea>
-                                                    </div>
-                                                    <div>
-                                                        <label className="ia-label">السيرة الذاتية المفصلة</label>
-                                                        <textarea
-                                                            rows={5}
-                                                            value={formData.bio}
-                                                            onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-                                                            className="ia-input resize-none leading-relaxed"
-                                                            placeholder="التفاصيل الكاملة، الخبرات، الشهادات، والمهارات..."
-                                                        ></textarea>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Section 2: Roles & Certs */}
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm h-full">
-                                            <div className="flex justify-between items-center mb-6 border-b border-slate-50 pb-2">
-                                                <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                                                    <Briefcase size={18} /> التخصص أو المسمى
-                                                </h3>
-                                                <button type="button" onClick={() => addArrayItem('roles')} className="text-orange-600 bg-orange-50 hover:bg-orange-100 p-2 rounded-lg transition"><Plus size={16} /></button>
-                                            </div>
-                                            <div className="space-y-3 max-h-60 overflow-y-auto pr-1">
-                                                {formData.roles.map((role, i) => (
-                                                    <div key={i} className="flex gap-2">
-                                                        <input
-                                                            type="text"
-                                                            className="ia-input py-2.5 text-sm"
-                                                            value={role}
-                                                            onChange={e => handleArrayChange(i, e.target.value, 'roles')}
-                                                            placeholder="مثال: مطور واجهات تفاعلية"
-                                                        />
-                                                        <button type="button" onClick={() => removeArrayItem(i, 'roles')} className="text-slate-300 hover:text-red-500 p-2 transition"><Minus size={18} /></button>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
-
-                                        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm h-full">
-                                            <div className="flex justify-between items-center mb-6 border-b border-slate-50 pb-2">
-                                                <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                                                    <Award size={18} /> الشهادات والاعتمادات
-                                                </h3>
-                                                <button type="button" onClick={() => addArrayItem('certifications')} className="text-orange-600 bg-orange-50 hover:bg-orange-100 p-2 rounded-lg transition"><Plus size={16} /></button>
-                                            </div>
-                                            <div className="space-y-3 max-h-60 overflow-y-auto pr-1">
-                                                {formData.certifications.map((cert, i) => (
-                                                    <div key={i} className="flex gap-2">
-                                                        <input
-                                                            type="text"
-                                                            className="ia-input py-2.5 text-sm"
-                                                            value={cert}
-                                                            onChange={e => handleArrayChange(i, e.target.value, 'certifications')}
-                                                            placeholder="مثال: مشارك في معسكر البرمجة"
-                                                        />
-                                                        <button type="button" onClick={() => removeArrayItem(i, 'certifications')} className="text-slate-300 hover:text-red-500 p-2 transition"><Minus size={18} /></button>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Section 3: Socials */}
-                                    <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
-                                        <div className="flex justify-between items-center mb-6 border-b border-slate-50 pb-2">
-                                            <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                                                <Share2 size={18} /> قنوات التواصل
-                                            </h3>
-                                            <button type="button" onClick={addSocial} className="text-orange-600 bg-orange-50 hover:bg-orange-100 p-2 rounded-lg transition"><Plus size={16} /></button>
-                                        </div>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            {formData.socials.map((social, i) => (
-                                                <div key={i} className="ia-social-row">
-                                                    <select
-                                                        value={social.type}
-                                                        onChange={e => handleSocialChange(i, 'type', e.target.value)}
-                                                        className="ia-social-select"
-                                                    >
-                                                        <option value="facebook">فيسبوك</option>
-                                                        <option value="instagram">انستغرام</option>
-                                                        <option value="linkedin">لينكد إن</option>
-                                                        <option value="twitter">X</option>
-                                                        <option value="telegram">تيليجرام</option>
-                                                        <option value="website">موقع</option>
-                                                        <option value="email">ايميل</option>
-                                                        <option value="phone">هاتف</option>
-                                                    </select>
-                                                    <div className="w-px h-6 bg-slate-200 mx-2"></div>
+                                                <div>
+                                                    <label className="ia-label">اسم الكورس الذي تخرج منه (يضاف كنص)</label>
                                                     <input
                                                         type="text"
-                                                        className="ia-social-input"
-                                                        value={social.value}
-                                                        onChange={e => handleSocialChange(i, 'value', e.target.value)}
-                                                        placeholder="اسم المستخدم أو الرابط..."
+                                                        required
+                                                        value={formData.roles[0] || ''}
+                                                        onChange={(e) => handleArrayChange(0, e.target.value, 'roles')}
+                                                        className="ia-input text-lg"
+                                                        placeholder="مثال: دورة صيانة الشاشات"
                                                     />
-                                                    <button type="button" onClick={() => removeSocial(i)} className="text-slate-300 hover:text-red-500 p-1.5 transition"><X size={16} /></button>
                                                 </div>
-                                            ))}
-                                            {formData.socials.length === 0 && (
-                                                <div className="col-span-2 text-center py-8 text-slate-400 text-sm italic bg-slate-50 rounded-xl border border-dashed border-slate-200">
-                                                    أضف طرق تواصل لتمكين الزوار من متابعة الخريج
-                                                </div>
-                                            )}
+                                            </div>
                                         </div>
                                     </div>
                                 </form>
