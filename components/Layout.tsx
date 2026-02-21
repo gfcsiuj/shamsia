@@ -145,7 +145,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <div className="flex items-center gap-3 lg:gap-4 justify-end">
               {/* Search Bar */}
               <div className="hidden lg:block relative group">
-                <div className="flex items-center rounded-xl px-3 py-2 border focus-within:border-emerald-500 focus-within:ring-4 focus-within:ring-emerald-500/10 dark:focus-within:ring-emerald-900/30 transition-all w-48 xl:w-64 bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 relative z-[100]">
+                <div className="flex items-center rounded-xl px-3 py-2 border focus-within:border-emerald-500 focus-within:ring-4 focus-within:ring-emerald-500/10 dark:focus-within:ring-emerald-900/30 transition-all duration-300 w-32 xl:w-48 focus-within:w-64 xl:focus-within:w-64 bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 relative z-[100]">
                   <Search className="w-4 h-4 group-focus-within:text-emerald-600 dark:group-focus-within:text-emerald-400 ml-2 text-slate-400 dark:text-slate-500 shrink-0" />
                   <input
                     type="text"
