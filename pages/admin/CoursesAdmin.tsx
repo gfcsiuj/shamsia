@@ -766,12 +766,27 @@ const CoursesAdmin: React.FC = () => {
                                                                 <input
                                                                     type="text"
                                                                     className="ca-input text-sm"
-                                                                    placeholder="اكتب واضغط Enter..."
+                                                                    placeholder="اكتب واضغط Enter أو الصق نصاً..."
                                                                     onKeyDown={(e) => {
                                                                         if (e.key === 'Enter') {
                                                                             e.preventDefault();
-                                                                            addTag(e.currentTarget.value);
+                                                                            addTag(e.currentTarget.value.trim());
                                                                             e.currentTarget.value = '';
+                                                                        }
+                                                                    }}
+                                                                    onPaste={(e) => {
+                                                                        e.preventDefault();
+                                                                        const paste = e.clipboardData.getData('text');
+                                                                        if (paste) {
+                                                                            // Split by English comma, Arabic comma, newline, or tab
+                                                                            const splitTags = paste.split(/[,\n\t،]/).map(t => t.trim()).filter(Boolean);
+                                                                            if (splitTags.length > 0) {
+                                                                                const newTags = [...formData.tags];
+                                                                                splitTags.forEach(tag => {
+                                                                                    if (!newTags.includes(tag)) newTags.push(tag);
+                                                                                });
+                                                                                setFormData({ ...formData, tags: newTags });
+                                                                            }
                                                                         }
                                                                     }}
                                                                 />
