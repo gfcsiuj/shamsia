@@ -778,8 +778,8 @@ const CoursesAdmin: React.FC = () => {
                                                                         e.preventDefault();
                                                                         const paste = e.clipboardData.getData('text');
                                                                         if (paste) {
-                                                                            // Split by English comma, Arabic comma, newline, or tab
-                                                                            const splitTags = paste.split(/[,\n\t،]/).map(t => t.trim()).filter(Boolean);
+                                                                            // Split by space, English comma, Arabic comma, newline, or tab
+                                                                            const splitTags = paste.split(/[ \n\t،,]+/).map(t => t.trim()).filter(Boolean);
                                                                             if (splitTags.length > 0) {
                                                                                 const newTags = [...formData.tags];
                                                                                 splitTags.forEach(tag => {
