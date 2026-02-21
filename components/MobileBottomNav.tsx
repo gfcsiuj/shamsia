@@ -13,7 +13,7 @@ const MobileBottomNav: React.FC = () => {
     { id: 'home', icon: Home, label: t('الرئيسية', 'Home'), path: '/' },
     { id: 'courses', icon: BookOpen, label: t('الدورات', 'Courses'), path: '/courses' },
     { id: 'library', icon: Library, label: t('المكتبة', 'Library'), path: '/library' },
-    { id: 'instructors', icon: Users, label: t('المدربون', 'Instructors'), path: '/instructors' },
+    { id: 'instructors', icon: Users, label: t('المدربين/الخريجين', 'Instructors/Graduates'), path: '/instructors' },
     { id: 'about', icon: Info, label: t('من نحن', 'About'), path: '/about' },
     { id: 'contact', icon: Phone, label: t('اتصل بنا', 'Contact'), path: '/contact' },
   ];
@@ -21,8 +21,8 @@ const MobileBottomNav: React.FC = () => {
   return (
     <div
       className={`lg:hidden fixed bottom-0 left-0 right-0 backdrop-blur-xl border-t px-2 py-2 flex justify-around items-center z-[100] shadow-[0_-4px_20px_-5px_rgba(0,0,0,0.1)] ${isDarkMode
-          ? 'bg-slate-900/95 border-slate-700'
-          : 'bg-white/95 border-slate-100'
+        ? 'bg-slate-900/95 border-slate-700'
+        : 'bg-white/95 border-slate-100'
         }`}
       style={{ paddingBottom: 'max(8px, env(safe-area-inset-bottom))' }}
     >
@@ -33,8 +33,8 @@ const MobileBottomNav: React.FC = () => {
             key={item.id}
             to={item.path}
             className={`flex flex-col items-center justify-center py-1 px-1.5 transition-all duration-300 relative ${active
-                ? 'text-emerald-500'
-                : isDarkMode ? 'text-slate-400' : 'text-slate-400'
+              ? 'text-emerald-500'
+              : isDarkMode ? 'text-slate-400' : 'text-slate-400'
               }`}
           >
             {active && (

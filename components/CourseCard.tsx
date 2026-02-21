@@ -56,7 +56,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, instructor: propInstruc
   const ChevronIcon = isEnglish ? ChevronRight : ChevronLeft;
 
   return (
-    <div className={`group rounded-[3rem] border shadow-sm overflow-hidden transition-all duration-500 hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] hover:-translate-y-3 cursor-pointer ${isDarkMode
+    <div className={`group rounded-[3rem] border shadow-sm overflow-hidden transition-all duration-500 hover:shadow-[0_30px_60px_-15px_rgba(16,185,129,0.2)] dark:hover:shadow-[0_30px_60px_-15px_rgba(16,185,129,0.1)] hover:-translate-y-3 cursor-pointer ${isDarkMode
       ? 'bg-slate-800 border-slate-700'
       : 'bg-white border-slate-100'
       }`}>

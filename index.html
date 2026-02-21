@@ -16,6 +16,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
+      darkMode: 'class',
       theme: {
         extend: {
           fontFamily: {
@@ -119,7 +120,14 @@
               '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
               '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
               '100%': { transform: 'translate(0px, 0px) scale(1)' },
+            },
+            shimmer: {
+              '100%': { transform: 'translateX(100%)' },
             }
+          },
+          backgroundImage: {
+            'grid-pattern': 'linear-gradient(to right, #e2e8f0 1px, transparent 1px), linear-gradient(to bottom, #e2e8f0 1px, transparent 1px)',
+            'grid-pattern-dark': 'linear-gradient(to right, #334155 1px, transparent 1px), linear-gradient(to bottom, #334155 1px, transparent 1px)'
           }
         },
       },
@@ -347,40 +355,6 @@
 
     .delay-2000 {
       animation-delay: 2000ms;
-    }
-
-    /* Dark Mode Utility Classes */
-    .dark .bg-white {
-      background-color: #1e293b !important;
-    }
-
-    .dark .bg-slate-50 {
-      background-color: #0f172a !important;
-    }
-
-    .dark .bg-slate-100 {
-      background-color: #1e293b !important;
-    }
-
-    .dark .text-slate-900,
-    .dark .text-slate-800,
-    .dark .text-slate-700 {
-      color: #f1f5f9 !important;
-    }
-
-    .dark .text-slate-600,
-    .dark .text-slate-500 {
-      color: #94a3b8 !important;
-    }
-
-    .dark .border-slate-100,
-    .dark .border-slate-200 {
-      border-color: #334155 !important;
-    }
-
-    .dark .shadow-lg,
-    .dark .shadow-xl {
-      --tw-shadow-color: rgba(0, 0, 0, 0.5);
     }
   </style>
   <script type="importmap">

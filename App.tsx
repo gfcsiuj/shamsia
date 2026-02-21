@@ -14,6 +14,7 @@ import Login from './pages/admin/Login';
 import VerifyCertificate from './pages/VerifyCertificate';
 import Dashboard from './pages/admin/Dashboard';
 import InstructorsAdmin from './pages/admin/InstructorsAdmin';
+import GraduatesAdmin from './pages/admin/GraduatesAdmin';
 import CoursesAdmin from './pages/admin/CoursesAdmin';
 import LibraryAdmin from './pages/admin/LibraryAdmin';
 import RegistrationsAdmin from './pages/admin/RegistrationsAdmin';
@@ -90,6 +91,14 @@ const App: React.FC = () => {
                 element={
                   <ProtectedRoute>
                     <InstructorsAdmin />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/graduates"
+                element={
+                  <ProtectedRoute>
+                    <GraduatesAdmin />
                   </ProtectedRoute>
                 }
               />

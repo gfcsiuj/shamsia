@@ -15,6 +15,8 @@ export interface Instructor {
   socials: SocialLink[];
 }
 
+export type Graduate = Instructor;
+
 export interface MediaItem {
   url: string;
   type: 'image' | 'video';

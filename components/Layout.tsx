@@ -84,7 +84,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { name: t('الدورات', 'Courses'), path: '/courses' },
     { name: t('التقويم', 'Calendar'), path: '/calendar' },
     { name: t('المكتبة', 'Library'), path: '/library' },
-    { name: t('المدربون', 'Instructors'), path: '/instructors' },
+    { name: t('المدربون والخريجون', 'Instructors & Graduates'), path: '/instructors' },
     { name: t('من نحن', 'About'), path: '/about' },
     { name: t('اتصل بنا', 'Contact'), path: '/contact' },
   ];
@@ -98,14 +98,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen font-sans">
-      {/* Header - Glassmorphism Navbar */}
+    <div className="flex flex-col min-h-screen font-sans bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
+      {/* Header - Premium Glassmorphism Navbar */}
       <nav
-        className={`fixed w-full z-50 transition-all duration-500 ${isScrolled
-          ? 'glass-nav py-3 shadow-md backdrop-blur-xl border-b'
-          : 'py-4 lg:py-6 backdrop-blur-sm shadow-sm'
+        className={`fixed w-full z-50 transition-all duration-500 top-0 ${isScrolled
+          ? 'bg-white/80 dark:bg-slate-900/80 py-3 shadow-[0_8px_32px_rgba(0,0,0,0.04)] shadow-emerald-500/5 backdrop-blur-2xl border-b border-slate-200/50 dark:border-slate-800/80'
+          : 'py-4 lg:py-6 bg-transparent'
           }`}
       >
+        {/* Animated Gradient Border */}
+        <div className={`absolute bottom-0 left-0 h-[1px] bg-gradient-to-r from-transparent via-emerald-500/50 dark:via-emerald-400/30 to-transparent transition-all duration-1000 ${isScrolled ? 'w-full opacity-100' : 'w-0 opacity-0'}`}></div>
         <div className="container mx-auto px-4 lg:px-8 max-w-7xl flex justify-between items-center">
           <div className="flex items-center gap-6 lg:gap-12">
             {/* Logo */}
@@ -113,9 +115,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <img
                 src="https://k.top4top.io/p_3662fca071.png"
                 alt="شمسية"
-                className="w-10 h-10 lg:w-12 lg:h-12 rounded-xl lg:rounded-2xl object-contain shadow-lg group-hover:rotate-[15deg] transition-all duration-500 shadow-emerald-200"
+                className="w-10 h-10 lg:w-12 lg:h-12 rounded-xl lg:rounded-2xl object-contain shadow-lg group-hover:rotate-[15deg] transition-all duration-500 shadow-emerald-200 dark:shadow-emerald-900/20 bg-white"
               />
-              <span className="text-xl lg:text-2xl font-black tracking-tighter italic">
+              <span className="text-xl lg:text-2xl font-black tracking-tighter italic text-slate-900 dark:text-white">
                 {settings.siteName || 'شمسية'}
               </span>
             </Link>
@@ -126,11 +128,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 <Link
                   key={link.path}
                   to={link.path}
-                  className={`text-sm xl:text-base font-bold transition-colors relative group py-2 ${isActive(link.path) ? 'text-emerald-600' : 'hover:text-emerald-600'
+                  className={`text-sm xl:text-base font-bold transition-colors relative group py-2 ${isActive(link.path) ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400'
                     }`}
                 >
                   {link.name}
-                  <span className={`absolute bottom-0 right-0 h-0.5 bg-emerald-600 transition-all duration-300 ${isActive(link.path) ? 'w-full' : 'w-0 group-hover:w-full'
+                  <span className={`absolute bottom-0 right-0 h-0.5 bg-emerald-600 dark:bg-emerald-400 transition-all duration-300 ${isActive(link.path) ? 'w-full' : 'w-0 group-hover:w-full'
                     }`}></span>
                 </Link>
               ))}
@@ -140,8 +142,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           <div className="flex items-center gap-2 lg:gap-3">
             {/* Search Bar */}
             <div className="hidden md:block relative group">
-              <div className="flex items-center rounded-xl px-3 py-2.5 border focus-within:border-emerald-500 focus-within:ring-4 focus-within:ring-emerald-500/10 transition-all w-40 lg:w-48 bg-slate-50 border-slate-200 relative z-[100]">
-                <Search className="w-4 h-4 group-focus-within:text-emerald-600 ml-2 text-slate-400" />
+              <div className="flex items-center rounded-xl px-3 py-2.5 border focus-within:border-emerald-500 focus-within:ring-4 focus-within:ring-emerald-500/10 dark:focus-within:ring-emerald-900/30 transition-all w-40 lg:w-48 bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 relative z-[100]">
+                <Search className="w-4 h-4 group-focus-within:text-emerald-600 dark:group-focus-within:text-emerald-400 ml-2 text-slate-400 dark:text-slate-500" />
                 <input
                   type="text"
                   value={headerSearch}
@@ -155,53 +157,53 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     }
                   }}
                   placeholder={t("بحث...", "Search...")}
-                  className="bg-transparent border-none outline-none text-sm w-full font-medium placeholder:text-slate-400"
+                  className="bg-transparent border-none outline-none text-sm w-full font-medium dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500"
                 />
               </div>
 
               {/* Live Search Results Dropdown */}
               {showResults && (searchResults.courses.length > 0 || searchResults.instructors.length > 0) && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-xl overflow-hidden z-[101] animate-fade-in border border-slate-100 max-h-96 overflow-y-auto w-64 -translate-x-8 lg:-translate-x-0">
+                <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-slate-800 rounded-2xl shadow-xl overflow-hidden z-[101] animate-fade-in border border-slate-100 dark:border-slate-700 max-h-96 overflow-y-auto w-64 -translate-x-8 lg:-translate-x-0">
                   {searchResults.courses.length > 0 && (
                     <div className="p-2">
-                      <h3 className="text-xs font-bold text-slate-400 px-3 py-2 uppercase tracking-wider">{t('الدورات', 'Courses')}</h3>
+                      <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 px-3 py-2 uppercase tracking-wider">{t('الدورات', 'Courses')}</h3>
                       {searchResults.courses.slice(0, 3).map(course => (
                         <div
                           key={course.id}
                           onClick={() => navigate(`/courses?q=${course.title}`)}
-                          className="flex items-center gap-3 p-3 hover:bg-slate-50 rounded-xl cursor-pointer transition group"
+                          className="flex items-center gap-3 p-3 hover:bg-slate-50 dark:hover:bg-slate-700/50 rounded-xl cursor-pointer transition group"
                         >
-                          <div className="w-10 h-10 rounded-lg bg-slate-100 overflow-hidden shrink-0 relative">
+                          <div className="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-900/50 overflow-hidden shrink-0 relative">
                             {course.media && course.media[0] && course.media[0].type === 'image' ? (
                               <img src={course.media[0].url} className="w-full h-full object-cover" alt="" />
                             ) : (
-                              <div className="w-full h-full flex items-center justify-center text-slate-400"><BookOpen size={16} /></div>
+                              <div className="w-full h-full flex items-center justify-center text-slate-400 dark:text-slate-500"><BookOpen size={16} /></div>
                             )}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <h4 className="font-bold text-slate-800 text-xs truncate group-hover:text-emerald-600 transition-colors">{course.title}</h4>
-                            <p className="text-[10px] text-slate-500 truncate">{course.category}</p>
+                            <h4 className="font-bold text-slate-800 dark:text-slate-200 text-xs truncate group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">{course.title}</h4>
+                            <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate">{course.category}</p>
                           </div>
                         </div>
                       ))}
                     </div>
                   )}
 
-                  {searchResults.courses.length > 0 && searchResults.instructors.length > 0 && <div className="h-px bg-slate-100 mx-4"></div>}
+                  {searchResults.courses.length > 0 && searchResults.instructors.length > 0 && <div className="h-px bg-slate-100 dark:bg-slate-700 mx-4"></div>}
 
                   {searchResults.instructors.length > 0 && (
                     <div className="p-2">
-                      <h3 className="text-xs font-bold text-slate-400 px-3 py-2 uppercase tracking-wider">{t('المدربون', 'Instructors')}</h3>
+                      <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 px-3 py-2 uppercase tracking-wider">{t('المدربون والخريجون', 'Instructors & Graduates')}</h3>
                       {searchResults.instructors.slice(0, 3).map(inst => (
                         <div
                           key={inst.id}
                           onClick={() => navigate(`/instructors?q=${inst.name}`)}
-                          className="flex items-center gap-3 p-3 hover:bg-slate-50 rounded-xl cursor-pointer transition group"
+                          className="flex items-center gap-3 p-3 hover:bg-slate-50 dark:hover:bg-slate-700/50 rounded-xl cursor-pointer transition group"
                         >
-                          <img src={inst.image} className="w-8 h-8 rounded-full object-cover border border-slate-100" alt="" />
+                          <img src={inst.image} className="w-8 h-8 rounded-full object-cover border border-slate-100 dark:border-slate-700" alt="" />
                           <div className="flex-1 min-w-0">
-                            <h4 className="font-bold text-slate-800 text-xs truncate group-hover:text-emerald-600 transition-colors">{inst.name}</h4>
-                            <p className="text-[10px] text-slate-500 truncate">{inst.specialization || t('مدرب', 'Instructor')}</p>
+                            <h4 className="font-bold text-slate-800 dark:text-slate-200 text-xs truncate group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">{inst.name}</h4>
+                            <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate">{inst.specialization || t('مدرب', 'Instructor')}</p>
                           </div>
                         </div>
                       ))}
@@ -215,7 +217,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <button
               onClick={() => setIsDarkMode(!isDarkMode)}
               className={`p-2.5 rounded-xl transition-all duration-300 ${isDarkMode
-                ? 'bg-slate-700 text-yellow-400 hover:bg-slate-600'
+                ? 'bg-slate-800 text-yellow-400 hover:bg-slate-700'
                 : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                 }`}
               aria-label="Toggle Theme"
@@ -228,7 +230,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <button
               onClick={() => setIsEnglish(!isEnglish)}
               className={`p-2.5 rounded-xl transition-all duration-300 flex items-center gap-1.5 ${isDarkMode
-                ? 'bg-slate-700 text-emerald-400 hover:bg-slate-600'
+                ? 'bg-slate-800 text-emerald-400 hover:bg-slate-700'
                 : 'bg-slate-100 text-emerald-600 hover:bg-slate-200'
                 }`}
               aria-label="Toggle Language"
@@ -241,14 +243,15 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             {/* CTA Button */}
             <Link
               to="/register"
-              className="hidden sm:block px-4 lg:px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-sm shadow-lg hover:shadow-xl hover:shadow-emerald-200/50 transition-all active:scale-95"
+              className="hidden sm:block px-4 lg:px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-sm shadow-[0_8px_20px_-6px_rgba(16,185,129,0.5)] hover:shadow-[0_12px_25px_-4px_rgba(16,185,129,0.6)] hover:-translate-y-0.5 transition-all active:scale-95 border border-emerald-500/50 relative overflow-hidden group/btn"
             >
-              {t('سجل الآن', 'Register')}
+              <div className="absolute inset-0 -translate-x-full group-hover/btn:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+              <span className="relative z-10">{t('سجل الآن', 'Register')}</span>
             </Link>
 
             {/* Mobile Menu Button */}
             <button
-              className="lg:hidden p-1.5 rounded-lg transition hover:bg-slate-100"
+              className="lg:hidden p-1.5 rounded-lg transition hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               aria-label="Toggle Menu"
             >
@@ -259,7 +262,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
         {/* Mobile Navigation Dropdown */}
         <div
-          className={`lg:hidden border-t border-slate-100 overflow-hidden transition-all duration-300 ease-in-out ${isMenuOpen ? 'max-h-[400px] opacity-100' : 'max-h-0 opacity-0'
+          className={`lg:hidden border-t border-slate-100 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl overflow-hidden transition-all duration-300 ease-in-out ${isMenuOpen ? 'max-h-[400px] opacity-100' : 'max-h-0 opacity-0'
             }`}
         >
           <nav className="flex flex-col p-4 gap-1">
@@ -267,7 +270,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <Link
                 key={link.path}
                 to={link.path}
-                className={`p-3 rounded-xl font-bold ${isActive(link.path) ? 'bg-emerald-50 text-emerald-700' : 'hover:bg-slate-50'
+                className={`p-3 rounded-xl font-bold ${isActive(link.path) ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400' : 'hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
                   }`}
                 onClick={() => setIsMenuOpen(false)}
               >
@@ -276,7 +279,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             ))}
             <Link
               to="/register"
-              className="mt-2 w-full text-center px-4 py-3 bg-emerald-600 text-white font-bold rounded-xl"
+              className="mt-2 w-full text-center px-4 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
               {t('تسجيل جديد', 'Register Now')}
@@ -286,7 +289,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       </nav>
 
       {/* Main Content */}
-      <main className="flex-grow pb-20 lg:pb-0 pt-16 lg:pt-20 animate-fade-up" style={{ animationDuration: '0.5s' }}>
+      <main className="flex-grow pb-20 lg:pb-0 animate-fade-up" style={{ animationDuration: '0.5s' }}>
         {children}
       </main>
 
@@ -306,7 +309,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
 
       {/* Footer - Modern Design */}
-      <footer className="pt-20 pb-28 lg:pb-10 border-t border-slate-100 px-4 lg:px-6 text-center lg:text-right">
+      <footer className="pt-20 pb-28 lg:pb-10 border-t border-slate-100 dark:border-slate-800 px-4 lg:px-6 text-center lg:text-right bg-white dark:bg-slate-900 transition-colors duration-300">
         <div className="container mx-auto max-w-7xl">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-16 mb-16">
             {/* Brand Column */}
@@ -315,24 +318,24 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 <img
                   src="https://k.top4top.io/p_3662fca071.png"
                   alt="شمسية"
-                  className="w-10 h-10 rounded-xl object-contain shadow-lg group-hover:shadow-emerald-200 transition-all duration-500"
+                  className="w-10 h-10 rounded-xl object-contain shadow-lg group-hover:shadow-emerald-200 dark:group-hover:shadow-emerald-900/30 transition-all duration-500 bg-white"
                 />
-                <span className="text-2xl font-black tracking-tighter uppercase italic">Shamsiya</span>
+                <span className="text-2xl font-black tracking-tighter uppercase italic text-slate-900 dark:text-white">Shamsiya</span>
               </div>
-              <p className="text-base leading-relaxed mb-8 font-medium">
+              <p className="text-base leading-relaxed mb-8 font-medium text-slate-600 dark:text-slate-400">
                 {t(
                   settings.siteDescription || 'نقود الثورة التعليمية الرقمية في العراق من خلال تمكين الطاقات الشابة بأدوات العصر.',
                   'Leading the digital educational revolution in Iraq by empowering youth with modern tools.'
                 )}
               </p>
               <div className="flex justify-center lg:justify-start gap-2">
-                <a href="https://www.facebook.com/profile.php?id=61554748052998" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 transition-all duration-300">
+                <a href="https://www.facebook.com/profile.php?id=61554748052998" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex items-center justify-center text-slate-400 dark:text-slate-500 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 dark:hover:bg-emerald-600 dark:hover:text-white transition-all duration-300">
                   <Facebook className="w-4 h-4" />
                 </a>
-                <a href="https://www.instagram.com/shamsia.iq/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 transition-all duration-300">
+                <a href="https://www.instagram.com/shamsia.iq/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex items-center justify-center text-slate-400 dark:text-slate-500 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 dark:hover:bg-emerald-600 dark:hover:text-white transition-all duration-300">
                   <Instagram className="w-4 h-4" />
                 </a>
-                <a href="https://wa.me/9647732200003" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 transition-all duration-300">
+                <a href="https://wa.me/9647732200003" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex items-center justify-center text-slate-400 dark:text-slate-500 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 dark:hover:bg-emerald-600 dark:hover:text-white transition-all duration-300">
                   <MessageCircle className="w-4 h-4" />
                 </a>
               </div>
@@ -340,13 +343,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
             {/* Links Columns */}
             <div>
-              <h4 className="font-black mb-6 text-sm uppercase tracking-widest opacity-60">
+              <h4 className="font-black mb-6 text-sm uppercase tracking-widest opacity-60 text-slate-900 dark:text-white">
                 {t('روابط سريعة', 'Quick Links')}
               </h4>
               <ul className="space-y-3 text-sm font-bold">
                 {navLinks.map((link) => (
                   <li key={link.path}>
-                    <Link to={link.path} className="hover:text-emerald-600 transition-all flex items-center gap-2 group justify-center lg:justify-start">
+                    <Link to={link.path} className="text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all flex items-center gap-2 group justify-center lg:justify-start">
                       {link.name} <ChevronLeft className="w-3 h-3 opacity-0 group-hover:opacity-100 group-hover:-translate-x-1 transition-all" />
                     </Link>
                   </li>
@@ -355,31 +358,31 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             </div>
 
             <div>
-              <h4 className="font-black mb-6 text-sm uppercase tracking-widest opacity-60">
+              <h4 className="font-black mb-6 text-sm uppercase tracking-widest opacity-60 text-slate-900 dark:text-white">
                 {t('تواصل معنا', 'Contact Us')}
               </h4>
-              <ul className="space-y-4 text-sm">
+              <ul className="space-y-4 text-sm text-slate-600 dark:text-slate-400">
                 <li className="flex items-center gap-3 justify-center lg:justify-start">
-                  <MapPin className="text-emerald-500 flex-shrink-0" size={16} />
+                  <MapPin className="text-emerald-500 dark:text-emerald-400 flex-shrink-0" size={16} />
                   <span>{settings.contactAddress || t('العراق، بغداد', 'Iraq, Baghdad')}</span>
                 </li>
                 <li className="flex items-center gap-3 justify-center lg:justify-start">
-                  <Phone className="text-emerald-500 flex-shrink-0" size={16} />
+                  <Phone className="text-emerald-500 dark:text-emerald-400 flex-shrink-0" size={16} />
                   <span className="ltr">{settings.contactPhone}</span>
                 </li>
                 <li className="flex items-center gap-3 justify-center lg:justify-start">
-                  <Mail className="text-emerald-500 flex-shrink-0" size={16} />
+                  <Mail className="text-emerald-500 dark:text-emerald-400 flex-shrink-0" size={16} />
                   <span className="break-all">{settings.contactEmail}</span>
                 </li>
               </ul>
             </div>
 
             {/* Newsletter Column */}
-            <div className="bg-emerald-50/80 p-6 lg:p-8 rounded-2xl border border-emerald-100">
-              <h4 className="text-emerald-950 font-black mb-3 text-lg tracking-tight">
+            <div className="bg-emerald-50/80 dark:bg-emerald-900/10 p-6 lg:p-8 rounded-2xl border border-emerald-100 dark:border-emerald-900/30">
+              <h4 className="text-emerald-950 dark:text-emerald-100 font-black mb-3 text-lg tracking-tight">
                 {t('النشرة البريدية', 'Newsletter')}
               </h4>
-              <p className="text-xs text-emerald-700/70 mb-6 font-bold uppercase tracking-wide">
+              <p className="text-xs text-emerald-700/70 dark:text-emerald-400/70 mb-6 font-bold uppercase tracking-wide">
                 {t('صُنِعَ بفخر في العراق 🇮🇶', 'Made with pride in Iraq 🇮🇶')}
               </p>
               <form onSubmit={handleSubscribe} className="relative">
@@ -388,7 +391,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder={t('بريدك الإلكتروني', 'Your email')}
-                  className="w-full bg-white border border-emerald-200/60 rounded-xl px-4 py-3 outline-none focus:ring-4 focus:ring-emerald-500/10 transition-all font-bold text-sm placeholder:text-slate-400"
+                  className="w-full bg-white dark:bg-slate-900 border border-emerald-200/60 dark:border-emerald-800/50 rounded-xl px-4 py-3 outline-none focus:ring-4 focus:ring-emerald-500/10 dark:focus:ring-emerald-900/20 transition-all font-bold text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500"
                 />
                 <button type="submit" className="absolute left-1.5 top-1.5 bottom-1.5 w-10 bg-emerald-600 text-white rounded-lg flex items-center justify-center shadow-lg hover:bg-emerald-700 active:scale-90 transition-all">
                   <Send className="w-4 h-4" />
@@ -398,14 +401,14 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           </div>
 
           {/* Bottom Bar */}
-          <div className="pt-8 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-xs font-bold uppercase tracking-wide opacity-50">
+          <div className="pt-8 border-t border-slate-100 dark:border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4">
+            <p className="text-xs font-bold uppercase tracking-wide opacity-50 text-slate-600 dark:text-slate-400">
               {settings.footerText || `© ${new Date().getFullYear()} SHAMSIYA PLATFORM`}
             </p>
-            <div className="flex items-center gap-6 text-xs font-bold uppercase tracking-wide opacity-30">
-              <span className="hover:text-emerald-600 transition-colors cursor-default">{t('جودة', 'Quality')}</span>
-              <span className="hover:text-emerald-600 transition-colors cursor-default">{t('ثقة', 'Trust')}</span>
-              <span className="hover:text-emerald-600 transition-colors cursor-default">{t('تأثير', 'Impact')}</span>
+            <div className="flex items-center gap-6 text-xs font-bold uppercase tracking-wide opacity-30 text-slate-600 dark:text-slate-400">
+              <span className="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors cursor-default">{t('جودة', 'Quality')}</span>
+              <span className="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors cursor-default">{t('ثقة', 'Trust')}</span>
+              <span className="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors cursor-default">{t('تأثير', 'Impact')}</span>
             </div>
           </div>
         </div>

@@ -142,12 +142,16 @@ const Home: React.FC = () => {
 
   return (
     <div className="animate-fade-in">
-      {/* Hero Section - New Design */}
+      {/* Hero Section - Premium Design */}
       <section id="home" className="relative pt-36 pb-16 lg:pt-64 lg:pb-48 overflow-hidden px-6">
+        {/* Grid Background */}
+        <div className="absolute inset-0 -z-20 bg-grid-pattern dark:bg-grid-pattern-dark bg-[length:32px_32px] opacity-40"></div>
+        <div className="absolute inset-0 -z-20 bg-gradient-to-b from-transparent via-slate-50/50 dark:via-slate-900/50 to-slate-50 dark:to-slate-900 pointer-events-none"></div>
+
         {/* Animated Background Blobs */}
         <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
-          <div className="absolute top-[-10%] right-[-10%] w-[700px] h-[700px] bg-emerald-100/50 rounded-full blur-[120px] animate-blob"></div>
-          <div className="absolute bottom-[-5%] left-[-5%] w-[500px] h-[500px] bg-orange-100/40 rounded-full blur-[100px] animate-blob delay-2000"></div>
+          <div className="absolute top-[-20%] right-[-10%] w-[800px] h-[800px] bg-emerald-200/40 rounded-full blur-[120px] animate-blob mix-blend-multiply dark:mix-blend-screen"></div>
+          <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-orange-200/30 rounded-full blur-[100px] animate-blob delay-2000 mix-blend-multiply dark:mix-blend-screen"></div>
         </div>
 
         <div className="container mx-auto max-w-7xl">
@@ -181,8 +185,9 @@ const Home: React.FC = () => {
 
               {/* CTA Buttons */}
               <div className={`flex flex-col sm:flex-row justify-center ${isEnglish ? 'lg:justify-start' : 'lg:justify-start'} gap-5`}>
-                <Link to="/courses" className="px-10 py-5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-[20px] font-black text-xl flex items-center justify-center gap-4 transition-all shadow-2xl shadow-emerald-200 active:scale-95 group">
-                  {t('استكشف الدورات', 'Explore Courses')} <ArrowIcon className="w-6 h-6 group-hover:-translate-x-1 transition-transform" />
+                <Link to="/courses" className="relative overflow-hidden px-10 py-5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-[20px] font-black text-xl flex items-center justify-center gap-4 transition-all shadow-2xl shadow-emerald-200/50 dark:shadow-emerald-900/50 active:scale-95 border border-emerald-500/50 group">
+                  <div className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+                  <span className="relative z-10 flex items-center gap-4">{t('استكشف الدورات', 'Explore Courses')} <ArrowIcon className="w-6 h-6 group-hover:-translate-x-1 transition-transform" /></span>
                 </Link>
               </div>
 
@@ -234,8 +239,8 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* Stats Section - New Design */}
-      <section className="py-16 lg:py-32 bg-white dark:bg-slate-900 border-y border-slate-50 dark:border-slate-800 px-6 relative z-20">
+      {/* Stats Section - Premium Design */}
+      <section className="py-16 lg:py-32 bg-white/50 dark:bg-slate-900/50 backdrop-blur-3xl border-y border-slate-100 dark:border-slate-800/50 px-6 relative z-20">
         <div className="container mx-auto max-w-7xl">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
             {STATS.map((stat) => {
@@ -249,15 +254,16 @@ const Home: React.FC = () => {
               return (
                 <div
                   key={stat.id}
-                  className="p-8 lg:p-10 rounded-[2.5rem] bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex flex-col items-center text-center transition-all duration-300 hover:bg-white dark:hover:bg-slate-700 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.08)] hover:-translate-y-2 group"
+                  className="relative p-8 lg:p-10 rounded-[2.5rem] bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl border border-slate-200/50 dark:border-slate-700/50 flex flex-col items-center text-center transition-all duration-500 hover:bg-white dark:hover:bg-slate-800 hover:shadow-[0_20px_60px_-15px_rgba(16,185,129,0.15)] dark:hover:shadow-[0_20px_60px_-15px_rgba(16,185,129,0.05)] hover:-translate-y-2 group overflow-hidden"
                 >
-                  <div className={`w-16 h-16 lg:w-20 lg:h-20 bg-white dark:bg-slate-900 rounded-[1.2rem] flex items-center justify-center mb-6 lg:mb-8 shadow-md ${colors[stat.color]} group-hover:text-white transition-all duration-500 ring-4 ring-slate-50 dark:ring-slate-700 group-hover:ring-offset-2 dark:group-hover:ring-offset-slate-800`}>
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/50 to-white/0 dark:from-white/5 dark:to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                  <div className={`relative w-16 h-16 lg:w-20 lg:h-20 bg-slate-50 dark:bg-slate-900/50 rounded-[1.2rem] flex items-center justify-center mb-6 lg:mb-8 shadow-sm ${colors[stat.color]} group-hover:text-white transition-all duration-500 ring-4 ring-white dark:ring-slate-800 group-hover:ring-emerald-50 dark:group-hover:ring-emerald-900/30 group-hover:scale-110 z-10`}>
                     <stat.icon className="w-8 h-8 lg:w-9 lg:h-9 fill-current" />
                   </div>
-                  <h3 className="text-4xl lg:text-5xl font-black mb-3 text-slate-900 dark:text-white tracking-tighter italic">
+                  <h3 className="relative z-10 text-4xl lg:text-5xl font-black mb-3 text-slate-900 dark:text-white tracking-tighter italic">
                     {stat.value}
                   </h3>
-                  <p className="text-xs lg:text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide leading-snug">
+                  <p className="relative z-10 text-xs lg:text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide leading-snug">
                     {stat.label}
                   </p>
                 </div>

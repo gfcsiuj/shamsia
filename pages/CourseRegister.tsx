@@ -89,21 +89,21 @@ const CourseRegister: React.FC = () => {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="text-center max-w-md mx-auto px-4">
-          <div className="w-24 h-24 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <CheckCircle className="w-12 h-12 text-emerald-600" />
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto px-4 animate-fade-up">
+          <div className="w-24 h-24 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-emerald-500/20">
+            <CheckCircle className="w-12 h-12 text-emerald-600 dark:text-emerald-400" />
           </div>
-          <h1 className="text-3xl font-black text-slate-900 mb-4 italic">
+          <h1 className="text-3xl font-black text-slate-900 dark:text-white mb-4 italic">
             {t('تم التسجيل بنجاح!', 'Registration Successful!')}
           </h1>
-          <p className="text-slate-600 mb-8 leading-relaxed">
+          <p className="text-slate-600 dark:text-slate-300 mb-8 leading-relaxed font-medium">
             {t(
               `شكراً لك ${formData.name}! تم استلام طلب تسجيلك في دورة "${selectedCourse?.title}". سيتم التواصل معك قريباً.`,
               `Thank you ${formData.name}! Your registration for "${selectedCourse?.title}" has been received. We will contact you soon.`
             )}
           </p>
-          <Link to="/courses" className="inline-block bg-emerald-600 hover:bg-emerald-700 text-white font-black px-8 py-4 rounded-2xl transition shadow-xl">
+          <Link to="/courses" className="inline-block bg-emerald-600 hover:bg-emerald-700 text-white font-black px-8 py-4 rounded-2xl transition shadow-xl shadow-emerald-500/20 active:scale-95">
             {t('تصفح الدورات', 'Browse Courses')}
           </Link>
         </div>
@@ -112,23 +112,23 @@ const CourseRegister: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-24">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 pb-24 transition-colors duration-300">
       {/* Hero Header */}
       <div className="relative pt-20 pb-16 overflow-hidden">
-        <div className="absolute inset-0 -z-10">
-          <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-emerald-100/50 rounded-full blur-[100px] animate-blob"></div>
-          <div className="absolute bottom-[-5%] left-[-5%] w-[400px] h-[400px] bg-orange-100/40 rounded-full blur-[80px] animate-blob delay-2000"></div>
+        <div className="absolute inset-0 -z-10 overflow-hidden">
+          <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-emerald-100/50 dark:bg-emerald-900/20 rounded-full blur-[100px] animate-blob"></div>
+          <div className="absolute bottom-[-5%] left-[-5%] w-[400px] h-[400px] bg-orange-100/40 dark:bg-orange-900/20 rounded-full blur-[80px] animate-blob delay-2000"></div>
         </div>
 
         <div className="container mx-auto px-4 text-center relative z-10">
-          <h1 className="text-4xl md:text-5xl font-black text-slate-900 mb-4 italic tracking-tight animate-fade-up">
+          <h1 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-4 italic tracking-tight animate-fade-up">
             {isEnglish ? (
               <>New <span className="text-gradient">Student Registration</span></>
             ) : (
               <>تسجيل <span className="text-gradient">طالب جديد</span></>
             )}
           </h1>
-          <p className="text-slate-600 text-lg max-w-2xl mx-auto font-medium animate-fade-up delay-100">
+          <p className="text-slate-600 dark:text-slate-300 text-lg max-w-2xl mx-auto font-medium animate-fade-up delay-100">
             {t('املأ النموذج أدناه لبدء رحلتك التعليمية مع شمسية', 'Fill out the form below to start your learning journey with Shamsiya')}
           </p>
         </div>
@@ -139,27 +139,27 @@ const CourseRegister: React.FC = () => {
 
           {/* Form Column */}
           <div className="lg:w-2/3 animate-fade-up delay-200">
-            <div className="bg-white rounded-[2rem] shadow-xl p-8 md:p-10 border border-slate-100">
+            <div className="bg-white dark:bg-slate-800 rounded-[2rem] shadow-xl p-8 md:p-10 border border-slate-100 dark:border-slate-700">
 
               {/* Course Selection Section */}
-              <div className="mb-8 border-b border-slate-100 pb-8">
-                <h2 className="text-xl font-black text-slate-900 mb-6 flex items-center gap-3 italic">
-                  <div className="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center">
-                    <BookOpen className="text-emerald-600" size={20} />
+              <div className="mb-8 border-b border-slate-100 dark:border-slate-700/70 pb-8">
+                <h2 className="text-xl font-black text-slate-900 dark:text-white mb-6 flex items-center gap-3 italic">
+                  <div className="w-10 h-10 bg-emerald-100 dark:bg-emerald-900/40 rounded-xl flex items-center justify-center">
+                    <BookOpen className="text-emerald-600 dark:text-emerald-400" size={20} />
                   </div>
                   {t('معلومات الدورة', 'Course Information')}
                 </h2>
 
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-black text-slate-700 mb-2">
+                    <label className="block text-sm font-black text-slate-700 dark:text-slate-300 mb-2">
                       {t('اختر الدورة التدريبية', 'Select Course')}
                     </label>
                     <div className="flex flex-col sm:flex-row gap-3">
                       <select
                         value={selectedCourseId}
                         onChange={(e) => setSelectedCourseId(e.target.value)}
-                        className="flex-grow px-4 py-4 rounded-xl bg-slate-50 border-2 border-slate-200 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 outline-none transition cursor-pointer font-medium"
+                        className="flex-grow px-4 py-4 rounded-xl bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 dark:text-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 dark:focus:ring-emerald-900/30 outline-none transition cursor-pointer font-medium"
                       >
                         <option value="" disabled>{t('-- اختر دورة --', '-- Select a course --')}</option>
                         {courses.map(course => (
@@ -171,7 +171,7 @@ const CourseRegister: React.FC = () => {
                         <Link
                           to={`/courses/${selectedCourseId}`}
                           target="_blank"
-                          className="px-5 py-4 bg-emerald-50 text-emerald-700 rounded-xl hover:bg-emerald-100 transition flex items-center justify-center gap-2 font-black whitespace-nowrap border border-emerald-100"
+                          className="px-5 py-4 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 rounded-xl hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition flex items-center justify-center gap-2 font-black whitespace-nowrap border border-emerald-100 dark:border-emerald-800/50"
                           title={t('عرض تفاصيل الدورة', 'View Course Details')}
                         >
                           <ExternalLink size={18} />
@@ -183,18 +183,18 @@ const CourseRegister: React.FC = () => {
                 </div>
               </div>
 
-              <h2 className="text-xl font-black text-slate-900 mb-6 italic">
+              <h2 className="text-xl font-black text-slate-900 dark:text-white mb-6 italic">
                 {t('بيانات المتدرب', 'Student Information')}
               </h2>
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div>
-                  <label className="block text-sm font-black text-slate-700 mb-2">
+                  <label className="block text-sm font-black text-slate-700 dark:text-slate-300 mb-2">
                     {t('الاسم الثلاثي', 'Full Name')}
                   </label>
                   <input
                     type="text"
                     required
-                    className="w-full px-4 py-4 rounded-xl bg-slate-50 border-2 border-slate-200 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 outline-none transition font-medium"
+                    className="w-full px-4 py-4 rounded-xl bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 dark:text-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 dark:focus:ring-emerald-900/30 outline-none transition font-medium"
                     placeholder={t('كما سيظهر في الشهادة', 'As it will appear on the certificate')}
                     value={formData.name}
                     onChange={e => setFormData({ ...formData, name: e.target.value })}
@@ -203,26 +203,26 @@ const CourseRegister: React.FC = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div>
-                    <label className="block text-sm font-black text-slate-700 mb-2">
+                    <label className="block text-sm font-black text-slate-700 dark:text-slate-300 mb-2">
                       {t('رقم الهاتف', 'Phone Number')}
                     </label>
                     <input
                       type="tel"
                       required
-                      className="w-full px-4 py-4 rounded-xl bg-slate-50 border-2 border-slate-200 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 outline-none transition font-medium"
+                      className="w-full px-4 py-4 rounded-xl bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 dark:text-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 dark:focus:ring-emerald-900/30 outline-none transition font-medium"
                       placeholder="077xxxxxxxx"
                       value={formData.phone}
                       onChange={e => setFormData({ ...formData, phone: e.target.value })}
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-black text-slate-700 mb-2">
+                    <label className="block text-sm font-black text-slate-700 dark:text-slate-300 mb-2">
                       {t('البريد الإلكتروني', 'Email')}
                     </label>
                     <input
                       type="email"
                       required
-                      className="w-full px-4 py-4 rounded-xl bg-slate-50 border-2 border-slate-200 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 outline-none transition font-medium"
+                      className="w-full px-4 py-4 rounded-xl bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 dark:text-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 dark:focus:ring-emerald-900/30 outline-none transition font-medium"
                       placeholder="example@mail.com"
                       value={formData.email}
                       onChange={e => setFormData({ ...formData, email: e.target.value })}
@@ -231,12 +231,12 @@ const CourseRegister: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-black text-slate-700 mb-2">
+                  <label className="block text-sm font-black text-slate-700 dark:text-slate-300 mb-2">
                     {t('المسمى الوظيفي / التخصص الدراسي', 'Job Title / Field of Study')}
                   </label>
                   <input
                     type="text"
-                    className="w-full px-4 py-4 rounded-xl bg-slate-50 border-2 border-slate-200 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 outline-none transition font-medium"
+                    className="w-full px-4 py-4 rounded-xl bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 dark:text-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 dark:focus:ring-emerald-900/30 outline-none transition font-medium"
                     placeholder={t('مثال: طالب علوم حاسوب / مهندس مدني', 'Example: Computer Science Student / Civil Engineer')}
                     value={formData.jobTitle}
                     onChange={e => setFormData({ ...formData, jobTitle: e.target.value })}
@@ -244,11 +244,11 @@ const CourseRegister: React.FC = () => {
                 </div>
 
                 <div className="pt-6">
-                  <h2 className="text-xl font-black text-slate-900 mb-6 italic">
+                  <h2 className="text-xl font-black text-slate-900 dark:text-white mb-6 italic">
                     {t('طريقة الدفع', 'Payment Method')}
                   </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <label className={`border-2 rounded-2xl p-5 cursor-pointer transition duration-300 flex items-center gap-3 ${formData.paymentMethod === 'zaincash' ? 'border-emerald-500 bg-emerald-50' : 'border-slate-200 hover:border-emerald-300'}`}>
+                    <label className={`border-2 rounded-2xl p-5 cursor-pointer transition duration-300 flex items-center gap-3 ${formData.paymentMethod === 'zaincash' ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20' : 'border-slate-200 dark:border-slate-700 hover:border-emerald-300 dark:hover:border-emerald-700'}`}>
                       <input
                         type="radio"
                         name="payment"
@@ -257,10 +257,10 @@ const CourseRegister: React.FC = () => {
                         onChange={e => setFormData({ ...formData, paymentMethod: e.target.value })}
                         className="w-5 h-5 text-emerald-600 focus:ring-emerald-500"
                       />
-                      <span className="font-black text-slate-700">{t('زين كاش (ZainCash)', 'ZainCash')}</span>
+                      <span className="font-black text-slate-700 dark:text-slate-200">{t('زين كاش (ZainCash)', 'ZainCash')}</span>
                     </label>
 
-                    <label className={`border-2 rounded-2xl p-5 cursor-pointer transition duration-300 flex items-center gap-3 ${formData.paymentMethod === 'cash' ? 'border-emerald-500 bg-emerald-50' : 'border-slate-200 hover:border-emerald-300'}`}>
+                    <label className={`border-2 rounded-2xl p-5 cursor-pointer transition duration-300 flex items-center gap-3 ${formData.paymentMethod === 'cash' ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20' : 'border-slate-200 dark:border-slate-700 hover:border-emerald-300 dark:hover:border-emerald-700'}`}>
                       <input
                         type="radio"
                         name="payment"
@@ -269,7 +269,7 @@ const CourseRegister: React.FC = () => {
                         onChange={e => setFormData({ ...formData, paymentMethod: e.target.value })}
                         className="w-5 h-5 text-emerald-600 focus:ring-emerald-500"
                       />
-                      <span className="font-black text-slate-700">{t('دفع نقدي (في المقر)', 'Cash (On-site)')}</span>
+                      <span className="font-black text-slate-700 dark:text-slate-200">{t('دفع نقدي (في المقر)', 'Cash (On-site)')}</span>
                     </label>
                   </div>
                 </div>

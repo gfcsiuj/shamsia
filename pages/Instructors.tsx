@@ -3,13 +3,14 @@ import ReactDOM from 'react-dom';
 import { ArrowRight, Award, BookOpen, Mail, Phone, ExternalLink, Facebook, Instagram, Linkedin, Twitter, Globe, Youtube, Send, X } from 'lucide-react';
 import { db } from '../lib/firebase';
 import InstructorCard from '../components/InstructorCard';
-import { Instructor, Course, SocialLink } from '../types';
+import { Instructor, Course, SocialLink, Graduate } from '../types';
 import { Link, useLocation } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 
 const Instructors: React.FC = () => {
   const { t, isEnglish } = useTheme();
   const [instructors, setInstructors] = useState<Instructor[]>([]);
+  const [graduates, setGraduates] = useState<Graduate[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedInstructor, setSelectedInstructor] = useState<Instructor | null>(null);
@@ -26,8 +27,9 @@ const Instructors: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [instructorsSnap, coursesSnap] = await Promise.all([
+        const [instructorsSnap, graduatesSnap, coursesSnap] = await Promise.all([
           db.collection('instructors').get(),
+          db.collection('graduates').get(),
           db.collection('courses').get()
         ]);
         const instData = instructorsSnap.docs.map(doc => {
@@ -39,7 +41,17 @@ const Instructors: React.FC = () => {
             certifications: data.certifications || [], socials: data.socials || []
           } as Instructor;
         });
+        const gradData = graduatesSnap.docs.map(doc => {
+          const data = doc.data() as any;
+          return {
+            id: doc.id, name: data.name,
+            roles: data.roles || (data.role ? [data.role] : []),
+            image: data.image, shortBio: data.shortBio || '', bio: data.bio || '',
+            certifications: data.certifications || [], socials: data.socials || []
+          } as Graduate;
+        });
         setInstructors(instData);
+        setGraduates(gradData);
         setCourses(coursesSnap.docs.map(doc => ({
           id: doc.id, ...doc.data(),
           media: doc.data().media || (doc.data().image ? [{ url: doc.data().image, type: 'image' }] : []),
@@ -54,6 +66,11 @@ const Instructors: React.FC = () => {
   const filteredInstructors = instructors.filter(inst => {
     return (inst.name?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
       (inst.shortBio?.toLowerCase() || '').includes(searchQuery.toLowerCase());
+  });
+
+  const filteredGraduates = graduates.filter(grad => {
+    return (grad.name?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
+      (grad.shortBio?.toLowerCase() || '').includes(searchQuery.toLowerCase());
   });
 
   const openInstructor = useCallback((inst: Instructor) => {
@@ -94,74 +111,54 @@ const Instructors: React.FC = () => {
 
     const overlay = (
       <div
-        style={{
-          position: 'fixed',
-          top: 0, left: 0, right: 0, bottom: 0,
-          zIndex: 99999,
-          backgroundColor: '#ffffff',
-          overflowY: 'auto',
-          WebkitOverflowScrolling: 'touch',
-        }}
+        className="fixed inset-0 z-[99999] bg-white dark:bg-slate-900 overflow-y-auto"
+        style={{ WebkitOverflowScrolling: 'touch' }}
       >
         {/* Sticky top bar */}
-        <div style={{
-          position: 'sticky', top: 0, zIndex: 10,
-          backgroundColor: 'rgba(255,255,255,0.92)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          borderBottom: '1px solid #f1f5f9',
-        }}>
-          <div style={{ maxWidth: '900px', margin: '0 auto', padding: '12px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <button onClick={closeInstructor}
-              style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#334155', fontWeight: 700, fontSize: '14px', padding: '8px', borderRadius: '12px', border: 'none', background: '#f1f5f9', cursor: 'pointer' }}>
+        <div className="sticky top-0 z-10 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border-b border-slate-100 dark:border-slate-800">
+          <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+            <button onClick={closeInstructor} className="flex items-center gap-2 text-slate-700 dark:text-slate-200 font-bold text-sm p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition">
               <ArrowRight size={20} />
               <span>{t('العودة', 'Back')}</span>
             </button>
-            <button onClick={closeInstructor}
-              style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#f1f5f9', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b' }}>
+            <button onClick={closeInstructor} className="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-700 transition">
               <X size={18} />
             </button>
           </div>
         </div>
 
         {/* Green hero */}
-        <div style={{
-          background: 'linear-gradient(135deg, #059669 0%, #0d9488 100%)',
-          padding: '32px 16px 40px',
-          textAlign: 'center',
-          position: 'relative',
-          overflow: 'hidden',
-        }}>
-          <div style={{ position: 'absolute', top: '-50%', right: '-20%', width: '300px', height: '300px', background: 'rgba(255,255,255,0.08)', borderRadius: '50%', filter: 'blur(60px)' }}></div>
+        <div className="bg-gradient-to-br from-emerald-600 to-teal-600 pt-8 px-4 pb-10 text-center relative overflow-hidden">
+          <div className="absolute top-[-50%] right-[-20%] w-[300px] h-[300px] bg-white/10 rounded-full blur-[60px]"></div>
           <img
             src={selectedInstructor.image}
             alt={selectedInstructor.name}
-            style={{ width: '120px', height: '120px', borderRadius: '24px', objectFit: 'cover', border: '4px solid rgba(255,255,255,0.3)', boxShadow: '0 20px 40px rgba(0,0,0,0.2)', margin: '0 auto 16px' }}
+            className="w-32 h-32 rounded-3xl object-cover border-4 border-white/30 shadow-2xl mx-auto mb-4"
           />
-          <h1 style={{ fontSize: '28px', fontWeight: 900, color: '#fff', fontStyle: 'italic', margin: '0 0 12px' }}>{selectedInstructor.name}</h1>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', justifyContent: 'center' }}>
+          <h1 className="text-3xl font-black text-white italic mb-3">{selectedInstructor.name}</h1>
+          <div className="flex flex-wrap gap-2 justify-center">
             {selectedInstructor.roles?.map((role, i) => (
-              <span key={i} style={{ fontSize: '12px', background: 'rgba(255,255,255,0.2)', color: '#fff', padding: '6px 14px', borderRadius: '20px', fontWeight: 700, backdropFilter: 'blur(4px)', border: '1px solid rgba(255,255,255,0.1)' }}>{role}</span>
+              <span key={i} className="text-xs bg-white/20 text-white px-3 py-1.5 rounded-full font-bold backdrop-blur-sm border border-white/10">{role}</span>
             ))}
           </div>
         </div>
 
         {/* Content */}
-        <div style={{ maxWidth: '900px', margin: '0 auto', padding: '24px 16px 60px' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '20px' }}>
+        <div className="max-w-4xl mx-auto px-4 py-8 pb-20">
+          <div className="grid grid-cols-1 gap-6">
 
             {/* Social Links */}
             {selectedInstructor.socials && selectedInstructor.socials.length > 0 && (
-              <div style={{ background: '#f8fafc', borderRadius: '16px', padding: '20px', border: '1px solid #e2e8f0' }}>
-                <h3 style={{ fontWeight: 900, color: '#1e293b', marginBottom: '12px', fontSize: '14px' }}>{t('معلومات التواصل', 'Contact')}</h3>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <div className="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-6 border border-slate-200 dark:border-slate-700">
+                <h3 className="font-black text-slate-900 dark:text-white mb-3 text-sm">{t('معلومات التواصل', 'Contact')}</h3>
+                <div className="flex flex-col gap-2">
                   {selectedInstructor.socials.map((s, i) => (
                     <a key={i} href={getSocialLink(s)} target="_blank" rel="noopener noreferrer"
-                      style={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#475569', textDecoration: 'none', padding: '10px', borderRadius: '12px', fontSize: '14px' }}>
-                      <div style={{ width: '34px', height: '34px', background: '#fff', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+                      className="flex items-center gap-3 text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 p-2 rounded-xl text-sm transition group">
+                      <div className="w-9 h-9 bg-white dark:bg-slate-800 rounded-xl flex items-center justify-center shrink-0 shadow-sm border border-slate-100 dark:border-slate-700 group-hover:border-emerald-200 dark:group-hover:border-emerald-700">
                         {getSocialIcon(s.type)}
                       </div>
-                      <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', direction: s.type === 'phone' ? 'ltr' : 'inherit' }}>{s.value}</span>
+                      <span className="truncate" dir={s.type === 'phone' ? 'ltr' : 'auto'}>{s.value}</span>
                     </a>
                   ))}
                 </div>
@@ -170,14 +167,14 @@ const Instructors: React.FC = () => {
 
             {/* Certifications */}
             {selectedInstructor.certifications && selectedInstructor.certifications.length > 0 && (
-              <div style={{ background: '#f8fafc', borderRadius: '16px', padding: '20px', border: '1px solid #e2e8f0' }}>
-                <h3 style={{ fontWeight: 900, color: '#1e293b', marginBottom: '12px', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Award size={16} style={{ color: '#059669' }} />
+              <div className="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-6 border border-slate-200 dark:border-slate-700">
+                <h3 className="font-black text-slate-900 dark:text-white mb-3 text-sm flex items-center gap-2">
+                  <Award size={16} className="text-emerald-600 dark:text-emerald-400" />
                   {t('الشهادات', 'Certifications')}
                 </h3>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                <div className="flex flex-wrap gap-2">
                   {selectedInstructor.certifications.map((cert, i) => (
-                    <span key={i} style={{ padding: '6px 12px', background: '#fff', border: '1px solid #e2e8f0', borderRadius: '12px', fontSize: '12px', color: '#475569', fontWeight: 500, boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>{cert}</span>
+                    <span key={i} className="px-3 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-600 dark:text-slate-300 font-medium shadow-sm">{cert}</span>
                   ))}
                 </div>
               </div>
@@ -185,14 +182,14 @@ const Instructors: React.FC = () => {
 
             {/* Bio */}
             <div>
-              <h3 style={{ fontSize: '18px', fontWeight: 900, color: '#0f172a', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '10px', fontStyle: 'italic' }}>
-                <div style={{ width: '36px', height: '36px', background: '#d1fae5', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <Award size={18} style={{ color: '#059669' }} />
+              <h3 className="text-lg font-black text-slate-900 dark:text-white mb-3 flex items-center gap-2.5 italic">
+                <div className="w-9 h-9 bg-emerald-100 dark:bg-emerald-900/40 rounded-xl flex items-center justify-center shrink-0">
+                  <Award size={18} className="text-emerald-600 dark:text-emerald-400" />
                 </div>
                 {t('نبذة شخصية', 'Personal Bio')}
               </h3>
-              <div style={{ background: '#f8fafc', borderRadius: '16px', padding: '20px', border: '1px solid #e2e8f0' }}>
-                <p style={{ color: '#475569', lineHeight: 2, fontSize: '15px', whiteSpace: 'pre-line', margin: 0 }}>
+              <div className="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-6 border border-slate-200 dark:border-slate-700">
+                <p className="text-slate-600 dark:text-slate-300 leading-loose text-[15px] whitespace-pre-line m-0">
                   {selectedInstructor.bio || t('لا توجد نبذة متاحة', 'No bio available')}
                 </p>
               </div>
@@ -200,41 +197,41 @@ const Instructors: React.FC = () => {
 
             {/* Courses */}
             <div>
-              <h3 style={{ fontSize: '18px', fontWeight: 900, color: '#0f172a', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '10px', fontStyle: 'italic' }}>
-                <div style={{ width: '36px', height: '36px', background: '#ffedd5', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <BookOpen size={18} style={{ color: '#ea580c' }} />
+              <h3 className="text-lg font-black text-slate-900 dark:text-white mb-3 flex items-center gap-2.5 italic">
+                <div className="w-9 h-9 bg-orange-100 dark:bg-orange-900/40 rounded-xl flex items-center justify-center shrink-0">
+                  <BookOpen size={18} className="text-orange-600 dark:text-orange-400" />
                 </div>
                 {t('الدورات التدريبية', 'Courses')} ({instructorCourses.length})
               </h3>
               {instructorCourses.length > 0 ? (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '12px' }}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {instructorCourses.map(course => (
                     <Link to={`/courses/${course.id}`} key={course.id} onClick={closeInstructor}
-                      style={{ display: 'flex', gap: '12px', padding: '12px', borderRadius: '16px', border: '1px solid #e2e8f0', background: '#fff', textDecoration: 'none', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+                      className="flex gap-3 p-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm hover:border-emerald-300 dark:hover:border-emerald-700 transition">
                       <img src={course.media && course.media.length > 0 ? course.media[0].url : 'https://via.placeholder.com/150'} alt=""
-                        style={{ width: '60px', height: '60px', borderRadius: '12px', objectFit: 'cover', flexShrink: 0 }} />
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <h4 style={{ fontWeight: 700, color: '#1e293b', fontSize: '14px', marginBottom: '4px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{course.title}</h4>
-                        <span style={{ fontSize: '12px', color: '#94a3b8', background: '#f1f5f9', padding: '2px 8px', borderRadius: '8px' }}>{course.level}</span>
+                        className="w-16 h-16 rounded-xl object-cover shrink-0 bg-slate-100 dark:bg-slate-700" />
+                      <div className="flex-1 min-w-0 py-1">
+                        <h4 className="font-bold text-slate-900 dark:text-white text-sm mb-1 line-clamp-2">{course.title}</h4>
+                        <span className="text-xs text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-900 px-2 py-0.5 rounded-lg">{course.level}</span>
                       </div>
                     </Link>
                   ))}
                 </div>
               ) : (
-                <div style={{ background: '#f8fafc', borderRadius: '16px', padding: '32px', textAlign: 'center', border: '1px solid #e2e8f0' }}>
-                  <BookOpen style={{ margin: '0 auto 8px', color: '#cbd5e1' }} size={32} />
-                  <p style={{ color: '#94a3b8', fontWeight: 500, fontSize: '14px', margin: 0 }}>{t('لا توجد دورات نشطة حالياً', 'No active courses')}</p>
+                <div className="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-8 text-center border border-slate-200 dark:border-slate-700">
+                  <BookOpen className="mx-auto mb-2 text-slate-300 dark:text-slate-600" size={32} />
+                  <p className="text-slate-500 dark:text-slate-400 font-medium text-sm m-0">{t('لا توجد دورات نشطة حالياً', 'No active courses')}</p>
                 </div>
               )}
             </div>
           </div>
 
           {/* Back button */}
-          <div style={{ marginTop: '40px', textAlign: 'center' }}>
+          <div className="mt-10 text-center">
             <button onClick={closeInstructor}
-              style={{ background: '#f1f5f9', color: '#334155', padding: '12px 32px', borderRadius: '12px', fontWeight: 700, border: 'none', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: '14px' }}>
+              className="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-8 py-3 rounded-xl font-bold inline-flex items-center gap-2 text-sm hover:bg-slate-200 dark:hover:bg-slate-700 transition">
               <ArrowRight size={18} />
-              {t('العودة لقائمة المدربين', 'Back to Instructors')}
+              {t('العودة للقائمة', 'Back to List')}
             </button>
           </div>
         </div>
@@ -246,19 +243,19 @@ const Instructors: React.FC = () => {
   };
 
   return (
-    <div className="bg-slate-50 min-h-screen">
+    <div className="bg-slate-50 dark:bg-slate-900 min-h-screen transition-colors duration-300">
       {/* Hero */}
       <div className="relative pt-20 pb-16 overflow-hidden">
-        <div className="absolute inset-0 -z-10">
-          <div className="absolute top-[-10%] right-[-10%] w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-emerald-100/50 rounded-full blur-[100px] animate-blob"></div>
-          <div className="absolute bottom-[-5%] left-[-5%] w-[250px] md:w-[400px] h-[250px] md:h-[400px] bg-orange-100/40 rounded-full blur-[80px] animate-blob delay-2000"></div>
+        <div className="absolute inset-0 -z-10 overflow-hidden">
+          <div className="absolute top-[-10%] right-[-10%] w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-emerald-100/50 dark:bg-emerald-900/20 rounded-full blur-[100px] animate-blob"></div>
+          <div className="absolute bottom-[-5%] left-[-5%] w-[250px] md:w-[400px] h-[250px] md:h-[400px] bg-orange-100/40 dark:bg-orange-900/20 rounded-full blur-[80px] animate-blob delay-2000"></div>
         </div>
         <div className="container mx-auto px-4 text-center relative z-10">
-          <h1 className="text-4xl md:text-6xl font-black text-slate-900 mb-4 italic tracking-tight animate-fade-up">
-            {isEnglish ? (<>Our <span className="text-gradient">Instructors</span></>) : (<>نخبة <span className="text-gradient">المدربين</span></>)}
+          <h1 className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white mb-4 italic tracking-tight animate-fade-up">
+            {isEnglish ? (<>Our <span className="text-gradient">Instructors & Graduates</span></>) : (<>نخبة <span className="text-gradient">المدربين والخريجين</span></>)}
           </h1>
-          <p className="text-slate-600 text-base md:text-lg max-w-2xl mx-auto font-medium animate-fade-up delay-100">
-            {t('تعلم من أفضل الخبراء في الوطن العربي', 'Learn from the best experts in the Arab world')}
+          <p className="text-slate-600 dark:text-slate-300 text-base md:text-lg max-w-2xl mx-auto font-medium animate-fade-up delay-100">
+            {t('تعلم من أفضل الخبراء وتعرف على خريجينا المتميزين', 'Learn from the best experts and meet our outstanding graduates')}
           </p>
         </div>
       </div>
@@ -266,16 +263,52 @@ const Instructors: React.FC = () => {
       <div className="container mx-auto px-4 py-8 md:py-12">
         {loading ? (
           <div className="flex justify-center py-20">
-            <div className="w-12 h-12 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin"></div>
+            <div className="w-12 h-12 border-4 border-emerald-200 dark:border-emerald-900/50 border-t-emerald-600 rounded-full animate-spin"></div>
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
-            {instructors.map((instructor, index) => (
-              <div key={instructor.id} className="animate-fade-up" style={{ animationDelay: `${index * 100}ms` }}>
-                <InstructorCard instructor={instructor} onClick={() => openInstructor(instructor)} />
+          <>
+            {filteredInstructors.length > 0 && (
+              <div className="mb-16">
+                <h2 className="text-3xl font-black text-slate-900 dark:text-white mb-8 flex items-center justify-center md:justify-start gap-3">
+                  <div className="w-12 h-12 rounded-2xl bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 items-center justify-center hidden md:flex">
+                    <Award size={24} />
+                  </div>
+                  {t('المدربون', 'Instructors')}
+                </h2>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
+                  {filteredInstructors.map((instructor, index) => (
+                    <div key={instructor.id} className="animate-fade-up" style={{ animationDelay: `${index * 100}ms` }}>
+                      <InstructorCard instructor={instructor} onClick={() => openInstructor(instructor)} />
+                    </div>
+                  ))}
+                </div>
               </div>
-            ))}
-          </div>
+            )}
+
+            {filteredGraduates.length > 0 && (
+              <div>
+                <h2 className="text-3xl font-black text-slate-900 dark:text-white mb-8 flex items-center justify-center md:justify-start gap-3">
+                  <div className="w-12 h-12 rounded-2xl bg-orange-100 dark:bg-orange-900/40 text-orange-600 dark:text-orange-400 items-center justify-center hidden md:flex">
+                    <Award size={24} />
+                  </div>
+                  {t('الخريجون', 'Graduates')}
+                </h2>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
+                  {filteredGraduates.map((graduate, index) => (
+                    <div key={graduate.id} className="animate-fade-up" style={{ animationDelay: `${index * 100}ms` }}>
+                      <InstructorCard instructor={graduate} onClick={() => openInstructor(graduate)} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {filteredInstructors.length === 0 && filteredGraduates.length === 0 && (
+              <div className="text-center py-20 text-slate-500 dark:text-slate-400 font-medium">
+                {t('لا توجد نتائج مطابقة لبحثك', 'No matching results found')}
+              </div>
+            )}
+          </>
         )}
 
         {/* Join CTA */}

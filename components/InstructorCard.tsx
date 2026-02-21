@@ -13,7 +13,7 @@ const InstructorCard: React.FC<InstructorCardProps> = ({ instructor, onClick }) 
 
   return (
     <div
-      className={`group rounded-2xl md:rounded-[2rem] shadow-sm hover:shadow-xl transition-all duration-500 border overflow-hidden flex flex-col items-center cursor-pointer relative hover:-translate-y-2 ${isDarkMode
+      className={`group rounded-2xl md:rounded-[2rem] shadow-sm hover:shadow-[0_20px_40px_-10px_rgba(16,185,129,0.15)] dark:hover:shadow-[0_20px_40px_-10px_rgba(16,185,129,0.05)] transition-all duration-500 border overflow-hidden flex flex-col items-center cursor-pointer relative hover:-translate-y-2 ${isDarkMode
         ? 'bg-slate-800 border-slate-700'
         : 'bg-white border-slate-100'
         }`}
