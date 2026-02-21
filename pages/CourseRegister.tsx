@@ -155,11 +155,11 @@ const CourseRegister: React.FC = () => {
                     <label className="block text-sm font-black text-slate-700 dark:text-slate-300 mb-2">
                       {t('اختر الدورة التدريبية', 'Select Course')}
                     </label>
-                    <div className="flex flex-col sm:flex-row gap-3">
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full">
                       <select
                         value={selectedCourseId}
                         onChange={(e) => setSelectedCourseId(e.target.value)}
-                        className="flex-grow px-4 py-4 rounded-xl bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 dark:text-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 dark:focus:ring-emerald-900/30 outline-none transition cursor-pointer font-medium"
+                        className="flex-1 min-w-0 w-full px-4 py-4 rounded-xl bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 dark:text-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 dark:focus:ring-emerald-900/30 outline-none transition cursor-pointer font-medium"
                       >
                         <option value="" disabled>{t('-- اختر دورة --', '-- Select a course --')}</option>
                         {courses.map(course => (
@@ -171,7 +171,7 @@ const CourseRegister: React.FC = () => {
                         <Link
                           to={`/courses/${selectedCourseId}`}
                           target="_blank"
-                          className="px-5 py-4 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 rounded-xl hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition flex items-center justify-center gap-2 font-black whitespace-nowrap border border-emerald-100 dark:border-emerald-800/50"
+                          className="w-full sm:w-auto shrink-0 px-5 py-4 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 rounded-xl hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition flex items-center justify-center gap-2 font-black whitespace-nowrap border border-emerald-100 dark:border-emerald-800/50"
                           title={t('عرض تفاصيل الدورة', 'View Course Details')}
                         >
                           <ExternalLink size={18} />
@@ -318,22 +318,24 @@ const CourseRegister: React.FC = () => {
                     <span className="font-bold">{selectedCourse.startDate}</span>
                   </div>
 
-                  <div className="border-t border-emerald-500/30 pt-6 mt-6">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-emerald-200">{t('سعر الدورة', 'Course Price')}</span>
-                      <span className="font-bold">{selectedCourse.priceText || `${selectedCourse.price.toLocaleString()} ${t('د.ع', 'IQD')}`}</span>
-                    </div>
-                    {selectedCourse.oldPrice && (
-                      <div className="flex justify-between items-center mb-4 text-xs text-emerald-300/60 line-through">
-                        <span>{t('السعر الأصلي', 'Original Price')}</span>
-                        <span>{selectedCourse.oldPrice.toLocaleString()} {t('د.ع', 'IQD')}</span>
+                  {!selectedCourse.hidePrice && (
+                    <div className="border-t border-emerald-500/30 pt-6 mt-6">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-emerald-200">{t('سعر الدورة', 'Course Price')}</span>
+                        <span className="font-bold">{selectedCourse.priceText || `${selectedCourse.price.toLocaleString()} ${t('د.ع', 'IQD')}`}</span>
                       </div>
-                    )}
-                    <div className="flex justify-between items-center text-2xl font-black mt-4 bg-white/10 p-4 rounded-xl">
-                      <span>{t('الإجمالي', 'Total')}</span>
-                      <span>{selectedCourse.priceText || `${selectedCourse.price.toLocaleString()} ${t('د.ع', 'IQD')}`}</span>
+                      {selectedCourse.oldPrice && (
+                        <div className="flex justify-between items-center mb-4 text-xs text-emerald-300/60 line-through">
+                          <span>{t('السعر الأصلي', 'Original Price')}</span>
+                          <span>{selectedCourse.oldPrice.toLocaleString()} {t('د.ع', 'IQD')}</span>
+                        </div>
+                      )}
+                      <div className="flex justify-between items-center text-2xl font-black mt-4 bg-white/10 p-4 rounded-xl">
+                        <span>{t('الإجمالي', 'Total')}</span>
+                        <span>{selectedCourse.priceText || `${selectedCourse.price.toLocaleString()} ${t('د.ع', 'IQD')}`}</span>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               ) : (
                 <div className="text-center py-10 opacity-70 relative z-10">
