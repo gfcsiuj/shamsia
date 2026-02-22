@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { db } from '../../lib/firebase';
 import { Certificate, Course } from '../../types';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Plus, Trash2, X, Award, Search, Loader2, Eye, Copy, CheckCircle, XCircle, QrCode, GraduationCap, Building2, Users, Image as ImageIcon } from 'lucide-react';
+import { ArrowRight, Plus, Trash2, X, Award, Search, Loader2, Eye, Copy, CheckCircle, XCircle, QrCode, GraduationCap, Building2, Users, Image as ImageIcon, Share2, Save, Edit3 } from 'lucide-react';
 
 // QR Code via free API
 const generateQRDataUrl = (text: string) =>
@@ -20,7 +20,7 @@ interface TrainerCert { id: string; instructorId: string; instructorName: string
 interface CompanyCert { id: string; name: string; frontImage: string; backImage?: string; createdAt: string; }
 
 const CertificatesAdmin: React.FC = () => {
-    const [activeTab, setActiveTab] = useState<'students' | 'trainers' | 'company'>('students');
+    const [activeTab, setActiveTab] = useState<'students' | 'trainers' | 'company' | 'distribution'>('students');
 
     // ─── Student Certificates State ───
     const [certificates, setCertificates] = useState<Certificate[]>([]);
@@ -46,25 +46,39 @@ const CertificatesAdmin: React.FC = () => {
     const [companyModal, setCompanyModal] = useState(false);
     const [companyForm, setCompanyForm] = useState({ name: '', frontImage: '', backImage: '' });
 
+    // ─── Distribution State ───
+    const [distText, setDistText] = useState('');
+    const [distImages, setDistImages] = useState<string[]>(['']);
+    const [distLoading, setDistLoading] = useState(true);
+    const [distSaving, setDistSaving] = useState(false);
+    const [distEditing, setDistEditing] = useState(false);
+    const [distSaved, setDistSaved] = useState(false);
+
     useEffect(() => { fetchAll(); }, []);
 
     const fetchAll = async () => {
         try {
-            setLoading(true); setTrainerLoading(true); setCompanyLoading(true);
-            const [certsSnap, coursesSnap, instrSnap, tCertsSnap, cCertsSnap] = await Promise.all([
+            setLoading(true); setTrainerLoading(true); setCompanyLoading(true); setDistLoading(true);
+            const [certsSnap, coursesSnap, instrSnap, tCertsSnap, cCertsSnap, distSnap] = await Promise.all([
                 db.collection('certificates').orderBy('issueDate', 'desc').get(),
                 db.collection('courses').get(),
                 db.collection('instructors').get(),
                 db.collection('trainerCertificates').orderBy('createdAt', 'desc').get(),
                 db.collection('companyCertificates').orderBy('createdAt', 'desc').get(),
+                db.collection('siteSettings').doc('certificateDistribution').get(),
             ]);
             setCertificates(certsSnap.docs.map(d => ({ id: d.id, ...d.data() } as Certificate)));
             setCourses(coursesSnap.docs.map(d => ({ id: d.id, ...d.data() } as Course)));
             setInstructors(instrSnap.docs.map(d => ({ id: d.id, name: d.data().name, image: d.data().image } as Instructor)));
             setTrainerCerts(tCertsSnap.docs.map(d => ({ id: d.id, ...d.data() } as TrainerCert)));
             setCompanyCerts(cCertsSnap.docs.map(d => ({ id: d.id, ...d.data() } as CompanyCert)));
+            if (distSnap.exists) {
+                const data = distSnap.data() as any;
+                setDistText(data.text || '');
+                setDistImages(data.images?.length ? data.images : ['']);
+            }
         } catch (err) { console.error(err); }
-        finally { setLoading(false); setTrainerLoading(false); setCompanyLoading(false); }
+        finally { setLoading(false); setTrainerLoading(false); setCompanyLoading(false); setDistLoading(false); }
     };
 
     // ─── Student handlers ───
@@ -140,6 +154,24 @@ const CertificatesAdmin: React.FC = () => {
         setCompanyCerts(prev => prev.filter(c => c.id !== id));
     };
 
+    // ─── Distribution handlers ───
+    const handleSaveDistribution = async () => {
+        setDistSaving(true);
+        try {
+            const cleanImages = distImages.filter(i => i.trim());
+            await db.collection('siteSettings').doc('certificateDistribution').set({
+                text: distText,
+                images: cleanImages,
+                updatedAt: new Date().toISOString(),
+            });
+            setDistImages(cleanImages.length ? cleanImages : ['']);
+            setDistEditing(false);
+            setDistSaved(true);
+            setTimeout(() => setDistSaved(false), 2500);
+        } catch (err) { console.error(err); alert('حدث خطأ أثناء الحفظ'); }
+        finally { setDistSaving(false); }
+    };
+
     const filtered = certificates.filter(c => {
         if (!searchQuery) return true;
         const q = searchQuery.toLowerCase();
@@ -150,6 +182,7 @@ const CertificatesAdmin: React.FC = () => {
         { id: 'students' as const, label: 'شهادات المتدربين', icon: GraduationCap, color: 'amber' },
         { id: 'trainers' as const, label: 'شهادات المدربين', icon: Users, color: 'teal' },
         { id: 'company' as const, label: 'شهادات الشركة', icon: Building2, color: 'purple' },
+        { id: 'distribution' as const, label: 'توزيع الشهادات', icon: Share2, color: 'rose' },
     ];
 
     return (
@@ -177,7 +210,7 @@ const CertificatesAdmin: React.FC = () => {
                         {tabs.map(tab => {
                             const Icon = tab.icon;
                             const isActive = activeTab === tab.id;
-                            const colors: Record<string, string> = { amber: 'from-amber-500 to-orange-500', teal: 'from-teal-500 to-emerald-600', purple: 'from-purple-500 to-indigo-600' };
+                            const colors: Record<string, string> = { amber: 'from-amber-500 to-orange-500', teal: 'from-teal-500 to-emerald-600', purple: 'from-purple-500 to-indigo-600', rose: 'from-rose-500 to-pink-600' };
                             return (
                                 <button key={tab.id} onClick={() => setActiveTab(tab.id)}
                                     className={`flex-1 flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl font-bold text-sm transition-all duration-300 ${isActive ? `bg-gradient-to-r ${colors[tab.color]} text-white shadow-lg` : 'text-slate-500 hover:bg-slate-50'}`}>
@@ -331,6 +364,98 @@ const CertificatesAdmin: React.FC = () => {
                                         </div>
                                     </div>
                                 ))}
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {/* ═══════════════════  TAB 4: Certificate Distribution ═══════════════════ */}
+                {activeTab === 'distribution' && (
+                    <div className="animate-fade-in">
+                        <div className="flex justify-between items-center mb-6">
+                            <h2 className="text-xl font-black text-slate-800">توزيع الشهادات</h2>
+                            {!distEditing && !distLoading && (
+                                <button onClick={() => setDistEditing(true)} className="bg-rose-600 hover:bg-rose-700 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 font-bold transition shadow-lg">
+                                    <Edit3 size={18} /> تعديل
+                                </button>
+                            )}
+                        </div>
+
+                        {distLoading ? (
+                            <div className="flex justify-center py-20"><Loader2 className="animate-spin text-rose-600" size={40} /></div>
+                        ) : distEditing ? (
+                            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 space-y-6">
+                                {/* Text */}
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-700 mb-2">النص الوصفي</label>
+                                    <textarea
+                                        className="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:border-rose-400 font-medium resize-none"
+                                        rows={5}
+                                        placeholder="أدخل نصاً وصفياً عن توزيع الشهادات..."
+                                        value={distText}
+                                        onChange={e => setDistText(e.target.value)}
+                                    />
+                                </div>
+
+                                {/* Images */}
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-700 mb-2">الصور</label>
+                                    {distImages.map((img, idx) => (
+                                        <div key={idx} className="mb-3">
+                                            <div className="flex gap-2 mb-1">
+                                                <input
+                                                    type="text"
+                                                    className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 outline-none focus:border-rose-400 text-sm ltr"
+                                                    placeholder="رابط الصورة..."
+                                                    value={img}
+                                                    onChange={e => { const newImgs = [...distImages]; newImgs[idx] = e.target.value; setDistImages(newImgs); }}
+                                                />
+                                                {distImages.length > 1 && (
+                                                    <button type="button" onClick={() => setDistImages(distImages.filter((_, i) => i !== idx))} className="p-2 text-red-400 hover:bg-red-50 rounded-lg"><Trash2 size={16} /></button>
+                                                )}
+                                            </div>
+                                            {img.trim() && (
+                                                <img src={img} alt="معاينة" className="mt-1 max-h-32 rounded-xl border object-contain" onError={e => (e.currentTarget.style.display = 'none')} onLoad={e => (e.currentTarget.style.display = '')} />
+                                            )}
+                                        </div>
+                                    ))}
+                                    <button type="button" onClick={() => setDistImages([...distImages, ''])} className="text-rose-600 text-sm font-bold hover:text-rose-700 flex items-center gap-1 mt-1">
+                                        <Plus size={14} /> إضافة صورة أخرى
+                                    </button>
+                                </div>
+
+                                {/* Actions */}
+                                <div className="flex gap-3 pt-2">
+                                    <button onClick={handleSaveDistribution} disabled={distSaving} className="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-black py-3.5 rounded-xl transition shadow-lg flex items-center justify-center gap-2 disabled:opacity-50">
+                                        {distSaving ? <Loader2 className="animate-spin" size={20} /> : <Save size={20} />}
+                                        {distSaving ? 'جاري الحفظ...' : 'حفظ التغييرات'}
+                                    </button>
+                                    <button onClick={() => { setDistEditing(false); fetchAll(); }} className="px-6 py-3.5 bg-slate-100 text-slate-600 rounded-xl font-bold hover:bg-slate-200 transition">
+                                        إلغاء
+                                    </button>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
+                                {distSaved && (
+                                    <div className="mb-4 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl text-sm font-bold flex items-center gap-2">
+                                        <CheckCircle size={18} /> تم حفظ التغييرات بنجاح
+                                    </div>
+                                )}
+                                {distText ? (
+                                    <p className="text-slate-700 leading-loose text-sm md:text-base mb-6 whitespace-pre-wrap">{distText}</p>
+                                ) : (
+                                    <p className="text-slate-400 text-sm mb-6">لم يتم إضافة نص بعد. اضغط على "تعديل" لإضافة نص وصور.</p>
+                                )}
+                                {distImages.filter(i => i.trim()).length > 0 && (
+                                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                                        {distImages.filter(i => i.trim()).map((img, idx) => (
+                                            <div key={idx} className="aspect-square rounded-xl overflow-hidden border border-slate-200 bg-slate-50">
+                                                <img src={img} alt={`صورة ${idx + 1}`} className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>

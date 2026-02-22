@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import ReactDOM from 'react-dom';
-import { Target, Heart, Award, ShieldCheck, Loader2, ChevronLeft, ChevronRight, X, User } from 'lucide-react';
+import { Target, Heart, Award, ShieldCheck, Loader2, ChevronLeft, ChevronRight, X, User, Share2 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { db } from '../lib/firebase';
 import { Instructor } from '../types';
@@ -17,6 +17,10 @@ const About: React.FC = () => {
   const [instructors, setInstructors] = useState<Instructor[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Distribution
+  const [distText, setDistText] = useState('');
+  const [distImages, setDistImages] = useState<string[]>([]);
+
   // Lightbox (company certs)
   const [lbImages, setLbImages] = useState<string[]>([]);
   const [lbIdx, setLbIdx] = useState(0);
@@ -29,16 +33,22 @@ const About: React.FC = () => {
   useEffect(() => {
     const fetchAll = async () => {
       try {
-        const [tSnap, cSnap, pSnap, iSnap] = await Promise.all([
+        const [tSnap, cSnap, pSnap, iSnap, distSnap] = await Promise.all([
           db.collection('trainerCertificates').get(),
           db.collection('companyCertificates').get(),
           db.collection('partners').get(),
           db.collection('instructors').get(),
+          db.collection('siteSettings').doc('certificateDistribution').get(),
         ]);
         setTrainerCerts(tSnap.docs.map(d => ({ id: d.id, ...d.data() } as TrainerCert)));
         setCompanyCerts(cSnap.docs.map(d => ({ id: d.id, ...d.data() } as CompanyCert)));
         setPartners(pSnap.docs.map(d => d.data() as Partner));
         setInstructors(iSnap.docs.map(d => ({ id: d.id, ...d.data() } as Instructor)));
+        if (distSnap.exists) {
+          const data = distSnap.data() as any;
+          setDistText(data.text || '');
+          setDistImages((data.images || []).filter((i: string) => i.trim()));
+        }
       } catch (err) { console.error(err); }
       finally { setLoading(false); }
     };
@@ -464,13 +474,11 @@ const About: React.FC = () => {
       </div>
 
       {/* ══════ Trainer Certificates ══════ */}
-      <div className="py-12 md:py-16 container mx-auto px-4">
-        <h2 className="text-2xl md:text-3xl font-black text-center text-slate-900 mb-8 md:mb-10 italic animate-fade-up">
-          {isEnglish ? (<>Trainer <span className="text-emerald-600">Certificates</span></>) : (<>شهادات <span className="text-emerald-600">المدربين</span></>)}
-        </h2>
-        {loading ? (
-          <div className="flex justify-center py-10"><Loader2 className="animate-spin text-emerald-500" size={32} /></div>
-        ) : trainerCerts.length > 0 ? (
+      {!loading && trainerCerts.length > 0 && (
+        <div className="py-12 md:py-16 container mx-auto px-4">
+          <h2 className="text-2xl md:text-3xl font-black text-center text-slate-900 mb-8 md:mb-10 italic animate-fade-up">
+            {isEnglish ? (<>Trainer <span className="text-emerald-600">Certificates</span></>) : (<>شهادات <span className="text-emerald-600">المدربين</span></>)}
+          </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 max-w-6xl mx-auto">
             {trainerCerts.map(tc => {
               const instructor = instructors.find(i => i.id === tc.instructorId);
@@ -507,10 +515,35 @@ const About: React.FC = () => {
               );
             })}
           </div>
-        ) : (
-          <p className="text-slate-400 font-medium text-center">{t('سيتم إضافة شهادات المدربين قريباً', 'Trainer certificates coming soon')}</p>
-        )}
-      </div>
+        </div>
+      )}
+
+      {/* ══════ Certificate Distribution ══════ */}
+      {(distText || distImages.length > 0) && (
+        <div className="py-12 md:py-16 container mx-auto px-4">
+          <h2 className="text-2xl md:text-3xl font-black text-center text-slate-900 mb-4 italic animate-fade-up">
+            {isEnglish ? (<>Certificate <span className="text-emerald-600">Distribution</span></>) : (<>توزيع <span className="text-emerald-600">الشهادات</span></>)}
+          </h2>
+          {distText && (
+            <p className="text-slate-600 text-center text-sm md:text-base leading-loose max-w-3xl mx-auto mb-8 whitespace-pre-wrap animate-fade-up delay-100">
+              {distText}
+            </p>
+          )}
+          {distImages.length > 0 && (
+            <div className="bg-emerald-50/50 rounded-2xl p-4 md:p-8 border border-emerald-100 max-w-5xl mx-auto animate-fade-up delay-200">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5">
+                {distImages.map((img, idx) => (
+                  <div key={idx} className="cursor-pointer group" onClick={() => openLb(distImages, idx)}>
+                    <div className="bg-white border-2 border-emerald-200 shadow-sm rounded-xl overflow-hidden hover:shadow-xl hover:border-emerald-400 hover:-translate-y-1 transition-all duration-300 aspect-square p-1 flex items-center justify-center">
+                      <img src={img} alt={`${idx + 1}`} className="max-w-full max-h-full object-cover rounded-lg" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {renderLightbox()}
       {renderCertModal()}
