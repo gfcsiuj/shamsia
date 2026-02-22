@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { auth, db } from '../../lib/firebase';
 import { useNavigate, Link } from 'react-router-dom';
-import { LogOut, Users, BookOpen, Settings, LayoutDashboard, ExternalLink, Library, Sparkles, ClipboardList, Award, MessageSquare, Search, GraduationCap } from 'lucide-react';
+import { LogOut, Users, BookOpen, Settings, LayoutDashboard, ExternalLink, Sparkles, ClipboardList, Award, MessageSquare, Search, GraduationCap } from 'lucide-react';
 import { Course, Instructor, Graduate } from '../../types';
 import { getCategoryLabel } from '../../constants';
 
@@ -125,15 +125,7 @@ const Dashboard: React.FC = () => {
             <span className="font-medium group-hover:text-white">إدارة الخريجين</span>
           </Link>
 
-          <Link
-            to="/admin/library"
-            className="group flex items-center gap-3 px-4 py-3.5 hover:bg-primary-800/60 rounded-xl text-primary-100 transition-all duration-300 hover:translate-x-1 hover:shadow-lg"
-          >
-            <div className="w-10 h-10 rounded-lg bg-purple-500/20 group-hover:bg-purple-500 flex items-center justify-center transition-all">
-              <Library size={20} className="group-hover:text-white transition-colors" />
-            </div>
-            <span className="font-medium group-hover:text-white">إدارة المكتبة</span>
-          </Link>
+
 
           <Link
             to="/admin/registrations"
@@ -381,21 +373,7 @@ const Dashboard: React.FC = () => {
               </div>
             </Link>
 
-            <Link
-              to="/admin/library"
-              className="group bg-white p-8 rounded-[3rem] shadow-sm hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] transition-all duration-500 border border-slate-100 hover:border-purple-200 transform hover:-translate-y-3 relative overflow-hidden"
-            >
-              <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-purple-100 to-transparent rounded-full -mr-20 -mt-20 opacity-50 group-hover:opacity-100 transition-opacity duration-500"></div>
-              <div className="relative z-10">
-                <div className="flex items-center justify-between mb-6">
-                  <div className="bg-gradient-to-br from-purple-500 to-purple-700 p-5 rounded-[2rem] text-white shadow-lg shadow-purple-200 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
-                    <Library size={32} />
-                  </div>
-                </div>
-                <div className="text-slate-400 text-xs font-black uppercase tracking-widest mb-2 italic">إدارة</div>
-                <div className="text-2xl font-black text-slate-900 group-hover:text-purple-600 transition-colors italic tracking-tight">المكتبة والمصادر</div>
-              </div>
-            </Link>
+
 
             <Link
               to="/admin/registrations"

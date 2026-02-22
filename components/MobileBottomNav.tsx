@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, BookOpen, Library, Users, Info, Phone } from 'lucide-react';
+import { Home, BookOpen, Award, Users, Info, Phone } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 
 const MobileBottomNav: React.FC = () => {
@@ -12,7 +12,7 @@ const MobileBottomNav: React.FC = () => {
   const navItems = [
     { id: 'home', icon: Home, label: t('الرئيسية', 'Home'), path: '/' },
     { id: 'courses', icon: BookOpen, label: t('الدورات', 'Courses'), path: '/courses' },
-    { id: 'library', icon: Library, label: t('المكتبة', 'Library'), path: '/library' },
+    { id: 'certificates', icon: Award, label: t('الشهادات', 'Certificates'), path: '/certificates' },
     { id: 'instructors', icon: Users, label: t('المدربين/الخريجين', 'Instructors/Graduates'), path: '/instructors' },
     { id: 'about', icon: Info, label: t('من نحن', 'About'), path: '/about' },
     { id: 'contact', icon: Phone, label: t('اتصل بنا', 'Contact'), path: '/contact' },

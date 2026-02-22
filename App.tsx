@@ -7,8 +7,8 @@ import CourseDetails from './pages/CourseDetails';
 import Instructors from './pages/Instructors';
 import About from './pages/About';
 import Contact from './pages/Contact';
-import Library from './pages/Library';
 import Calendar from './pages/Calendar';
+import Certificates from './pages/Certificates';
 import CourseRegister from './pages/CourseRegister';
 import Login from './pages/admin/Login';
 import VerifyCertificate from './pages/VerifyCertificate';
@@ -16,7 +16,6 @@ import Dashboard from './pages/admin/Dashboard';
 import InstructorsAdmin from './pages/admin/InstructorsAdmin';
 import GraduatesAdmin from './pages/admin/GraduatesAdmin';
 import CoursesAdmin from './pages/admin/CoursesAdmin';
-import LibraryAdmin from './pages/admin/LibraryAdmin';
 import RegistrationsAdmin from './pages/admin/RegistrationsAdmin';
 import CertificatesAdmin from './pages/admin/CertificatesAdmin';
 import TestimonialsAdmin from './pages/admin/TestimonialsAdmin';
@@ -66,8 +65,9 @@ const App: React.FC = () => {
                 <Route path="/courses/:id" element={<CourseDetails />} />
                 <Route path="/courses/:id/register" element={<CourseRegister />} />
                 <Route path="/register" element={<CourseRegister />} />
-                <Route path="/library" element={<Library />} />
+
                 <Route path="/instructors" element={<Instructors />} />
+                <Route path="/certificates" element={<Certificates />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/calendar" element={<Calendar />} />
                 <Route path="/contact" element={<Contact />} />
@@ -110,14 +110,7 @@ const App: React.FC = () => {
                   </ProtectedRoute>
                 }
               />
-              <Route
-                path="/admin/library"
-                element={
-                  <ProtectedRoute>
-                    <LibraryAdmin />
-                  </ProtectedRoute>
-                }
-              />
+
               <Route
                 path="/admin/registrations"
                 element={
