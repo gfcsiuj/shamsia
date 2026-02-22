@@ -5,6 +5,7 @@ import { Course, Instructor, MediaItem } from '../../types';
 import { Plus, Pencil, Trash2, X, Upload, Loader2, Save, ArrowRight, Minus, Image as ImageIcon, Video, Link as LinkIcon, Users, Tag, CheckSquare, Layers, Award, Search } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import './CoursesAdmin.css';
+import { getCategoryLabel } from '../../constants';
 
 const CoursesAdmin: React.FC = () => {
     const [courses, setCourses] = useState<Course[]>([]);
@@ -334,7 +335,7 @@ const CoursesAdmin: React.FC = () => {
                                     ) : (
                                         <div className="w-full h-full bg-slate-100 flex items-center justify-center text-slate-300"><ImageIcon size={32} /></div>
                                     )}
-                                    <span className="absolute top-2 right-2 bg-white/90 px-2 py-1 rounded text-xs font-bold text-primary-700 shadow-sm">{course.category}</span>
+                                    <span className="absolute top-2 right-2 bg-white/90 px-2 py-1 rounded text-xs font-bold text-primary-700 shadow-sm">{getCategoryLabel(course.category)}</span>
                                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition duration-300"></div>
                                 </div>
                                 <div className="p-7">

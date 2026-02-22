@@ -4,6 +4,7 @@ import { Calendar, Clock, Award, PlayCircle, CheckCircle, User, BarChart, Users,
 import { db } from '../lib/firebase';
 import { Course, Instructor } from '../types';
 import { useTheme } from '../context/ThemeContext';
+import { getCategoryLabel } from '../constants';
 
 const CourseDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -103,7 +104,7 @@ const CourseDetails: React.FC = () => {
           <div className="flex flex-col lg:flex-row gap-8 items-start">
             <div className="lg:w-2/3 animate-fade-up">
               <span className="inline-block bg-emerald-600 text-white text-xs font-black px-4 py-2 rounded-xl mb-6 uppercase tracking-wide shadow-lg shadow-emerald-500/20">
-                {course.category}
+                {getCategoryLabel(course.category)}
               </span>
               <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white mb-6 leading-tight italic tracking-tight animate-fade-up delay-100">
                 {course.title}

@@ -5,6 +5,7 @@ import MobileBottomNav from './MobileBottomNav';
 import { useTheme } from '../context/ThemeContext';
 import { db } from '../lib/firebase';
 import { Course, Instructor } from '../types';
+import { getCategoryLabel } from '../constants';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -185,7 +186,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                             </div>
                             <div className="flex-1 min-w-0">
                               <h4 className="font-bold text-slate-800 dark:text-slate-200 text-xs truncate group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">{course.title}</h4>
-                              <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate">{course.category}</p>
+                              <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate">{getCategoryLabel(course.category)}</p>
                             </div>
                           </div>
                         ))}

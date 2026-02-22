@@ -21,3 +21,22 @@ export const TESTIMONIALS: Testimonial[] = [
     isVisible: true,
   },
 ];
+
+// Category English → Arabic mapping
+export const CATEGORY_AR: Record<string, string> = {
+  'Tech': 'تقنية',
+  'Human Development': 'تنمية بشرية',
+  'Cyber Security': 'أمن سيبراني',
+  'Admin Skills': 'مهارات إدارية',
+  'Student Skills': 'مهارات طلابية',
+  'Solar Energy': 'الطاقة الشمسية',
+  'Electricity': 'الكهرباء',
+  'Generators': 'المولدات الكهربائية',
+  'Mechanics': 'الميكانيك',
+  'Barbering': 'الحلاقة',
+  'Languages': 'لغات',
+  'Electrical Installations': 'تأسيسات كهربائية',
+};
+
+/** Returns Arabic label for a category key, or the key itself if not found */
+export const getCategoryLabel = (category: string): string => CATEGORY_AR[category] || category;

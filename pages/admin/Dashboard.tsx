@@ -3,6 +3,7 @@ import { auth, db } from '../../lib/firebase';
 import { useNavigate, Link } from 'react-router-dom';
 import { LogOut, Users, BookOpen, Settings, LayoutDashboard, ExternalLink, Library, Sparkles, ClipboardList, Award, MessageSquare, Search, GraduationCap } from 'lucide-react';
 import { Course, Instructor, Graduate } from '../../types';
+import { getCategoryLabel } from '../../constants';
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -274,7 +275,7 @@ const Dashboard: React.FC = () => {
                                 </div>
                                 <div className="flex-1 min-w-0">
                                   <h4 className="font-bold text-slate-800 text-sm truncate group-hover:text-primary-600 transition-colors">{course.title}</h4>
-                                  <p className="text-xs text-slate-500 truncate">{course.category} • {course.level}</p>
+                                  <p className="text-xs text-slate-500 truncate">{getCategoryLabel(course.category)} • {course.level}</p>
                                 </div>
                               </div>
                             ))}

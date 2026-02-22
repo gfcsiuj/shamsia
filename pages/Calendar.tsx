@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { db } from '../lib/firebase';
 import { Course } from '../types';
 import { useTheme } from '../context/ThemeContext';
+import { getCategoryLabel } from '../constants';
 import { Link } from 'react-router-dom';
 import { Calendar as CalendarIcon, Clock, MapPin, ChevronRight, ChevronLeft, BookOpen, Users, Loader2 } from 'lucide-react';
 
@@ -114,7 +115,7 @@ const Calendar: React.FC = () => {
                                                 {/* Category & Date Row */}
                                                 <div className="flex items-center justify-between mb-4">
                                                     <span className={`px-3 py-1 rounded-full text-xs font-bold border ${getCategoryColorLight(course.category)}`}>
-                                                        {course.category}
+                                                        {getCategoryLabel(course.category)}
                                                     </span>
                                                     <div className="flex items-center gap-1.5 text-xs text-slate-400">
                                                         <CalendarIcon size={14} />
@@ -174,7 +175,7 @@ const Calendar: React.FC = () => {
                                     )}
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
                                     <span className={`absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold border ${getCategoryColorLight(course.category)} bg-white/90`}>
-                                        {course.category}
+                                        {getCategoryLabel(course.category)}
                                     </span>
                                     <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
                                         <span className="text-white text-xs font-bold flex items-center gap-1"><CalendarIcon size={12} /> {course.startDate || t('يحدد لاحقاً', 'TBD')}</span>
