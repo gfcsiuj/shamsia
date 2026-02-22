@@ -13,6 +13,7 @@ interface CourseCardProps {
 const CourseCard: React.FC<CourseCardProps> = ({ course, instructor: propInstructor }) => {
     const { t, isEnglish, isDarkMode } = useTheme();
     const [instructorName, setInstructorName] = useState<string>('');
+    const [currentImgIdx, setCurrentImgIdx] = useState(0);
 
     // Fetch instructor name if not provided as prop
     useEffect(() => {
@@ -34,8 +35,22 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, instructor: propInstruc
         }
     }, [course.instructorIds, course.instructorText, propInstructor]);
 
-    // Handle media (use first image or placeholder)
-    const imageUrl = course.media && course.media.length > 0 ? course.media[0].url : 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=600';
+    // Handle media
+    const images = course.media && course.media.length > 0
+        ? course.media.filter(m => m.type === 'image').map(m => m.url)
+        : ['https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=600'];
+    const hasMultiple = images.length > 1;
+
+    const goNext = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setCurrentImgIdx(prev => (prev + 1) % images.length);
+    };
+    const goPrev = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setCurrentImgIdx(prev => (prev - 1 + images.length) % images.length);
+    };
 
     // Get tag color based on level
     const getTagStyle = () => {
@@ -63,11 +78,43 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, instructor: propInstruc
             {/* Image Area */}
             <div className="relative h-64 lg:h-72 overflow-hidden">
                 <img
-                    src={imageUrl}
+                    key={currentImgIdx}
+                    src={images[currentImgIdx]}
                     alt={course.title}
                     className="w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60"></div>
+
+                {/* Carousel Arrows */}
+                {hasMultiple && (
+                    <>
+                        <button
+                            onClick={goPrev}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-black/60 border border-white/10"
+                        >
+                            <ChevronRight className="w-5 h-5" />
+                        </button>
+                        <button
+                            onClick={goNext}
+                            className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-black/60 border border-white/10"
+                        >
+                            <ChevronLeft className="w-5 h-5" />
+                        </button>
+                        {/* Dots */}
+                        <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-10 flex gap-1.5">
+                            {images.map((_, idx) => (
+                                <button
+                                    key={idx}
+                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); setCurrentImgIdx(idx); }}
+                                    className={`rounded-full transition-all duration-300 ${idx === currentImgIdx
+                                        ? 'w-5 h-2 bg-white'
+                                        : 'w-2 h-2 bg-white/50 hover:bg-white/80'
+                                        }`}
+                                />
+                            ))}
+                        </div>
+                    </>
+                )}
 
                 {/* Tag Badge */}
                 <div className={`absolute top-6 ${isEnglish ? 'left-6' : 'right-6'} px-4 py-2 backdrop-blur-md rounded-2xl text-[10px] lg:text-xs font-black shadow-lg border italic ${tagStyle.text}`}>
