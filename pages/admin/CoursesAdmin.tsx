@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { db, storage } from '../../lib/firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { Course, Instructor, MediaItem } from '../../types';
-import { Plus, Pencil, Trash2, X, Upload, Loader2, Save, ArrowRight, Minus, Image as ImageIcon, Video, Link as LinkIcon, Users, Tag, CheckSquare, Layers, Award, Search } from 'lucide-react';
+import { Plus, Pencil, Trash2, X, Upload, Loader2, Save, ArrowRight, Minus, Image as ImageIcon, Video, Link as LinkIcon, Users, Tag, CheckSquare, Layers, Award, Search, Sparkles } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import './CoursesAdmin.css';
 import { getCategoryLabel } from '../../constants';
+import { fillCourseFromText } from '../../lib/aiAutoFill';
 
 const CoursesAdmin: React.FC = () => {
     const [courses, setCourses] = useState<Course[]>([]);
@@ -30,6 +31,12 @@ const CoursesAdmin: React.FC = () => {
     const [showCustomCategoryInput, setShowCustomCategoryInput] = useState(false);
     const [mediaFile, setMediaFile] = useState<File | null>(null);
     const [mediaLinkInput, setMediaLinkInput] = useState('');
+
+    // AI Auto-Fill states
+    const [showAiInput, setShowAiInput] = useState(false);
+    const [aiText, setAiText] = useState('');
+    const [aiLoading, setAiLoading] = useState(false);
+    const [aiError, setAiError] = useState('');
     const [mediaTypeInput, setMediaTypeInput] = useState<'image' | 'video'>('image');
 
     const initialFormState: Course = {
@@ -278,6 +285,43 @@ const CoursesAdmin: React.FC = () => {
         setFormData({ ...formData, syllabus: [...formData.syllabus, { title: '', week: '', topic: '', points: [] }] });
     };
 
+    // AI Auto-Fill handler
+    const handleAiFill = async () => {
+        if (!aiText.trim()) return;
+        setAiLoading(true);
+        setAiError('');
+        try {
+            const aiData = await fillCourseFromText(aiText.trim());
+            setFormData(prev => ({
+                ...prev,
+                ...(aiData.title && { title: aiData.title }),
+                ...(aiData.category && { category: aiData.category }),
+                ...(aiData.level && { level: aiData.level }),
+                ...(aiData.price !== undefined && { price: aiData.price }),
+                ...(aiData.duration && { duration: aiData.duration }),
+                ...(aiData.startDate && { startDate: aiData.startDate }),
+                ...(aiData.endDate && { endDate: aiData.endDate }),
+                ...(aiData.lecturesCount && { lecturesCount: aiData.lecturesCount }),
+                ...(aiData.instructorText && { instructorText: aiData.instructorText }),
+                ...(aiData.description && { description: aiData.description }),
+                ...(aiData.longDescription && { longDescription: aiData.longDescription }),
+                ...(aiData.objectives && aiData.objectives.length > 0 && { objectives: aiData.objectives }),
+                ...(aiData.targetAudience && aiData.targetAudience.length > 0 && { targetAudience: aiData.targetAudience }),
+                ...(aiData.syllabus && aiData.syllabus.length > 0 && { syllabus: aiData.syllabus }),
+                ...(aiData.certifications && aiData.certifications.length > 0 && { certifications: aiData.certifications }),
+                ...(aiData.notes && aiData.notes.length > 0 && { notes: aiData.notes }),
+                ...(aiData.tags && aiData.tags.length > 0 && { tags: aiData.tags }),
+            }));
+            setShowAiInput(false);
+            setAiText('');
+        } catch (err: any) {
+            setAiError(err.message || 'حدث خطأ غير متوقع');
+        } finally {
+            setAiLoading(false);
+        }
+    };
+
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-green-50/20 to-orange-50/20 p-6 md:p-8">
             <div className="max-w-7xl mx-auto">
@@ -374,6 +418,15 @@ const CoursesAdmin: React.FC = () => {
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-3">
+                                    {/* AI Auto-Fill Button */}
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowAiInput(true)}
+                                        className="ai-fill-btn flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-sm transition-all duration-300"
+                                    >
+                                        <Sparkles size={18} />
+                                        تعبئة ذكية
+                                    </button>
                                     {/* Tabs */}
                                     <div className="flex p-1 bg-slate-100 rounded-xl border border-slate-200">
                                         {['basic', 'details', 'syllabus'].map((t) => (
@@ -389,6 +442,58 @@ const CoursesAdmin: React.FC = () => {
                                     <button onClick={() => setIsEditing(false)} className="w-10 h-10 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400 transition"><X size={24} /></button>
                                 </div>
                             </div>
+
+                            {/* AI Auto-Fill Overlay */}
+                            {showAiInput && (
+                                <div className="ai-overlay">
+                                    <div className="ai-overlay-content">
+                                        <div className="flex items-center justify-between mb-6">
+                                            <div className="flex items-center gap-3">
+                                                <div className="ai-icon-wrapper">
+                                                    <Sparkles size={24} />
+                                                </div>
+                                                <div>
+                                                    <h3 className="text-lg font-bold text-slate-800">التعبئة الذكية بالذكاء الاصطناعي</h3>
+                                                    <p className="text-xs text-slate-500">الصق تفاصيل الدورة وسيقوم الذكاء الاصطناعي بترتيبها تلقائياً</p>
+                                                </div>
+                                            </div>
+                                            <button onClick={() => { setShowAiInput(false); setAiError(''); }} className="w-9 h-9 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400 transition"><X size={20} /></button>
+                                        </div>
+                                        <textarea
+                                            className="ai-textarea"
+                                            rows={12}
+                                            placeholder="الصق هنا تفاصيل الدورة... مثل: اسم الدورة، الوصف، الأهداف، المنهج، المدة، السعر، الفئة المستهدفة، الشهادات، وغيرها..."
+                                            value={aiText}
+                                            onChange={e => setAiText(e.target.value)}
+                                            disabled={aiLoading}
+                                        />
+                                        {aiError && (
+                                            <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm font-bold">
+                                                ⚠️ {aiError}
+                                            </div>
+                                        )}
+                                        <div className="flex justify-end gap-3 mt-5">
+                                            <button
+                                                type="button"
+                                                onClick={() => { setShowAiInput(false); setAiError(''); }}
+                                                className="px-6 py-3 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 font-bold transition"
+                                                disabled={aiLoading}
+                                            >
+                                                إلغاء
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={handleAiFill}
+                                                disabled={aiLoading || !aiText.trim()}
+                                                className="ai-analyze-btn px-8 py-3 rounded-xl font-bold transition flex items-center gap-2 disabled:opacity-50"
+                                            >
+                                                {aiLoading ? <Loader2 className="animate-spin" size={20} /> : <Sparkles size={20} />}
+                                                {aiLoading ? 'جاري التحليل...' : 'تحليل وملء البيانات'}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
 
                             {/* Body */}
                             <div className="flex-1 overflow-y-auto p-6 ca-scrollable bg-slate-50/50">

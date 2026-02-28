@@ -158,4 +158,21 @@ export interface Certificate {
   status: 'issued' | 'revoked';
 }
 
+export interface CalendarEntry {
+  id: string;
+  courseId: string;
+  courseTitle: string;
+  category: string;
+  startDate: string;
+  endDate?: string;
+  lecturesCount?: number;
+  duration?: string;
+  instructor?: string;
+  location?: string;
+  status: 'upcoming' | 'ongoing' | 'completed' | 'cancelled';
+  notes?: string;
+  price?: number;
+  priceText?: string;
+  createdAt?: string;
+}
 

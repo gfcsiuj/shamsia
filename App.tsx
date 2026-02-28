@@ -20,6 +20,7 @@ import RegistrationsAdmin from './pages/admin/RegistrationsAdmin';
 import CertificatesAdmin from './pages/admin/CertificatesAdmin';
 import TestimonialsAdmin from './pages/admin/TestimonialsAdmin';
 import Settings from './pages/admin/Settings';
+import CalendarAdmin from './pages/admin/CalendarAdmin';
 import ProtectedRoute from './components/ProtectedRoute';
 import Maintenance from './components/Maintenance';
 import LoadingScreen from './components/LoadingScreen';
@@ -140,6 +141,14 @@ const App: React.FC = () => {
                 element={
                   <ProtectedRoute>
                     <Settings />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/calendar"
+                element={
+                  <ProtectedRoute>
+                    <CalendarAdmin />
                   </ProtectedRoute>
                 }
               />

@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { db, storage } from '../../lib/firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { Instructor, Course } from '../../types';
-import { Plus, Pencil, Trash2, X, Upload, Loader2, Save, ArrowRight, Minus, Link as LinkIcon, Briefcase, User, Award, Share2 } from 'lucide-react';
+import { Plus, Pencil, Trash2, X, Upload, Loader2, Save, ArrowRight, Minus, Link as LinkIcon, Briefcase, User, Award, Share2, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import './InstructorsAdmin.css';
+import { fillInstructorFromText } from '../../lib/aiAutoFill';
 
 const InstructorsAdmin: React.FC = () => {
   const [instructors, setInstructors] = useState<Instructor[]>([]);
@@ -13,6 +14,12 @@ const InstructorsAdmin: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [saveLoading, setSaveLoading] = useState(false);
+
+  // AI Auto-Fill states
+  const [showAiInput, setShowAiInput] = useState(false);
+  const [aiText, setAiText] = useState('');
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState('');
 
   const initialFormState: Instructor = {
     id: '',
@@ -175,6 +182,30 @@ const InstructorsAdmin: React.FC = () => {
     return courses.filter(c => c.instructorIds?.includes(instructorId)).length;
   };
 
+  // AI Auto-Fill handler
+  const handleAiFill = async () => {
+    if (!aiText.trim()) return;
+    setAiLoading(true);
+    setAiError('');
+    try {
+      const aiData = await fillInstructorFromText(aiText.trim());
+      setFormData(prev => ({
+        ...prev,
+        ...(aiData.name && { name: aiData.name }),
+        ...(aiData.roles && aiData.roles.length > 0 && { roles: aiData.roles }),
+        ...(aiData.shortBio && { shortBio: aiData.shortBio }),
+        ...(aiData.bio && { bio: aiData.bio }),
+        ...(aiData.certifications && aiData.certifications.length > 0 && { certifications: aiData.certifications }),
+      }));
+      setShowAiInput(false);
+      setAiText('');
+    } catch (err: any) {
+      setAiError(err.message || 'حدث خطأ غير متوقع');
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-green-50/20 to-orange-50/20 p-6 md:p-8">
       <div className="max-w-6xl mx-auto">
@@ -261,8 +292,71 @@ const InstructorsAdmin: React.FC = () => {
                     <p className="text-xs text-slate-500">قم بإدارة الملف الشخصي والمهني للمدرب</p>
                   </div>
                 </div>
-                <button onClick={() => setIsEditing(false)} className="w-10 h-10 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400 transition"><X size={24} /></button>
+                <div className="flex items-center gap-3">
+                  {/* AI Auto-Fill Button */}
+                  <button
+                    type="button"
+                    onClick={() => setShowAiInput(true)}
+                    className="ai-fill-btn flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-sm transition-all duration-300"
+                  >
+                    <Sparkles size={18} />
+                    تعبئة ذكية
+                  </button>
+                  <button onClick={() => setIsEditing(false)} className="w-10 h-10 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400 transition"><X size={24} /></button>
+                </div>
               </div>
+
+              {/* AI Auto-Fill Overlay */}
+              {showAiInput && (
+                <div className="ai-overlay">
+                  <div className="ai-overlay-content">
+                    <div className="flex items-center justify-between mb-6">
+                      <div className="flex items-center gap-3">
+                        <div className="ai-icon-wrapper">
+                          <Sparkles size={24} />
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-bold text-slate-800">التعبئة الذكية بالذكاء الاصطناعي</h3>
+                          <p className="text-xs text-slate-500">الصق تفاصيل المدرب وسيقوم الذكاء الاصطناعي بترتيبها تلقائياً</p>
+                        </div>
+                      </div>
+                      <button onClick={() => { setShowAiInput(false); setAiError(''); }} className="w-9 h-9 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400 transition"><X size={20} /></button>
+                    </div>
+                    <textarea
+                      className="ai-textarea"
+                      rows={12}
+                      placeholder="الصق هنا تفاصيل المدرب... مثل: الاسم، المسمى الوظيفي، السيرة الذاتية، الشهادات، الخبرات..."
+                      value={aiText}
+                      onChange={e => setAiText(e.target.value)}
+                      disabled={aiLoading}
+                    />
+                    {aiError && (
+                      <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm font-bold">
+                        ⚠️ {aiError}
+                      </div>
+                    )}
+                    <div className="flex justify-end gap-3 mt-5">
+                      <button
+                        type="button"
+                        onClick={() => { setShowAiInput(false); setAiError(''); }}
+                        className="px-6 py-3 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 font-bold transition"
+                        disabled={aiLoading}
+                      >
+                        إلغاء
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleAiFill}
+                        disabled={aiLoading || !aiText.trim()}
+                        className="ai-analyze-btn px-8 py-3 rounded-xl font-bold transition flex items-center gap-2 disabled:opacity-50"
+                      >
+                        {aiLoading ? <Loader2 className="animate-spin" size={20} /> : <Sparkles size={20} />}
+                        {aiLoading ? 'جاري التحليل...' : 'تحليل وملء البيانات'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               <div className="overflow-y-auto p-8 bg-slate-50/50 flex-1">
                 <form id="instructorForm" onSubmit={handleSubmit} className="space-y-8">

@@ -1,69 +1,85 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../lib/firebase';
-import { Course } from '../types';
+import { CalendarEntry } from '../types';
 import { useTheme } from '../context/ThemeContext';
 import { getCategoryLabel } from '../constants';
 import { Link } from 'react-router-dom';
-import { Calendar as CalendarIcon, Clock, MapPin, ChevronRight, ChevronLeft, BookOpen, Users, Loader2 } from 'lucide-react';
+import {
+    Calendar as CalendarIcon, Clock, MapPin, BookOpen,
+    Loader2, ChevronLeft, ChevronRight, Users, Tag, Info
+} from 'lucide-react';
 
-const Calendar: React.FC = () => {
+const STATUS_CONFIG = {
+    upcoming: { label: 'قادمة', labelEn: 'Upcoming', bg: 'bg-blue-50', text: 'text-blue-700', border: 'border-blue-200', dot: 'bg-blue-500' },
+    ongoing: { label: 'جارية', labelEn: 'Ongoing', bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-200', dot: 'bg-emerald-500' },
+    completed: { label: 'منتهية', labelEn: 'Completed', bg: 'bg-slate-100', text: 'text-slate-500', border: 'border-slate-200', dot: 'bg-slate-400' },
+    cancelled: { label: 'ملغاة', labelEn: 'Cancelled', bg: 'bg-red-50', text: 'text-red-600', border: 'border-red-200', dot: 'bg-red-500' },
+} as const;
+
+const CATEGORY_COLOR: Record<string, string> = {
+    'Tech': 'bg-blue-500',
+    'Cyber Security': 'bg-red-500',
+    'Human Development': 'bg-emerald-500',
+    'Admin Skills': 'bg-orange-500',
+    'Student Skills': 'bg-purple-500',
+};
+
+const CalendarPage: React.FC = () => {
     const { t, isEnglish } = useTheme();
-    const [courses, setCourses] = useState<Course[]>([]);
+    const [entries, setEntries] = useState<CalendarEntry[]>([]);
     const [loading, setLoading] = useState(true);
-    const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
+    const [filter, setFilter] = useState<'all' | 'upcoming' | 'ongoing' | 'completed' | 'cancelled'>('all');
 
     useEffect(() => {
-        const fetchCourses = async () => {
+        const fetch = async () => {
             try {
-                const snap = await db.collection('courses').get();
-                const data = snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Course));
-                setCourses(data);
-            } catch (error) {
-                console.error('Error fetching courses:', error);
+                const snap = await db.collection('calendarEntries').get();
+                const data = snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as CalendarEntry));
+                // Sort: upcoming first, then ongoing, then completed, then cancelled
+                const order = ['upcoming', 'ongoing', 'completed', 'cancelled'];
+                data.sort((a, b) => order.indexOf(a.status) - order.indexOf(b.status));
+                setEntries(data);
+            } catch (e) {
+                console.error(e);
             } finally {
                 setLoading(false);
             }
         };
-        fetchCourses();
+        fetch();
     }, []);
 
-    const getCategoryColor = (category: string) => {
-        switch (category) {
-            case 'Tech': return 'bg-blue-500';
-            case 'Cyber Security': return 'bg-red-500';
-            case 'Human Development': return 'bg-emerald-500';
-            case 'Admin Skills': return 'bg-orange-500';
-            case 'Student Skills': return 'bg-purple-500';
-            default: return 'bg-slate-500';
-        }
+    const filtered = filter === 'all' ? entries : entries.filter(e => e.status === filter);
+
+    const getStatusCfg = (status: string) =>
+        STATUS_CONFIG[status as keyof typeof STATUS_CONFIG] ?? STATUS_CONFIG.upcoming;
+
+    const counts = {
+        all: entries.length,
+        upcoming: entries.filter(e => e.status === 'upcoming').length,
+        ongoing: entries.filter(e => e.status === 'ongoing').length,
+        completed: entries.filter(e => e.status === 'completed').length,
+        cancelled: entries.filter(e => e.status === 'cancelled').length,
     };
 
-    const getCategoryColorLight = (category: string) => {
-        switch (category) {
-            case 'Tech': return 'bg-blue-50 text-blue-700 border-blue-200';
-            case 'Cyber Security': return 'bg-red-50 text-red-700 border-red-200';
-            case 'Human Development': return 'bg-emerald-50 text-emerald-700 border-emerald-200';
-            case 'Admin Skills': return 'bg-orange-50 text-orange-700 border-orange-200';
-            case 'Student Skills': return 'bg-purple-50 text-purple-700 border-purple-200';
-            default: return 'bg-slate-50 text-slate-700 border-slate-200';
-        }
-    };
+    const filterTabs = [
+        { key: 'all', label: t('الكل', 'All'), count: counts.all },
+        { key: 'upcoming', label: t('قادمة', 'Upcoming'), count: counts.upcoming },
+        { key: 'ongoing', label: t('جارية', 'Ongoing'), count: counts.ongoing },
+        { key: 'completed', label: t('منتهية', 'Completed'), count: counts.completed },
+        { key: 'cancelled', label: t('ملغاة', 'Cancelled'), count: counts.cancelled },
+    ] as const;
 
     return (
         <div className="min-h-screen bg-slate-50 pb-24">
             {/* Hero */}
             <div className="relative pt-20 pb-16 overflow-hidden">
                 <div className="absolute inset-0 -z-10">
-                    <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-emerald-100/50 rounded-full blur-[100px] animate-blob"></div>
-                    <div className="absolute bottom-[-5%] left-[-5%] w-[400px] h-[400px] bg-orange-100/40 rounded-full blur-[80px] animate-blob delay-2000"></div>
+                    <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-emerald-100/50 rounded-full blur-[100px] animate-blob" />
+                    <div className="absolute bottom-[-5%] left-[-5%] w-[400px] h-[400px] bg-orange-100/40 rounded-full blur-[80px] animate-blob delay-2000" />
                 </div>
                 <div className="container mx-auto px-4 text-center relative z-10">
                     <h1 className="text-4xl md:text-5xl font-black text-slate-900 mb-4 italic tracking-tight animate-fade-up">
-                        {isEnglish ? (
-                            <>Course <span className="text-gradient">Calendar</span></>
-                        ) : (
-                            <>تقويم <span className="text-gradient">الدورات</span></>
-                        )}
+                        {isEnglish ? <>Course <span className="text-gradient">Schedule</span></> : <>جدول <span className="text-gradient">الدورات</span></>}
                     </h1>
                     <p className="text-slate-600 text-lg max-w-2xl mx-auto font-medium animate-fade-up delay-100">
                         {t('تصفح مواعيد الدورات القادمة وسجّل في الدورة المناسبة لك', 'Browse upcoming course dates and register for the one that suits you')}
@@ -71,133 +87,183 @@ const Calendar: React.FC = () => {
                 </div>
             </div>
 
-            <div className="container mx-auto px-4 max-w-6xl -mt-4">
-                {/* View Toggle */}
-                <div className="flex justify-center mb-8">
-                    <div className="bg-white rounded-xl p-1 shadow-sm border border-slate-100 flex gap-1">
-                        <button onClick={() => setViewMode('list')} className={`px-6 py-2.5 rounded-lg font-bold text-sm transition ${viewMode === 'list' ? 'bg-slate-900 text-white shadow-md' : 'text-slate-500 hover:text-slate-700'}`}>
-                            {t('عرض قائمة', 'List View')}
+            <div className="container mx-auto px-4 max-w-7xl -mt-4">
+                {/* Filter Tabs */}
+                <div className="flex flex-wrap gap-2 justify-center mb-8">
+                    {filterTabs.map(tab => (
+                        <button
+                            key={tab.key}
+                            onClick={() => setFilter(tab.key)}
+                            className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm transition-all ${filter === tab.key
+                                    ? 'bg-slate-900 text-white shadow-md scale-105'
+                                    : 'bg-white text-slate-500 border border-slate-200 hover:border-slate-400 hover:text-slate-700'
+                                }`}
+                        >
+                            {tab.label}
+                            <span className={`px-2 py-0.5 rounded-full text-xs font-black ${filter === tab.key ? 'bg-white/20' : 'bg-slate-100 text-slate-600'}`}>
+                                {tab.count}
+                            </span>
                         </button>
-                        <button onClick={() => setViewMode('grid')} className={`px-6 py-2.5 rounded-lg font-bold text-sm transition ${viewMode === 'grid' ? 'bg-slate-900 text-white shadow-md' : 'text-slate-500 hover:text-slate-700'}`}>
-                            {t('عرض شبكي', 'Grid View')}
-                        </button>
-                    </div>
+                    ))}
                 </div>
 
                 {loading ? (
-                    <div className="flex justify-center py-20"><Loader2 className="animate-spin text-primary-600" size={40} /></div>
-                ) : courses.length === 0 ? (
-                    <div className="text-center py-20">
+                    <div className="flex justify-center py-24"><Loader2 className="animate-spin text-primary-600" size={40} /></div>
+                ) : filtered.length === 0 ? (
+                    <div className="text-center py-24 bg-white rounded-[2rem] border border-slate-100 shadow-sm">
                         <CalendarIcon className="mx-auto mb-4 text-slate-300" size={64} />
-                        <p className="text-slate-400 font-bold text-lg">{t('لا توجد دورات مجدولة حالياً', 'No courses scheduled at the moment')}</p>
-                    </div>
-                ) : viewMode === 'list' ? (
-                    /* Timeline List View */
-                    <div className="relative">
-                        {/* Timeline Line */}
-                        <div className="absolute right-8 md:right-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-emerald-200 via-emerald-400 to-emerald-200 hidden md:block"></div>
-
-                        <div className="space-y-8">
-                            {courses.map((course, index) => (
-                                <div key={course.id} className={`relative flex flex-col md:flex-row items-start gap-6 animate-fade-up`} style={{ animationDelay: `${index * 100}ms` }}>
-                                    {/* Timeline Dot */}
-                                    <div className="hidden md:flex absolute right-1/2 transform translate-x-1/2 -translate-y-0">
-                                        <div className={`w-4 h-4 rounded-full ${getCategoryColor(course.category)} ring-4 ring-white shadow-lg`}></div>
-                                    </div>
-
-                                    {/* Content Card */}
-                                    <div className={`w-full md:w-[calc(50%-2rem)] ${index % 2 === 0 ? 'md:mr-auto md:pl-8' : 'md:ml-auto md:pr-8'}`}>
-                                        <div className="bg-white rounded-[2rem] shadow-sm border border-slate-100 overflow-hidden hover:shadow-xl transition-all duration-500 group hover:-translate-y-1">
-                                            {/* Color Accent */}
-                                            <div className={`h-1.5 ${getCategoryColor(course.category)}`}></div>
-
-                                            <div className="p-6">
-                                                {/* Category & Date Row */}
-                                                <div className="flex items-center justify-between mb-4">
-                                                    <span className={`px-3 py-1 rounded-full text-xs font-bold border ${getCategoryColorLight(course.category)}`}>
-                                                        {getCategoryLabel(course.category)}
-                                                    </span>
-                                                    <div className="flex items-center gap-1.5 text-xs text-slate-400">
-                                                        <CalendarIcon size={14} />
-                                                        <span>{course.startDate || t('يحدد لاحقاً', 'TBD')}</span>
-                                                    </div>
-                                                </div>
-
-                                                {/* Title */}
-                                                <h3 className="text-lg font-black text-slate-900 mb-3 italic tracking-tight group-hover:text-primary-700 transition">
-                                                    {course.title}
-                                                </h3>
-
-                                                {/* Description */}
-                                                {course.description && (
-                                                    <p className="text-sm text-slate-500 line-clamp-2 mb-4 leading-relaxed">{course.description}</p>
-                                                )}
-
-                                                {/* Meta Row */}
-                                                <div className="flex flex-wrap items-center gap-3 text-xs text-slate-400 mb-4">
-                                                    {course.duration && (
-                                                        <div className="flex items-center gap-1"><Clock size={14} /> {course.duration}</div>
-                                                    )}
-                                                    {course.lecturesCount && course.lecturesCount > 0 && (
-                                                        <div className="flex items-center gap-1"><BookOpen size={14} /> {course.lecturesCount} {t('محاضرة', 'lectures')}</div>
-                                                    )}
-                                                    <div className="flex items-center gap-1"><Users size={14} /> {course.studentsCount} {t('طالب', 'students')}</div>
-                                                </div>
-
-                                                {/* Footer */}
-                                                <div className="flex items-center justify-between pt-4 border-t border-slate-100">
-                                                    <span className="text-lg font-black text-primary-600">
-                                                        {course.priceText || (course.price > 0 ? `${course.price.toLocaleString()} ${t('د.ع', 'IQD')}` : t('مجاناً', 'Free'))}
-                                                    </span>
-                                                    <Link to={`/courses/${course.id}`} className="flex items-center gap-1 text-sm font-bold text-emerald-600 hover:text-emerald-700 transition group/link">
-                                                        {t('التفاصيل', 'Details')}
-                                                        {isEnglish ? <ChevronRight size={16} className="group-hover/link:translate-x-1 transition-transform" /> : <ChevronLeft size={16} className="group-hover/link:-translate-x-1 transition-transform" />}
-                                                    </Link>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
+                        <p className="text-slate-400 font-bold text-lg">
+                            {t('لا توجد دورات في هذه الفئة', 'No courses in this category')}
+                        </p>
                     </div>
                 ) : (
-                    /* Grid View */
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {courses.map((course, index) => (
-                            <div key={course.id} className="bg-white rounded-[2rem] shadow-sm border border-slate-100 overflow-hidden hover:shadow-xl transition-all duration-500 group hover:-translate-y-1 animate-fade-up" style={{ animationDelay: `${index * 80}ms` }}>
-                                {/* Course Image or Color Block */}
-                                <div className="h-40 relative overflow-hidden">
-                                    {course.media && course.media[0] ? (
-                                        <img src={course.media[0].url} alt={course.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                                    ) : (
-                                        <div className={`w-full h-full ${getCategoryColor(course.category)} opacity-20`}></div>
-                                    )}
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-                                    <span className={`absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold border ${getCategoryColorLight(course.category)} bg-white/90`}>
-                                        {getCategoryLabel(course.category)}
-                                    </span>
-                                    <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
-                                        <span className="text-white text-xs font-bold flex items-center gap-1"><CalendarIcon size={12} /> {course.startDate || t('يحدد لاحقاً', 'TBD')}</span>
-                                        {course.duration && <span className="text-white text-xs font-bold flex items-center gap-1"><Clock size={12} /> {course.duration}</span>}
-                                    </div>
-                                </div>
+                    /* Table */
+                    <div className="bg-white rounded-[2rem] shadow-sm border border-slate-100 overflow-hidden">
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-sm">
+                                <thead>
+                                    <tr className="bg-gradient-to-r from-slate-800 to-slate-900 text-white">
+                                        <th className="text-right px-6 py-5 font-black text-xs uppercase tracking-widest">#</th>
+                                        <th className="text-right px-6 py-5 font-black text-xs uppercase tracking-widest">{t('الكورس', 'Course')}</th>
+                                        <th className="text-right px-6 py-5 font-black text-xs uppercase tracking-widest">{t('تاريخ البدء', 'Start Date')}</th>
+                                        <th className="text-right px-6 py-5 font-black text-xs uppercase tracking-widest">{t('تاريخ الانتهاء', 'End Date')}</th>
+                                        <th className="text-right px-6 py-5 font-black text-xs uppercase tracking-widest">{t('المحاضرات', 'Lectures')}</th>
+                                        <th className="text-right px-6 py-5 font-black text-xs uppercase tracking-widest">{t('المدة', 'Duration')}</th>
+                                        <th className="text-right px-6 py-5 font-black text-xs uppercase tracking-widest">{t('الموقع', 'Location')}</th>
+                                        <th className="text-right px-6 py-5 font-black text-xs uppercase tracking-widest">{t('السعر', 'Price')}</th>
+                                        <th className="text-right px-6 py-5 font-black text-xs uppercase tracking-widest">{t('الحالة', 'Status')}</th>
+                                        <th className="text-right px-6 py-5 font-black text-xs uppercase tracking-widest">{t('تسجيل', 'Register')}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {filtered.map((entry, i) => {
+                                        const cfg = getStatusCfg(entry.status);
+                                        const catColor = CATEGORY_COLOR[entry.category] || 'bg-slate-500';
+                                        return (
+                                            <tr
+                                                key={entry.id}
+                                                className={`border-b border-slate-50 hover:bg-slate-50/80 transition-colors animate-fade-up group ${entry.status === 'cancelled' ? 'opacity-60' : ''}`}
+                                                style={{ animationDelay: `${i * 50}ms` }}
+                                            >
+                                                {/* # */}
+                                                <td className="px-6 py-5">
+                                                    <span className="w-7 h-7 rounded-full bg-slate-100 text-slate-500 font-black text-xs flex items-center justify-center">{i + 1}</span>
+                                                </td>
 
-                                <div className="p-5">
-                                    <h3 className="font-black text-slate-900 mb-2 italic tracking-tight group-hover:text-primary-700 transition line-clamp-2">{course.title}</h3>
-                                    {course.description && <p className="text-xs text-slate-400 line-clamp-2 mb-4">{course.description}</p>}
-                                    <div className="flex items-center justify-between pt-3 border-t border-slate-100">
-                                        <span className="font-black text-primary-600">
-                                            {course.priceText || (course.price > 0 ? `${course.price.toLocaleString()} ${t('د.ع', 'IQD')}` : t('مجاناً', 'Free'))}
-                                        </span>
-                                        <Link to={`/courses/${course.id}`} className="text-xs font-bold text-emerald-600 hover:text-emerald-700 transition flex items-center gap-1">
-                                            {t('سجّل الآن', 'Register Now')}
-                                            {isEnglish ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
-                                        </Link>
-                                    </div>
+                                                {/* Course */}
+                                                <td className="px-6 py-5 min-w-[200px]">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className={`w-1 h-12 rounded-full ${catColor} shrink-0`} />
+                                                        <div>
+                                                            <div className="font-black text-slate-900 text-sm leading-tight line-clamp-2">{entry.courseTitle}</div>
+                                                            <div className="text-xs text-slate-400 mt-1 flex items-center gap-1">
+                                                                <Tag size={11} />{getCategoryLabel(entry.category)}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+
+                                                {/* Start Date */}
+                                                <td className="px-6 py-5 whitespace-nowrap">
+                                                    <div className="flex items-center gap-1.5 font-bold text-slate-700">
+                                                        <CalendarIcon size={14} className="text-emerald-500 shrink-0" />
+                                                        {entry.startDate || <span className="text-slate-300">—</span>}
+                                                    </div>
+                                                </td>
+
+                                                {/* End Date */}
+                                                <td className="px-6 py-5 whitespace-nowrap">
+                                                    <div className="flex items-center gap-1.5 font-medium text-slate-600">
+                                                        <CalendarIcon size={14} className="text-slate-300 shrink-0" />
+                                                        {entry.endDate || <span className="text-slate-300">—</span>}
+                                                    </div>
+                                                </td>
+
+                                                {/* Lectures */}
+                                                <td className="px-6 py-5 whitespace-nowrap">
+                                                    {entry.lecturesCount ? (
+                                                        <div className="flex items-center gap-1.5 font-bold text-slate-700">
+                                                            <BookOpen size={14} className="text-blue-400 shrink-0" />
+                                                            {entry.lecturesCount} {t('محاضرة', 'lec')}
+                                                        </div>
+                                                    ) : <span className="text-slate-300">—</span>}
+                                                </td>
+
+                                                {/* Duration */}
+                                                <td className="px-6 py-5 whitespace-nowrap">
+                                                    {entry.duration ? (
+                                                        <div className="flex items-center gap-1.5 font-medium text-slate-600">
+                                                            <Clock size={14} className="text-orange-400 shrink-0" />
+                                                            {entry.duration}
+                                                        </div>
+                                                    ) : <span className="text-slate-300">—</span>}
+                                                </td>
+
+                                                {/* Location */}
+                                                <td className="px-6 py-5 whitespace-nowrap">
+                                                    {entry.location ? (
+                                                        <div className="flex items-center gap-1.5 font-medium text-slate-600">
+                                                            <MapPin size={14} className="text-purple-400 shrink-0" />
+                                                            {entry.location}
+                                                        </div>
+                                                    ) : <span className="text-slate-300">—</span>}
+                                                </td>
+
+                                                {/* Price */}
+                                                <td className="px-6 py-5 whitespace-nowrap">
+                                                    <span className="font-black text-primary-600 text-sm">
+                                                        {entry.priceText || (entry.price && entry.price > 0
+                                                            ? `${entry.price.toLocaleString()} ${t('د.ع', 'IQD')}`
+                                                            : t('مجاناً', 'Free')
+                                                        )}
+                                                    </span>
+                                                </td>
+
+                                                {/* Status */}
+                                                <td className="px-6 py-5 whitespace-nowrap">
+                                                    <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold border ${cfg.bg} ${cfg.text} ${cfg.border}`}>
+                                                        <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
+                                                        {isEnglish ? cfg.labelEn : cfg.label}
+                                                    </span>
+                                                </td>
+
+                                                {/* Register link */}
+                                                <td className="px-6 py-5 whitespace-nowrap">
+                                                    {entry.status !== 'completed' && entry.status !== 'cancelled' ? (
+                                                        <Link
+                                                            to={`/courses/${entry.courseId}`}
+                                                            className="flex items-center gap-1 text-sm font-bold text-emerald-600 hover:text-emerald-700 transition group/link"
+                                                        >
+                                                            {t('التفاصيل', 'Details')}
+                                                            {isEnglish
+                                                                ? <ChevronRight size={15} className="group-hover/link:translate-x-1 transition-transform" />
+                                                                : <ChevronLeft size={15} className="group-hover/link:-translate-x-1 transition-transform" />
+                                                            }
+                                                        </Link>
+                                                    ) : (
+                                                        <span className="text-slate-300 text-sm font-medium">—</span>
+                                                    )}
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        {/* Notes hint if any */}
+                        {filtered.some(e => e.notes) && (
+                            <div className="px-6 pb-6 pt-2 border-t border-slate-50">
+                                <div className="space-y-2 mt-4">
+                                    {filtered.filter(e => e.notes).map((entry, i) => (
+                                        <div key={entry.id} className="flex items-start gap-2 text-xs text-slate-500 bg-amber-50 border border-amber-100 rounded-xl px-4 py-3">
+                                            <Info size={13} className="text-amber-400 shrink-0 mt-0.5" />
+                                            <span><span className="font-bold text-amber-700">{entry.courseTitle}:</span> {entry.notes}</span>
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
-                        ))}
+                        )}
                     </div>
                 )}
             </div>
@@ -205,4 +271,4 @@ const Calendar: React.FC = () => {
     );
 };
 
-export default Calendar;
+export default CalendarPage;
