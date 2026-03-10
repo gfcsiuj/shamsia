@@ -168,11 +168,11 @@ const Home: React.FC = () => {
               </div>
 
               {/* Title */}
-              <h1 className="text-3xl md:text-5xl lg:text-8xl font-black text-slate-900 leading-[1.1] mb-5 lg:mb-8 tracking-tight italic">
+              <h1 className="text-4xl md:text-5xl lg:text-7xl xl:text-8xl font-black text-slate-900 leading-[1.3] lg:leading-[1.4] mb-6 lg:mb-10 tracking-tight italic">
                 {isEnglish ? (
-                  <>Build Your Career <br />Path <span className="text-gradient px-2">Smartly</span></>
+                  <>Build Your Career <br />Path <span className="text-gradient px-2 py-1">Smartly</span></>
                 ) : (
-                  <>ابنِ مسارك <br />المهني <span className="text-gradient px-2">بذكاء</span></>
+                  <>ابنِ مسارك <br />المهني <span className="text-gradient px-2 py-1">بذكاء</span></>
                 )}
               </h1>
 
@@ -348,11 +348,11 @@ const Home: React.FC = () => {
 
             {/* Features Content */}
             <div className={`lg:w-1/2 ${isEnglish ? 'text-left' : 'text-right'}`}>
-              <h2 className="text-2xl md:text-4xl lg:text-[4.5rem] font-black mb-8 lg:mb-14 italic leading-[1.05] tracking-tight">
+              <h2 className="text-2xl md:text-4xl lg:text-[4.5rem] font-black mb-8 lg:mb-14 italic leading-[1.3] lg:leading-[1.4] tracking-tight">
                 {isEnglish ? (
-                  <>Shamsiya.. Creating <br /> <span className="text-emerald-400 font-medium">Your Digital Future</span></>
+                  <>Shamsiya.. Creating <br /> <span className="text-emerald-400 font-medium inline-block mt-2 lg:mt-4">Your Digital Future</span></>
                 ) : (
-                  <>شمسية.. نبتكر <br /> <span className="text-emerald-400 font-medium">مستقبلك الرقمي</span></>
+                  <>شمسية.. نبتكر <br /> <span className="text-emerald-400 font-medium inline-block mt-2 lg:mt-4">مستقبلك الرقمي</span></>
                 )}
               </h2>
               <div className="space-y-8 lg:space-y-12">

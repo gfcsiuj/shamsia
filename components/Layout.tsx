@@ -351,7 +351,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <h4 className="font-black mb-3 lg:mb-6 text-xs lg:text-sm uppercase tracking-widest opacity-60 text-slate-900 dark:text-white">
                 {t('روابط سريعة', 'Quick Links')}
               </h4>
-              <ul className="grid grid-cols-2 lg:grid-cols-1 gap-1.5 lg:space-y-3 text-xs lg:text-sm font-bold">
+              <ul className="grid grid-cols-2 lg:grid-cols-2 gap-x-4 gap-y-3 lg:gap-y-4 text-xs lg:text-sm font-bold">
                 {navLinks.map((link) => {
                   // Arabic tatweel padding for equal visual width in footer
                   const footerNames: Record<string, string> = {

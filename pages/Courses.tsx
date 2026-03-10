@@ -88,33 +88,35 @@ const Courses: React.FC = () => {
       </div>
 
       <div className="container mx-auto px-4 -mt-6 relative z-20">
-        {/* Filter Bar - New Design */}
-        <div className="bg-white dark:bg-slate-800 rounded-[1.5rem] lg:rounded-[2.5rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] dark:shadow-none p-4 lg:p-6 mb-8 lg:mb-12 border border-slate-100 dark:border-slate-700">
-          <div className="flex flex-col md:flex-row gap-4 lg:gap-6 items-center justify-between">
-            {/* Categories */}
-            <div className="flex items-center gap-3 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 no-scrollbar">
-              <Filter className="text-emerald-500 flex-shrink-0" size={22} />
-              {categories.map(cat => (
-                <button
-                  key={cat.id}
-                  onClick={() => setSelectedCategory(cat.id)}
-                  className={`px-4 py-2.5 lg:px-6 lg:py-3 rounded-xl lg:rounded-2xl text-xs lg:text-sm font-black whitespace-nowrap transition-all duration-300 border border-transparent ${selectedCategory === cat.id
-                    ? 'bg-slate-900 dark:bg-emerald-600 text-white shadow-xl dark:shadow-emerald-900/50'
-                    : 'bg-slate-50 dark:bg-slate-900/50 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-emerald-600 dark:hover:text-emerald-400 dark:border-slate-700'
-                    }`}
-                >
-                  {cat.label}
-                </button>
-              ))}
+        {/* Filter Bar - Compact Design */}
+        <div className="bg-white dark:bg-slate-800 rounded-[1.5rem] shadow-sm dark:shadow-none p-3 lg:p-4 mb-6 lg:mb-10 border border-slate-100 dark:border-slate-700 max-w-4xl mx-auto">
+          <div className="flex flex-col gap-3">
+            {/* Top Row: Categories & Filter Icon */}
+            <div className="flex items-center gap-3 w-full">
+              <div className="flex items-center gap-2 overflow-x-auto w-full pb-1 no-scrollbar justify-start md:justify-center">
+                {categories.map(cat => (
+                  <button
+                    key={cat.id}
+                    onClick={() => setSelectedCategory(cat.id)}
+                    className={`px-3 py-1.5 lg:px-4 lg:py-2 rounded-xl text-xs lg:text-sm font-bold whitespace-nowrap transition-all duration-300 border border-transparent ${selectedCategory === cat.id
+                      ? 'bg-slate-900 dark:bg-emerald-600 text-white shadow-md'
+                      : 'bg-slate-50 dark:bg-slate-900/50 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-emerald-600 dark:border-slate-700'
+                      }`}
+                  >
+                    {cat.label}
+                  </button>
+                ))}
+              </div>
+              <Filter className="text-emerald-500 flex-shrink-0 mr-1" size={20} />
             </div>
 
-            {/* Search */}
-            <div className="relative w-full md:w-80">
-              <Search className={`absolute ${isEnglish ? 'left-4' : 'right-4'} top-1/2 -translate-y-1/2 text-slate-400`} size={20} />
+            {/* Bottom Row: Search */}
+            <div className="relative w-full">
+              <Search className={`absolute ${isEnglish ? 'left-4' : 'right-4'} top-1/2 -translate-y-1/2 text-slate-400`} size={18} />
               <input
                 type="text"
                 placeholder={t('ابحث عن دورة...', 'Search for a course...')}
-                className={`w-full ${isEnglish ? 'pl-12 pr-4' : 'pl-4 pr-12'} py-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 dark:text-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 dark:focus:ring-emerald-900/30 outline-none transition-all duration-300 font-bold`}
+                className={`w-full ${isEnglish ? 'pl-11 pr-4' : 'pl-4 pr-11'} py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none transition-all duration-300 text-sm font-bold`}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
