@@ -121,17 +121,17 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, instructor: propInstruc
                     {tagStyle.label}
                 </div>
 
-                {/* Duration Badge */}
-                <div className={`absolute bottom-3 lg:bottom-6 ${isEnglish ? 'right-3 lg:right-6' : 'left-3 lg:left-6'} bg-slate-900/60 backdrop-blur-md px-2 py-1 lg:px-4 lg:py-2 rounded-lg lg:rounded-xl text-white text-[8px] lg:text-xs font-bold flex items-center gap-1 lg:gap-2 border border-white/10`}>
-                    <Clock className="w-3.5 h-3.5" /> {course.duration}
-                </div>
-
-                {/* Lectures Count Badge */}
-                {course.lecturesCount && course.lecturesCount > 0 && (
-                    <div className={`absolute bottom-3 lg:bottom-6 ${isEnglish ? 'left-3 lg:left-6' : 'right-3 lg:right-6'} bg-emerald-600/80 backdrop-blur-md px-2 py-1 lg:px-4 lg:py-2 rounded-lg lg:rounded-xl text-white text-[8px] lg:text-xs font-bold flex items-center gap-1 lg:gap-2 border border-white/10`}>
-                        <PlayCircle className="w-3.5 h-3.5" /> {course.lecturesCount} {t('محاضرة', 'Lectures')}
+                {/* Duration & Lectures Badges */}
+                <div className={`absolute bottom-3 lg:bottom-6 ${isEnglish ? 'right-3 lg:right-6' : 'left-3 lg:left-6'} flex flex-col gap-1.5 lg:gap-2`}>
+                    <div className="bg-slate-900/60 backdrop-blur-md px-2 py-1 lg:px-4 lg:py-2 rounded-lg lg:rounded-xl text-white text-[8px] lg:text-xs font-bold flex items-center gap-1 lg:gap-2 border border-white/10">
+                        <Clock className="w-3 h-3 lg:w-3.5 lg:h-3.5" /> {course.duration}
                     </div>
-                )}
+                    {course.lecturesCount && course.lecturesCount > 0 && (
+                        <div className="bg-emerald-600/80 backdrop-blur-md px-2 py-1 lg:px-4 lg:py-2 rounded-lg lg:rounded-xl text-white text-[8px] lg:text-xs font-bold flex items-center gap-1 lg:gap-2 border border-white/10">
+                            <PlayCircle className="w-3 h-3 lg:w-3.5 lg:h-3.5" /> {course.lecturesCount} {t('محاضرة', 'Lectures')}
+                        </div>
+                    )}
+                </div>
             </div>
 
             {/* Content Area */}

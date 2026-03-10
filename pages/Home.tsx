@@ -216,7 +216,7 @@ const Home: React.FC = () => {
             {/* Hero Image */}
             <div className="lg:w-2/5 relative w-full perspective-1000 order-1 lg:order-2 mb-4 lg:mb-0 px-8 lg:px-0">
               <div className="rounded-[2rem] lg:rounded-[4rem] bg-white p-3 lg:p-6 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.1)] border border-slate-100 animate-float max-w-[280px] lg:max-w-md mx-auto relative group overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=800" alt="Hero Student" className="rounded-[2.5rem] lg:rounded-[3rem] w-full aspect-[4/5] object-cover transition-transform duration-1000 group-hover:scale-105" />
+                <img src="https://d.top4top.io/p_37213rq871.jpg" alt="Hero Student" className="rounded-[2.5rem] lg:rounded-[3rem] w-full aspect-[4/5] object-cover transition-transform duration-1000 group-hover:scale-105" />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/20 to-transparent"></div>
               </div>
 
