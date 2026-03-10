@@ -46,70 +46,70 @@ const Contact: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-50 pb-24">
       {/* Hero */}
-      <div className="relative pt-32 pb-16 overflow-hidden">
+      <div className="relative pt-24 sm:pt-32 pb-10 sm:pb-16 overflow-hidden">
         <div className="absolute inset-0 -z-10">
           <div className="absolute top-[-10%] right-[-10%] w-[400px] h-[400px] bg-emerald-100/50 rounded-full blur-[100px] animate-blob"></div>
           <div className="absolute bottom-[-5%] left-[-5%] w-[300px] h-[300px] bg-orange-100/40 rounded-full blur-[80px] animate-blob delay-2000"></div>
         </div>
 
         <div className="container mx-auto px-4 text-center relative z-10">
-          <h1 className="text-5xl md:text-6xl font-black text-slate-900 mb-4 italic tracking-tight animate-fade-up">
+          <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-slate-900 mb-3 lg:mb-4 italic tracking-tight animate-fade-up">
             {isEnglish ? (
               <>Contact <span className="text-gradient">Us</span></>
             ) : (
               <>تواصل <span className="text-gradient">معنا</span></>
             )}
           </h1>
-          <p className="text-slate-600 text-lg max-w-2xl mx-auto font-medium animate-fade-up delay-100">
+          <p className="text-slate-600 text-sm lg:text-lg max-w-2xl mx-auto font-medium animate-fade-up delay-100">
             {t('هل لديك استفسار؟ نحن هنا لمساعدتك', 'Have a question? We are here to help')}
           </p>
         </div>
       </div>
 
       <div className="container mx-auto px-4">
-        <div className="max-w-5xl mx-auto bg-white rounded-[2rem] shadow-xl overflow-hidden flex flex-col md:flex-row mb-12 animate-fade-up delay-200">
+        <div className="max-w-5xl mx-auto bg-white rounded-[1.5rem] lg:rounded-[2rem] shadow-xl overflow-hidden flex flex-col md:flex-row mb-12 animate-fade-up delay-200">
 
           {/* Info Side - Emerald Theme */}
-          <div className="bg-emerald-600 text-white p-10 md:p-12 md:w-2/5 flex flex-col justify-between relative overflow-hidden">
+          <div className="bg-emerald-600 text-white p-6 lg:p-12 md:w-2/5 flex flex-col justify-between relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2"></div>
             <div className="absolute bottom-0 left-0 w-40 h-40 bg-emerald-400/20 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2"></div>
 
             <div className="relative z-10">
-              <h2 className="text-3xl font-black mb-6 italic">
+              <h2 className="text-2xl lg:text-3xl font-black mb-4 lg:mb-6 italic">
                 {t('تواصل معنا', 'Get in Touch')}
               </h2>
-              <p className="text-emerald-100 mb-10 leading-relaxed">
+              <p className="text-emerald-100 mb-6 sm:mb-10 leading-relaxed text-sm sm:text-base">
                 {t(
                   'هل لديك استفسار حول دوراتنا؟ أو ترغب في تسجيل مجموعة؟ نحن هنا لمساعدتك.',
                   'Do you have questions about our courses? Or want to register a group? We are here to help.'
                 )}
               </p>
 
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
                 {contactInfo.map((item, idx) => (
-                  <div key={idx} className="flex items-start gap-4">
-                    <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
-                      <item.icon size={18} />
+                  <div key={idx} className="flex items-start gap-3 sm:gap-4">
+                    <div className="w-9 h-9 sm:w-10 sm:h-10 bg-white/20 rounded-lg sm:rounded-xl flex items-center justify-center">
+                      <item.icon size={16} />
                     </div>
                     <div>
-                      <h4 className="font-bold text-base">{item.title}</h4>
-                      <p className="text-emerald-100 text-sm ltr">{item.val}</p>
+                      <h4 className="font-bold text-sm sm:text-base">{item.title}</h4>
+                      <p className="text-emerald-100 text-xs sm:text-sm ltr">{item.val}</p>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="mt-10 pt-6 border-t border-emerald-500/30 relative z-10">
-              <p className="text-sm opacity-70">
+            <div className="mt-6 sm:mt-10 pt-4 sm:pt-6 border-t border-emerald-500/30 relative z-10">
+              <p className="text-xs sm:text-sm opacity-70">
                 {t('أوقات العمل: الأحد - الخميس 9ص - 5م', 'Working Hours: Sunday - Thursday 9AM - 5PM')}
               </p>
             </div>
           </div>
 
           {/* Form Side */}
-          <div className="p-10 md:p-12 md:w-3/5">
-            <h2 className="text-2xl font-black text-slate-800 mb-8 italic">
+          <div className="p-6 lg:p-12 md:w-3/5">
+            <h2 className="text-xl lg:text-2xl font-black text-slate-800 mb-5 lg:mb-8 italic">
               {t('أرسل رسالة', 'Send a Message')}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-5">

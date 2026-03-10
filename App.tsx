@@ -10,6 +10,7 @@ import Contact from './pages/Contact';
 import Calendar from './pages/Calendar';
 import Certificates from './pages/Certificates';
 import CourseRegister from './pages/CourseRegister';
+import TrainerRegister from './pages/TrainerRegister';
 import Login from './pages/admin/Login';
 import VerifyCertificate from './pages/VerifyCertificate';
 import Dashboard from './pages/admin/Dashboard';
@@ -66,6 +67,7 @@ const App: React.FC = () => {
                 <Route path="/courses/:id" element={<CourseDetails />} />
                 <Route path="/courses/:id/register" element={<CourseRegister />} />
                 <Route path="/register" element={<CourseRegister />} />
+                <Route path="/join-trainer" element={<TrainerRegister />} />
 
                 <Route path="/instructors" element={<Instructors />} />
                 <Route path="/certificates" element={<Certificates />} />

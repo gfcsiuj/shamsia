@@ -251,10 +251,10 @@ const Instructors: React.FC = () => {
           <div className="absolute bottom-[-5%] left-[-5%] w-[250px] md:w-[400px] h-[250px] md:h-[400px] bg-orange-100/40 dark:bg-orange-900/20 rounded-full blur-[80px] animate-blob delay-2000"></div>
         </div>
         <div className="container mx-auto px-4 text-center relative z-10">
-          <h1 className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white mb-4 italic tracking-tight animate-fade-up">
+          <h1 className="text-2xl md:text-4xl lg:text-6xl font-black text-slate-900 dark:text-white mb-3 lg:mb-4 italic tracking-tight animate-fade-up">
             {isEnglish ? (<>Our <span className="text-gradient">Instructors & Graduates</span></>) : (<>نخبة <span className="text-gradient">المدربين والخريجين</span></>)}
           </h1>
-          <p className="text-slate-600 dark:text-slate-300 text-base md:text-lg max-w-2xl mx-auto font-medium animate-fade-up delay-100">
+          <p className="text-slate-600 dark:text-slate-300 text-sm md:text-base lg:text-lg max-w-2xl mx-auto font-medium animate-fade-up delay-100">
             {t('تعلم من أفضل الخبراء وتعرف على خريجينا المتميزين', 'Learn from the best experts and meet our outstanding graduates')}
           </p>
         </div>
@@ -269,7 +269,7 @@ const Instructors: React.FC = () => {
           <>
             {filteredInstructors.length > 0 && (
               <div className="mb-16">
-                <h2 className="text-3xl font-black text-slate-900 dark:text-white mb-8 flex items-center justify-center md:justify-start gap-3">
+                <h2 className="text-xl lg:text-3xl font-black text-slate-900 dark:text-white mb-5 lg:mb-8 flex items-center justify-center md:justify-start gap-3">
                   <div className="w-12 h-12 rounded-2xl bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 items-center justify-center hidden md:flex">
                     <Award size={24} />
                   </div>
@@ -287,7 +287,7 @@ const Instructors: React.FC = () => {
 
             {filteredGraduates.length > 0 && (
               <div>
-                <h2 className="text-3xl font-black text-slate-900 dark:text-white mb-8 flex items-center justify-center md:justify-start gap-3">
+                <h2 className="text-xl lg:text-3xl font-black text-slate-900 dark:text-white mb-5 lg:mb-8 flex items-center justify-center md:justify-start gap-3">
                   <div className="w-12 h-12 rounded-2xl bg-orange-100 dark:bg-orange-900/40 text-orange-600 dark:text-orange-400 items-center justify-center hidden md:flex">
                     <Award size={24} />
                   </div>
@@ -312,13 +312,13 @@ const Instructors: React.FC = () => {
         )}
 
         {/* Join CTA */}
-        <div className="mt-16 md:mt-20 bg-emerald-600 rounded-2xl md:rounded-[2rem] p-8 md:p-14 text-center text-white relative overflow-hidden shadow-2xl shadow-emerald-600/20">
+        <div className="mt-10 md:mt-20 bg-emerald-600 rounded-xl md:rounded-[2rem] p-6 md:p-14 text-center text-white relative overflow-hidden shadow-2xl shadow-emerald-600/20">
           <div className="relative z-10">
-            <h2 className="text-2xl md:text-4xl font-black mb-4 italic">{t('هل تمتلك خبرة تود مشاركتها؟', 'Do you have expertise to share?')}</h2>
-            <p className="text-emerald-100 mb-6 md:mb-8 max-w-2xl mx-auto text-base md:text-lg">{t('انضم إلى فريق مدربي شمسية', 'Join the Shamsiya trainers team')}</p>
-            <button className="bg-white text-emerald-700 px-8 md:px-10 py-3 md:py-4 rounded-xl font-black text-base md:text-lg hover:bg-emerald-50 transition shadow-lg">
+            <h2 className="text-xl md:text-4xl font-black mb-3 lg:mb-4 italic">{t('هل تمتلك خبرة تود مشاركتها؟', 'Do you have expertise to share?')}</h2>
+            <p className="text-emerald-100 mb-5 md:mb-8 max-w-2xl mx-auto text-sm md:text-lg">{t('انضم إلى فريق مدربي شمسية', 'Join the Shamsiya trainers team')}</p>
+            <Link to="/join-trainer" className="inline-block bg-white text-emerald-700 px-8 md:px-10 py-3 md:py-4 rounded-xl font-black text-base md:text-lg hover:bg-emerald-50 transition shadow-lg">
               {t('انضم كمدرب', 'Join as Instructor')}
-            </button>
+            </Link>
           </div>
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
         </div>

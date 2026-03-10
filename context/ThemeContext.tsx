@@ -34,7 +34,7 @@ const defaultSettings: SiteSettings = {
   textColor: '#1e293b',
 
   // Contact
-  contactPhone: '0773 220 0003',
+  contactPhone: '0783 220 0003',
   contactEmail: 'info@shamsia.edu',
   contactAddress: 'العراق، بغداد',
 

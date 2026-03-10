@@ -6,7 +6,7 @@ import { getCategoryLabel } from '../constants';
 import { Link } from 'react-router-dom';
 import {
     Calendar as CalendarIcon, Clock, MapPin, BookOpen,
-    Loader2, ChevronLeft, ChevronRight, Users, Tag, Info
+    Loader2, ChevronLeft, ChevronRight, ChevronDown, Users, Tag, Info
 } from 'lucide-react';
 
 const STATUS_CONFIG = {
@@ -29,6 +29,7 @@ const CalendarPage: React.FC = () => {
     const [entries, setEntries] = useState<CalendarEntry[]>([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState<'all' | 'upcoming' | 'ongoing' | 'completed' | 'cancelled'>('all');
+    const [expandedMobileEntry, setExpandedMobileEntry] = useState<string | null>(null);
 
     useEffect(() => {
         const fetch = async () => {
@@ -78,10 +79,10 @@ const CalendarPage: React.FC = () => {
                     <div className="absolute bottom-[-5%] left-[-5%] w-[400px] h-[400px] bg-orange-100/40 rounded-full blur-[80px] animate-blob delay-2000" />
                 </div>
                 <div className="container mx-auto px-4 text-center relative z-10">
-                    <h1 className="text-4xl md:text-5xl font-black text-slate-900 mb-4 italic tracking-tight animate-fade-up">
+                    <h1 className="text-2xl sm:text-4xl md:text-5xl font-black text-slate-900 mb-4 italic tracking-tight animate-fade-up">
                         {isEnglish ? <>Course <span className="text-gradient">Schedule</span></> : <>جدول <span className="text-gradient">الدورات</span></>}
                     </h1>
-                    <p className="text-slate-600 text-lg max-w-2xl mx-auto font-medium animate-fade-up delay-100">
+                    <p className="text-slate-600 text-sm sm:text-lg max-w-2xl mx-auto font-medium animate-fade-up delay-100">
                         {t('تصفح مواعيد الدورات القادمة وسجّل في الدورة المناسبة لك', 'Browse upcoming course dates and register for the one that suits you')}
                     </p>
                 </div>
@@ -94,9 +95,9 @@ const CalendarPage: React.FC = () => {
                         <button
                             key={tab.key}
                             onClick={() => setFilter(tab.key)}
-                            className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm transition-all ${filter === tab.key
-                                    ? 'bg-slate-900 text-white shadow-md scale-105'
-                                    : 'bg-white text-slate-500 border border-slate-200 hover:border-slate-400 hover:text-slate-700'
+                            className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 sm:py-2.5 rounded-full font-bold text-xs sm:text-sm transition-all ${filter === tab.key
+                                ? 'bg-slate-900 text-white shadow-md scale-105'
+                                : 'bg-white text-slate-500 border border-slate-200 hover:border-slate-400 hover:text-slate-700'
                                 }`}
                         >
                             {tab.label}
@@ -118,8 +119,113 @@ const CalendarPage: React.FC = () => {
                     </div>
                 ) : (
                     /* Table */
-                    <div className="bg-white rounded-[2rem] shadow-sm border border-slate-100 overflow-hidden">
-                        <div className="overflow-x-auto">
+                    <div className="bg-white rounded-2xl sm:rounded-[2rem] shadow-sm border border-slate-100 overflow-hidden">
+                        {/* Mobile Expandable List */}
+                        <div className="sm:hidden">
+                            {/* Mobile Header */}
+                            <div className="bg-gradient-to-r from-slate-800 to-slate-900 text-white px-4 py-3 flex items-center text-[10px] font-black uppercase tracking-wider">
+                                <span className="flex-1">{t('الكورس', 'Course')}</span>
+                                <span className="w-20 text-center">{t('البدء', 'Start')}</span>
+                                <span className="w-14 text-center">{t('الحالة', 'Status')}</span>
+                                <span className="w-6"></span>
+                            </div>
+                            {filtered.map((entry, i) => {
+                                const cfg = getStatusCfg(entry.status);
+                                const catColor = CATEGORY_COLOR[entry.category] || 'bg-slate-500';
+                                const isExpanded = expandedMobileEntry === entry.id;
+                                return (
+                                    <div key={entry.id} className={`border-b border-slate-100 ${entry.status === 'cancelled' ? 'opacity-50' : ''}`}>
+                                        {/* Row - clickable */}
+                                        <button
+                                            onClick={() => setExpandedMobileEntry(isExpanded ? null : entry.id)}
+                                            className="w-full flex items-center px-4 py-3 text-right hover:bg-slate-50 transition-colors"
+                                        >
+                                            <div className="flex-1 flex items-center gap-2 min-w-0">
+                                                <div className={`w-0.5 h-7 rounded-full ${catColor} shrink-0`} />
+                                                <span className="font-bold text-slate-900 text-xs leading-tight line-clamp-1">{entry.courseTitle}</span>
+                                            </div>
+                                            <span className="w-20 text-center text-[10px] text-slate-600 font-medium shrink-0">{entry.startDate || '—'}</span>
+                                            <span className="w-14 flex justify-center shrink-0">
+                                                <span className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-bold border ${cfg.bg} ${cfg.text} ${cfg.border}`}>
+                                                    <span className={`w-1 h-1 rounded-full ${cfg.dot}`} />
+                                                    {isEnglish ? cfg.labelEn : cfg.label}
+                                                </span>
+                                            </span>
+                                            <ChevronDown size={14} className={`w-6 shrink-0 text-slate-400 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} />
+                                        </button>
+                                        {/* Expanded Details */}
+                                        {isExpanded && (
+                                            <div className="px-4 pb-4 bg-slate-50/80 animate-fade-up">
+                                                <div className="grid grid-cols-2 gap-x-4 gap-y-2.5 text-xs py-3 border-t border-slate-100">
+                                                    <div className="flex items-center gap-2">
+                                                        <CalendarIcon size={13} className="text-emerald-500 shrink-0" />
+                                                        <div>
+                                                            <div className="text-[10px] text-slate-400 font-medium">{t('تاريخ البدء', 'Start Date')}</div>
+                                                            <div className="font-bold text-slate-800">{entry.startDate || '—'}</div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex items-center gap-2">
+                                                        <CalendarIcon size={13} className="text-slate-400 shrink-0" />
+                                                        <div>
+                                                            <div className="text-[10px] text-slate-400 font-medium">{t('تاريخ الانتهاء', 'End Date')}</div>
+                                                            <div className="font-bold text-slate-800">{entry.endDate || '—'}</div>
+                                                        </div>
+                                                    </div>
+                                                    {entry.duration && (
+                                                        <div className="flex items-center gap-2">
+                                                            <Clock size={13} className="text-orange-400 shrink-0" />
+                                                            <div>
+                                                                <div className="text-[10px] text-slate-400 font-medium">{t('المدة', 'Duration')}</div>
+                                                                <div className="font-bold text-slate-800">{entry.duration}</div>
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                    {entry.lecturesCount && (
+                                                        <div className="flex items-center gap-2">
+                                                            <BookOpen size={13} className="text-blue-400 shrink-0" />
+                                                            <div>
+                                                                <div className="text-[10px] text-slate-400 font-medium">{t('المحاضرات', 'Lectures')}</div>
+                                                                <div className="font-bold text-slate-800">{entry.lecturesCount} {t('محاضرة', 'lec')}</div>
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                    {entry.location && (
+                                                        <div className="flex items-center gap-2">
+                                                            <MapPin size={13} className="text-purple-400 shrink-0" />
+                                                            <div>
+                                                                <div className="text-[10px] text-slate-400 font-medium">{t('الموقع', 'Location')}</div>
+                                                                <div className="font-bold text-slate-800">{entry.location}</div>
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                    <div className="flex items-center gap-2">
+                                                        <Tag size={13} className="text-emerald-500 shrink-0" />
+                                                        <div>
+                                                            <div className="text-[10px] text-slate-400 font-medium">{t('السعر', 'Price')}</div>
+                                                            <div className="font-black text-emerald-600">
+                                                                {entry.priceText || (entry.price && entry.price > 0 ? `${entry.price.toLocaleString()} ${t('د.ع', 'IQD')}` : t('مجاناً', 'Free'))}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {entry.status !== 'completed' && entry.status !== 'cancelled' && (
+                                                    <Link
+                                                        to={`/courses/${entry.courseId}`}
+                                                        className="mt-2 w-full flex items-center justify-center gap-1.5 bg-emerald-600 text-white font-bold text-xs py-2.5 rounded-xl shadow-sm hover:bg-emerald-700 transition"
+                                                    >
+                                                        {t('عرض التفاصيل والتسجيل', 'View Details & Register')}
+                                                        {isEnglish ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
+                                                    </Link>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </div>
+
+                        {/* Desktop/Tablet Table View */}
+                        <div className="hidden sm:block overflow-x-auto">
                             <table className="w-full text-sm">
                                 <thead>
                                     <tr className="bg-gradient-to-r from-slate-800 to-slate-900 text-white">

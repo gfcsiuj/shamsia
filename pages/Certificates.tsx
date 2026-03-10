@@ -331,14 +331,14 @@ const Certificates: React.FC = () => {
                         <Award size={16} />
                         {!loading && <span>{totalCount} {t('شهادة معتمدة', 'Accredited Certificates')}</span>}
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-black text-slate-900 mb-4 italic tracking-tight animate-fade-up">
+                    <h1 className="text-2xl md:text-4xl lg:text-5xl font-black text-slate-900 mb-3 lg:mb-4 italic tracking-tight animate-fade-up">
                         {isEnglish ? (
                             <>Our <span className="text-gradient">Certificates</span></>
                         ) : (
                             <>الشهادات <span className="text-gradient">والاعتمادات</span></>
                         )}
                     </h1>
-                    <p className="text-slate-600 text-lg max-w-2xl mx-auto font-medium animate-fade-up delay-100">
+                    <p className="text-slate-600 text-sm lg:text-lg max-w-2xl mx-auto font-medium animate-fade-up delay-100">
                         {t('تصفح شهاداتنا المعتمدة وشهادات المدربين المتخصصين', 'Browse our accredited certificates and specialized trainer certifications')}
                     </p>
                 </div>
@@ -347,7 +347,7 @@ const Certificates: React.FC = () => {
             <div className="container mx-auto px-4 max-w-7xl -mt-4">
                 {/* Filter Tabs */}
                 <div className="flex justify-center mb-10">
-                    <div className="bg-white rounded-2xl p-1.5 shadow-sm border border-slate-100 flex gap-1 flex-wrap justify-center">
+                    <div className="bg-white rounded-xl lg:rounded-2xl p-1.5 shadow-sm border border-slate-100 flex gap-1 flex-wrap justify-center">
                         {[
                             { key: 'all' as const, label: t('الكل', 'All'), icon: Award, count: totalCount },
                             { key: 'company' as const, label: t('شهادات المركز', 'Company'), icon: ShieldCheck, count: companyCount },
@@ -357,9 +357,9 @@ const Certificates: React.FC = () => {
                             <button
                                 key={tab.key}
                                 onClick={() => setActiveTab(tab.key)}
-                                className={`px-4 py-2.5 rounded-xl font-bold text-sm transition-all flex items-center gap-2 ${activeTab === tab.key
-                                        ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-200'
-                                        : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'
+                                className={`px-3 py-2 lg:px-4 lg:py-2.5 rounded-lg lg:rounded-xl font-bold text-xs lg:text-sm transition-all flex items-center gap-1.5 lg:gap-2 ${activeTab === tab.key
+                                    ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-200'
+                                    : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'
                                     }`}
                             >
                                 <tab.icon size={16} />

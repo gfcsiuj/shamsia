@@ -143,7 +143,7 @@ const Home: React.FC = () => {
   return (
     <div className="animate-fade-in">
       {/* Hero Section - Premium Design */}
-      <section id="home" className="relative pt-36 pb-16 lg:pt-64 lg:pb-48 overflow-hidden px-6">
+      <section id="home" className="relative pt-28 pb-10 lg:pt-64 lg:pb-48 overflow-hidden px-4 lg:px-6">
         {/* Grid Background */}
         <div className="absolute inset-0 -z-20 bg-grid-pattern dark:bg-grid-pattern-dark bg-[length:32px_32px] opacity-40"></div>
         <div className="absolute inset-0 -z-20 bg-gradient-to-b from-transparent via-slate-50/50 dark:via-slate-900/50 to-slate-50 dark:to-slate-900 pointer-events-none"></div>
@@ -155,11 +155,11 @@ const Home: React.FC = () => {
         </div>
 
         <div className="container mx-auto max-w-7xl">
-          <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
+          <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-24">
             {/* Content */}
             <div className={`lg:w-3/5 text-center ${isEnglish ? 'lg:text-left' : 'lg:text-right'} animate-fade-up order-2 lg:order-1`}>
               {/* Badge */}
-              <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-white shadow-sm border border-slate-200 text-emerald-700 text-xs md:text-sm font-black mb-8 lg:mb-10 tracking-wide hover:shadow-md transition-shadow cursor-default">
+              <div className="inline-flex items-center gap-2 px-4 py-2 lg:px-6 lg:py-3 rounded-full bg-white shadow-sm border border-slate-200 text-emerald-700 text-[11px] md:text-sm font-black mb-5 lg:mb-10 tracking-wide hover:shadow-md transition-shadow cursor-default">
                 <span className="flex h-2.5 w-2.5 relative">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
@@ -168,7 +168,7 @@ const Home: React.FC = () => {
               </div>
 
               {/* Title */}
-              <h1 className="text-5xl md:text-6xl lg:text-8xl font-black text-slate-900 leading-[1.1] mb-8 tracking-tight italic">
+              <h1 className="text-3xl md:text-5xl lg:text-8xl font-black text-slate-900 leading-[1.1] mb-5 lg:mb-8 tracking-tight italic">
                 {isEnglish ? (
                   <>Build Your Career <br />Path <span className="text-gradient px-2">Smartly</span></>
                 ) : (
@@ -177,7 +177,7 @@ const Home: React.FC = () => {
               </h1>
 
               {/* Subtitle */}
-              <p className="text-lg md:text-2xl text-slate-600 leading-relaxed mb-12 max-w-2xl mx-auto lg:mx-0 font-medium">
+              <p className="text-sm md:text-xl lg:text-2xl text-slate-600 leading-relaxed mb-8 lg:mb-12 max-w-2xl mx-auto lg:mx-0 font-medium">
                 {isEnglish
                   ? 'We combined the expertise of Arab trainers with the latest AI technologies to offer you a comprehensive learning experience that guarantees your place in the job market.'
                   : (settings.heroSubtitle || 'دمجنا خبرة المدربين العرب مع أحدث تقنيات الذكاء الاصطناعي لنقدم لك تجربة تعليمية محكمة تضمن لك مكاناً في سوق العمل.')}
@@ -185,26 +185,26 @@ const Home: React.FC = () => {
 
               {/* CTA Buttons */}
               <div className={`flex flex-col sm:flex-row justify-center ${isEnglish ? 'lg:justify-start' : 'lg:justify-start'} gap-5`}>
-                <Link to="/courses" className="relative overflow-hidden px-10 py-5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-[20px] font-black text-xl flex items-center justify-center gap-4 transition-all shadow-2xl shadow-emerald-200/50 dark:shadow-emerald-900/50 active:scale-95 border border-emerald-500/50 group">
+                <Link to="/courses" className="relative overflow-hidden px-7 py-4 lg:px-10 lg:py-5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-[16px] lg:rounded-[20px] font-black text-base lg:text-xl flex items-center justify-center gap-3 lg:gap-4 transition-all shadow-2xl shadow-emerald-200/50 dark:shadow-emerald-900/50 active:scale-95 border border-emerald-500/50 group">
                   <div className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
                   <span className="relative z-10 flex items-center gap-4">{t('استكشف الدورات', 'Explore Courses')} <ArrowIcon className="w-6 h-6 group-hover:-translate-x-1 transition-transform" /></span>
                 </Link>
               </div>
 
               {/* Social Proof */}
-              <div className={`mt-14 flex flex-col sm:flex-row items-center justify-center ${isEnglish ? 'lg:justify-start' : 'lg:justify-start'} gap-8`}>
+              <div className={`mt-8 lg:mt-14 flex flex-col sm:flex-row items-center justify-center ${isEnglish ? 'lg:justify-start' : 'lg:justify-start'} gap-5 lg:gap-8`}>
                 <div className={`flex ${isEnglish ? '-space-x-5' : '-space-x-5 space-x-reverse'}`}>
                   {[1, 2, 3].map((i) => (
-                    <img key={i} src={`https://i.pravatar.cc/150?u=a${i}`} alt="User" className="w-16 h-16 rounded-full border-4 border-white shadow-lg object-cover ring-1 ring-slate-100" />
+                    <img key={i} src={`https://i.pravatar.cc/150?u=a${i}`} alt="User" className="w-11 h-11 lg:w-16 lg:h-16 rounded-full border-[3px] lg:border-4 border-white shadow-lg object-cover ring-1 ring-slate-100" />
                   ))}
-                  <div className="w-16 h-16 rounded-full border-4 border-white bg-slate-900 text-white flex items-center justify-center text-xs font-black shadow-lg ring-1 ring-slate-100 italic">+1.2k</div>
+                  <div className="w-11 h-11 lg:w-16 lg:h-16 rounded-full border-[3px] lg:border-4 border-white bg-slate-900 text-white flex items-center justify-center text-[10px] lg:text-xs font-black shadow-lg ring-1 ring-slate-100 italic">+1.2k</div>
                 </div>
                 <div className={`text-center ${isEnglish ? 'lg:text-left' : 'lg:text-right'}`}>
                   <div className={`flex items-center justify-center ${isEnglish ? 'lg:justify-start' : 'lg:justify-start'} gap-1 text-yellow-400 mb-2`}>
                     {[...Array(5)].map((_, i) => (
-                      <Star key={i} fill="currentColor" className="w-6 h-6" />
+                      <Star key={i} fill="currentColor" className="w-4 h-4 lg:w-6 lg:h-6" />
                     ))}
-                    <span className={`text-slate-900 font-black text-lg ${isEnglish ? 'ml-3' : 'mr-3'} tracking-tighter`}>4.9/5.0</span>
+                    <span className={`text-slate-900 font-black text-sm lg:text-lg ${isEnglish ? 'ml-2 lg:ml-3' : 'mr-2 lg:mr-3'} tracking-tighter`}>4.9/5.0</span>
                   </div>
                   <p className="text-xs font-bold text-slate-500 uppercase tracking-widest italic">
                     {t('انضم لمجتمع المتعلمين', 'Join Our Learning Community')}
@@ -214,8 +214,8 @@ const Home: React.FC = () => {
             </div>
 
             {/* Hero Image */}
-            <div className="lg:w-2/5 relative w-full perspective-1000 order-1 lg:order-2 mb-4 lg:mb-0 px-4 lg:px-0">
-              <div className="rounded-[3rem] lg:rounded-[4rem] bg-white p-4 lg:p-6 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.1)] border border-slate-100 animate-float max-w-sm lg:max-w-md mx-auto relative group overflow-hidden">
+            <div className="lg:w-2/5 relative w-full perspective-1000 order-1 lg:order-2 mb-4 lg:mb-0 px-8 lg:px-0">
+              <div className="rounded-[2rem] lg:rounded-[4rem] bg-white p-3 lg:p-6 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.1)] border border-slate-100 animate-float max-w-[280px] lg:max-w-md mx-auto relative group overflow-hidden">
                 <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=800" alt="Hero Student" className="rounded-[2.5rem] lg:rounded-[3rem] w-full aspect-[4/5] object-cover transition-transform duration-1000 group-hover:scale-105" />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/20 to-transparent"></div>
               </div>
@@ -240,9 +240,9 @@ const Home: React.FC = () => {
       </section>
 
       {/* Stats Section - Premium Design */}
-      <section className="py-16 lg:py-32 bg-white/50 dark:bg-slate-900/50 backdrop-blur-3xl border-y border-slate-100 dark:border-slate-800/50 px-6 relative z-20">
+      <section className="py-10 lg:py-32 bg-white/50 dark:bg-slate-900/50 backdrop-blur-3xl border-y border-slate-100 dark:border-slate-800/50 px-4 lg:px-6 relative z-20">
         <div className="container mx-auto max-w-7xl">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-8">
             {STATS.map((stat) => {
               const colors: { [key: string]: string } = {
                 emerald: 'text-emerald-600 group-hover:bg-emerald-600',
@@ -254,16 +254,16 @@ const Home: React.FC = () => {
               return (
                 <div
                   key={stat.id}
-                  className="relative p-8 lg:p-10 rounded-[2.5rem] bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl border border-slate-200/50 dark:border-slate-700/50 flex flex-col items-center text-center transition-all duration-500 hover:bg-white dark:hover:bg-slate-800 hover:shadow-[0_20px_60px_-15px_rgba(16,185,129,0.15)] dark:hover:shadow-[0_20px_60px_-15px_rgba(16,185,129,0.05)] hover:-translate-y-2 group overflow-hidden"
+                  className="relative p-4 lg:p-10 rounded-[1.5rem] lg:rounded-[2.5rem] bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl border border-slate-200/50 dark:border-slate-700/50 flex flex-col items-center text-center transition-all duration-500 hover:bg-white dark:hover:bg-slate-800 hover:shadow-[0_20px_60px_-15px_rgba(16,185,129,0.15)] dark:hover:shadow-[0_20px_60px_-15px_rgba(16,185,129,0.05)] hover:-translate-y-2 group overflow-hidden"
                 >
                   <div className="absolute inset-0 bg-gradient-to-br from-white/50 to-white/0 dark:from-white/5 dark:to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                  <div className={`relative w-16 h-16 lg:w-20 lg:h-20 bg-slate-50 dark:bg-slate-900/50 rounded-[1.2rem] flex items-center justify-center mb-6 lg:mb-8 shadow-sm ${colors[stat.color]} group-hover:text-white transition-all duration-500 ring-4 ring-white dark:ring-slate-800 group-hover:ring-emerald-50 dark:group-hover:ring-emerald-900/30 group-hover:scale-110 z-10`}>
-                    <stat.icon className="w-8 h-8 lg:w-9 lg:h-9 fill-current" />
+                  <div className={`relative w-11 h-11 lg:w-20 lg:h-20 bg-slate-50 dark:bg-slate-900/50 rounded-xl lg:rounded-[1.2rem] flex items-center justify-center mb-3 lg:mb-8 shadow-sm ${colors[stat.color]} group-hover:text-white transition-all duration-500 ring-2 lg:ring-4 ring-white dark:ring-slate-800 group-hover:ring-emerald-50 dark:group-hover:ring-emerald-900/30 group-hover:scale-110 z-10`}>
+                    <stat.icon className="w-5 h-5 lg:w-9 lg:h-9 fill-current" />
                   </div>
-                  <h3 className="relative z-10 text-4xl lg:text-5xl font-black mb-3 text-slate-900 dark:text-white tracking-tighter italic">
+                  <h3 className="relative z-10 text-2xl lg:text-5xl font-black mb-1 lg:mb-3 text-slate-900 dark:text-white tracking-tighter italic">
                     {stat.value}
                   </h3>
-                  <p className="relative z-10 text-xs lg:text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide leading-snug">
+                  <p className="relative z-10 text-[10px] lg:text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide leading-snug">
                     {stat.label}
                   </p>
                 </div>
@@ -274,17 +274,17 @@ const Home: React.FC = () => {
       </section>
 
       {/* Course Explorer Section - New Design */}
-      <section id="explore" className="py-20 lg:py-40 px-6 bg-slate-50/50">
+      <section id="explore" className="py-12 lg:py-40 px-4 lg:px-6 bg-slate-50/50">
         <div className="container mx-auto max-w-7xl">
-          <div className="text-center mb-16 lg:mb-20">
-            <h2 className="text-4xl lg:text-7xl font-black text-slate-900 mb-6 lg:mb-8 italic tracking-tight">
+          <div className="text-center mb-8 lg:mb-20">
+            <h2 className="text-2xl md:text-4xl lg:text-7xl font-black text-slate-900 mb-4 lg:mb-8 italic tracking-tight">
               {isEnglish ? (
                 <>What do you want to learn <span className="text-emerald-600 underline underline-offset-[16px] decoration-4 decoration-emerald-200">today?</span></>
               ) : (
                 <>ماذا تود أن تتعلم <span className="text-emerald-600 underline underline-offset-[16px] decoration-4 decoration-emerald-200">اليوم؟</span></>
               )}
             </h2>
-            <p className="text-slate-500 max-w-2xl mx-auto font-medium text-lg lg:text-xl leading-relaxed">
+            <p className="text-slate-500 max-w-2xl mx-auto font-medium text-sm lg:text-xl leading-relaxed">
               {t(
                 'استكشف مكتبتنا المتنوعة التي تغطي أحدث المهارات المطلوبة عالمياً بلهجة عراقية قريبة منك.',
                 'Explore our diverse library covering the latest globally demanded skills.'
@@ -293,13 +293,13 @@ const Home: React.FC = () => {
           </div>
 
           {/* Tabs Header */}
-          <div className="flex flex-col items-center mb-16 lg:mb-20">
-            <div className="flex flex-wrap gap-3 justify-center">
+          <div className="flex flex-col items-center mb-8 lg:mb-20">
+            <div className="flex flex-wrap gap-2 lg:gap-3 justify-center">
               {categoryTabs.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`px-6 py-3 lg:px-8 lg:py-4 rounded-2xl text-sm md:text-base font-black transition-all duration-300 italic ${activeTab === tab.id
+                  className={`px-4 py-2.5 lg:px-8 lg:py-4 rounded-xl lg:rounded-2xl text-xs md:text-base font-black transition-all duration-300 italic ${activeTab === tab.id
                     ? 'bg-slate-900 text-white shadow-xl'
                     : 'bg-white text-slate-500 hover:text-slate-800 border border-slate-200 hover:border-slate-300'
                     }`}
@@ -317,7 +317,7 @@ const Home: React.FC = () => {
                 <div className="w-12 h-12 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin"></div>
               </div>
             ) : getFilteredCourses().length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10 animate-fade-up">
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-10 animate-fade-up">
                 {getFilteredCourses().map((course) => (
                   <CourseCard key={course.id} course={course} />
                 ))}
@@ -334,7 +334,7 @@ const Home: React.FC = () => {
 
           {/* View All Button */}
           <div className="mt-16 text-center">
-            <Link to="/courses" className="inline-flex items-center gap-3 px-10 py-5 bg-white border-2 border-slate-200 text-slate-700 rounded-[20px] font-black text-lg hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm">
+            <Link to="/courses" className="inline-flex items-center gap-3 px-7 py-4 lg:px-10 lg:py-5 bg-white border-2 border-slate-200 text-slate-700 rounded-2xl lg:rounded-[20px] font-black text-sm lg:text-lg hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm">
               {t('عرض جميع الدورات', 'View All Courses')} <ArrowIcon className="w-5 h-5" />
             </Link>
           </div>
@@ -342,20 +342,20 @@ const Home: React.FC = () => {
       </section>
 
       {/* Features Section - Dark Background */}
-      <section id="features" className="py-24 lg:py-40 bg-slate-900 text-white relative overflow-hidden px-6">
+      <section id="features" className="py-14 lg:py-40 bg-slate-900 text-white relative overflow-hidden px-4 lg:px-6">
         <div className="container mx-auto max-w-7xl relative z-10">
-          <div className="flex flex-col lg:flex-row gap-24 lg:gap-36 items-center">
+          <div className="flex flex-col lg:flex-row gap-12 lg:gap-36 items-center">
 
             {/* Features Content */}
             <div className={`lg:w-1/2 ${isEnglish ? 'text-left' : 'text-right'}`}>
-              <h2 className="text-4xl lg:text-[4.5rem] font-black mb-14 italic leading-[1.05] tracking-tight">
+              <h2 className="text-2xl md:text-4xl lg:text-[4.5rem] font-black mb-8 lg:mb-14 italic leading-[1.05] tracking-tight">
                 {isEnglish ? (
                   <>Shamsiya.. Creating <br /> <span className="text-emerald-400 font-medium">Your Digital Future</span></>
                 ) : (
                   <>شمسية.. نبتكر <br /> <span className="text-emerald-400 font-medium">مستقبلك الرقمي</span></>
                 )}
               </h2>
-              <div className="space-y-12">
+              <div className="space-y-8 lg:space-y-12">
                 <div className="flex gap-6 lg:gap-8 group">
                   <div className="w-16 h-16 lg:w-20 lg:h-20 shrink-0 rounded-[2.2rem] bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:bg-emerald-500 group-hover:text-black transition-all duration-700 shadow-xl">
                     <Users2 className="w-8 h-8 lg:w-10 lg:h-10" />
@@ -396,26 +396,26 @@ const Home: React.FC = () => {
               {testimonials.length > 0 && (
                 <div className="relative">
                   {/* Carousel Content */}
-                  <div className="relative p-10 lg:p-16 bg-white/5 border border-white/10 rounded-[3rem] lg:rounded-[4.5rem] backdrop-blur-[20px] group hover:border-emerald-500/40 transition-all duration-1000 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] min-h-[400px] flex flex-col justify-center">
+                  <div className="relative p-6 lg:p-16 bg-white/5 border border-white/10 rounded-[1.5rem] lg:rounded-[4.5rem] backdrop-blur-[20px] group hover:border-emerald-500/40 transition-all duration-1000 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] min-h-[300px] lg:min-h-[400px] flex flex-col justify-center">
 
                     {/* Decorative Icon */}
-                    <div className={`absolute -top-5 ${isEnglish ? '-left-5 lg:-left-6' : '-right-5 lg:-right-6'} w-20 h-20 lg:w-24 lg:h-24 bg-emerald-600 rounded-[2rem] flex items-center justify-center shadow-2xl group-hover:rotate-12 transition-transform duration-700 z-20`}>
-                      <Star fill="white" className="w-8 h-8 lg:w-10 lg:h-10 text-white" />
+                    <div className={`absolute -top-4 ${isEnglish ? '-left-4 lg:-left-6' : '-right-4 lg:-right-6'} w-14 h-14 lg:w-24 lg:h-24 bg-emerald-600 rounded-xl lg:rounded-[2rem] flex items-center justify-center shadow-2xl group-hover:rotate-12 transition-transform duration-700 z-20`}>
+                      <Star fill="white" className="w-6 h-6 lg:w-10 lg:h-10 text-white" />
                     </div>
 
                     {/* Testimonial Text */}
                     <div key={activeTestimonialIndex} className="animate-fade-in">
-                      <p className={`text-xl md:text-3xl font-medium leading-relaxed mb-12 lg:mb-16 relative z-10 italic text-slate-100 ${isEnglish ? 'text-left' : 'text-right'}`}>
+                      <p className={`text-base md:text-xl lg:text-3xl font-medium leading-relaxed mb-8 lg:mb-16 relative z-10 italic text-slate-100 ${isEnglish ? 'text-left' : 'text-right'}`}>
                         "{testimonials[activeTestimonialIndex].text}"
                       </p>
 
                       <div className={`flex items-center gap-6 ${isEnglish ? 'justify-start text-left' : 'justify-end text-right'}`}>
                         <div>
-                          <h5 className="text-xl lg:text-2xl font-black italic tracking-tighter">{testimonials[activeTestimonialIndex].name}</h5>
+                          <h5 className="text-base lg:text-2xl font-black italic tracking-tighter">{testimonials[activeTestimonialIndex].name}</h5>
                           <p className="text-emerald-400 text-[10px] lg:text-xs font-black tracking-[0.2em] uppercase italic">{testimonials[activeTestimonialIndex].role}</p>
                         </div>
                         <div className="relative">
-                          <img src={testimonials[activeTestimonialIndex].image || `https://ui-avatars.com/api/?name=${testimonials[activeTestimonialIndex].name}&background=10b981&color=fff`} alt={testimonials[activeTestimonialIndex].name} className="w-16 h-16 lg:w-20 lg:h-20 rounded-[2.2rem] border-2 border-emerald-500 shadow-2xl object-cover ring-4 ring-emerald-500/20" />
+                          <img src={testimonials[activeTestimonialIndex].image || `https://ui-avatars.com/api/?name=${testimonials[activeTestimonialIndex].name}&background=10b981&color=fff`} alt={testimonials[activeTestimonialIndex].name} className="w-12 h-12 lg:w-20 lg:h-20 rounded-xl lg:rounded-[2.2rem] border-2 border-emerald-500 shadow-2xl object-cover ring-2 lg:ring-4 ring-emerald-500/20" />
                           <div className={`absolute bottom-1 ${isEnglish ? '-left-1' : '-right-1'} w-4 h-4 lg:w-5 lg:h-5 bg-green-500 border-4 border-slate-900 rounded-full`}></div>
                         </div>
                       </div>

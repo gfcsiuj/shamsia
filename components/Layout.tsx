@@ -118,9 +118,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 <img
                   src="https://k.top4top.io/p_3662fca071.png"
                   alt="شمسية"
-                  className="w-10 h-10 lg:w-12 lg:h-12 rounded-xl lg:rounded-2xl object-contain shadow-lg group-hover:rotate-[15deg] transition-all duration-500 shadow-emerald-200 dark:shadow-emerald-900/20 bg-white"
+                  className="w-9 h-9 lg:w-12 lg:h-12 rounded-xl lg:rounded-2xl object-contain shadow-lg group-hover:rotate-[15deg] transition-all duration-500 shadow-emerald-200 dark:shadow-emerald-900/20 bg-white"
                 />
-                <span className="text-xl lg:text-3xl font-black tracking-tighter italic text-slate-900 dark:text-white">
+                <span className="text-lg lg:text-3xl font-black tracking-tighter italic text-slate-900 dark:text-white">
                   {settings.siteName || 'شمسية'}
                 </span>
               </Link>
@@ -303,44 +303,44 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
       {/* Floating WhatsApp Chat Button */}
       <a
-        href="https://wa.me/9647732200003"
+        href="https://wa.me/9647832200003"
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-24 lg:bottom-10 left-6 lg:left-10 w-14 h-14 lg:w-16 lg:h-16 bg-emerald-600 text-white rounded-full flex items-center justify-center shadow-[0_20px_40px_-10px_rgba(5,150,105,0.4)] z-[99] transition-all hover:scale-110 active:scale-95 group overflow-hidden border-2 border-white/20"
+        className="fixed bottom-20 lg:bottom-10 left-4 lg:left-10 w-12 h-12 lg:w-16 lg:h-16 bg-emerald-600 text-white rounded-full flex items-center justify-center shadow-[0_20px_40px_-10px_rgba(5,150,105,0.4)] z-[99] transition-all hover:scale-110 active:scale-95 group overflow-hidden border-2 border-white/20"
       >
         <div className="absolute inset-0 bg-white/20 scale-0 group-hover:scale-100 transition-transform duration-500 rounded-full"></div>
-        <MessageCircle className="w-7 h-7 lg:w-8 lg:h-8 fill-current relative z-10" />
+        <MessageCircle className="w-6 h-6 lg:w-8 lg:h-8 fill-current relative z-10" />
       </a>
 
 
       {/* Footer - Modern Design */}
-      <footer className="pt-20 pb-28 lg:pb-10 border-t border-slate-100 dark:border-slate-800 px-4 lg:px-6 text-center lg:text-right bg-white dark:bg-slate-900 transition-colors duration-300">
+      <footer className="pt-12 lg:pt-20 pb-28 lg:pb-10 border-t border-slate-100 dark:border-slate-800 px-4 lg:px-6 text-center lg:text-right bg-white dark:bg-slate-900 transition-colors duration-300">
         <div className="container mx-auto max-w-7xl">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-16 mb-16">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 lg:gap-16 mb-8 lg:mb-16">
             {/* Brand Column */}
-            <div className="col-span-1">
-              <div className="flex items-center justify-center lg:justify-start gap-3 mb-6 group cursor-pointer">
+            <div className="col-span-2 lg:col-span-1">
+              <div className="flex items-center justify-center lg:justify-start gap-2 lg:gap-3 mb-3 lg:mb-6 group cursor-pointer">
                 <img
                   src="https://k.top4top.io/p_3662fca071.png"
                   alt="شمسية"
-                  className="w-10 h-10 rounded-xl object-contain shadow-lg group-hover:shadow-emerald-200 dark:group-hover:shadow-emerald-900/30 transition-all duration-500 bg-white"
+                  className="w-8 h-8 lg:w-10 lg:h-10 rounded-lg lg:rounded-xl object-contain shadow-lg group-hover:shadow-emerald-200 dark:group-hover:shadow-emerald-900/30 transition-all duration-500 bg-white"
                 />
-                <span className="text-2xl font-black tracking-tighter uppercase italic text-slate-900 dark:text-white">Shamsiya</span>
+                <span className="text-base lg:text-2xl font-black tracking-tighter uppercase italic text-slate-900 dark:text-white">Shamsiya</span>
               </div>
-              <p className="text-base leading-relaxed mb-8 font-medium text-slate-600 dark:text-slate-400">
+              <p className="text-xs lg:text-base leading-relaxed mb-3 lg:mb-8 font-medium text-slate-600 dark:text-slate-400 text-center lg:text-right">
                 {t(
                   settings.siteDescription || 'نقود الثورة التعليمية الرقمية في العراق من خلال تمكين الطاقات الشابة بأدوات العصر.',
                   'Leading the digital educational revolution in Iraq by empowering youth with modern tools.'
                 )}
               </p>
               <div className="flex justify-center lg:justify-start gap-2">
-                <a href="https://www.facebook.com/profile.php?id=61554748052998" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex items-center justify-center text-slate-400 dark:text-slate-500 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 dark:hover:bg-emerald-600 dark:hover:text-white transition-all duration-300">
+                <a href="https://www.facebook.com/profile.php?id=61554748052998" target="_blank" rel="noopener noreferrer" className="w-9 h-9 lg:w-10 lg:h-10 rounded-lg lg:rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex items-center justify-center text-slate-400 dark:text-slate-500 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 dark:hover:bg-emerald-600 dark:hover:text-white transition-all duration-300">
                   <Facebook className="w-4 h-4" />
                 </a>
-                <a href="https://www.instagram.com/shamsia.iq/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex items-center justify-center text-slate-400 dark:text-slate-500 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 dark:hover:bg-emerald-600 dark:hover:text-white transition-all duration-300">
+                <a href="https://www.instagram.com/shamsia.iq/" target="_blank" rel="noopener noreferrer" className="w-9 h-9 lg:w-10 lg:h-10 rounded-lg lg:rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex items-center justify-center text-slate-400 dark:text-slate-500 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 dark:hover:bg-emerald-600 dark:hover:text-white transition-all duration-300">
                   <Instagram className="w-4 h-4" />
                 </a>
-                <a href="https://wa.me/9647732200003" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex items-center justify-center text-slate-400 dark:text-slate-500 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 dark:hover:bg-emerald-600 dark:hover:text-white transition-all duration-300">
+                <a href="https://wa.me/9647832200003" target="_blank" rel="noopener noreferrer" className="w-9 h-9 lg:w-10 lg:h-10 rounded-lg lg:rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex items-center justify-center text-slate-400 dark:text-slate-500 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 dark:hover:bg-emerald-600 dark:hover:text-white transition-all duration-300">
                   <MessageCircle className="w-4 h-4" />
                 </a>
               </div>
@@ -348,34 +348,46 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
             {/* Links Columns */}
             <div>
-              <h4 className="font-black mb-6 text-sm uppercase tracking-widest opacity-60 text-slate-900 dark:text-white">
+              <h4 className="font-black mb-3 lg:mb-6 text-xs lg:text-sm uppercase tracking-widest opacity-60 text-slate-900 dark:text-white">
                 {t('روابط سريعة', 'Quick Links')}
               </h4>
-              <ul className="space-y-3 text-sm font-bold">
-                {navLinks.map((link) => (
-                  <li key={link.path}>
-                    <Link to={link.path} className="text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all flex items-center gap-2 group justify-center lg:justify-start">
-                      {link.name} <ChevronLeft className="w-3 h-3 opacity-0 group-hover:opacity-100 group-hover:-translate-x-1 transition-all" />
-                    </Link>
-                  </li>
-                ))}
+              <ul className="grid grid-cols-2 lg:grid-cols-1 gap-1.5 lg:space-y-3 text-xs lg:text-sm font-bold">
+                {navLinks.map((link) => {
+                  // Arabic tatweel padding for equal visual width in footer
+                  const footerNames: Record<string, string> = {
+                    '/': t('الرئيسيـــــة', 'Home'),
+                    '/courses': t('الــــــــــدورات', 'Courses'),
+                    '/calendar': t('التـقـويــــــــم', 'Calendar'),
+                    '/certificates': t('الشـهادات', 'Certificates'),
+                    '/instructors': t('أعـضــــــاؤنـا', 'Members'),
+                    '/about': t('مـــــن نــحــــن', 'About Us'),
+                    '/contact': t('اتصــــل بنـا', 'Contact'),
+                  };
+                  return (
+                    <li key={link.path}>
+                      <Link to={link.path} className="text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all flex items-center gap-1 group lg:justify-start">
+                        {footerNames[link.path] || link.name} <ChevronLeft className="w-3 h-3 opacity-0 group-hover:opacity-100 group-hover:-translate-x-1 transition-all" />
+                      </Link>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
 
             <div>
-              <h4 className="font-black mb-6 text-sm uppercase tracking-widest opacity-60 text-slate-900 dark:text-white">
+              <h4 className="font-black mb-3 lg:mb-6 text-xs lg:text-sm uppercase tracking-widest opacity-60 text-slate-900 dark:text-white">
                 {t('تواصل معنا', 'Contact Us')}
               </h4>
-              <ul className="space-y-4 text-sm text-slate-600 dark:text-slate-400">
-                <li className="flex items-center gap-3 justify-center lg:justify-start">
+              <ul className="space-y-3 lg:space-y-4 text-xs lg:text-sm text-slate-600 dark:text-slate-400">
+                <li className="flex items-center gap-2 lg:gap-3 lg:justify-start">
                   <MapPin className="text-emerald-500 dark:text-emerald-400 flex-shrink-0" size={16} />
                   <span>{settings.contactAddress || t('العراق، بغداد', 'Iraq, Baghdad')}</span>
                 </li>
-                <li className="flex items-center gap-3 justify-center lg:justify-start">
+                <li className="flex items-center gap-2 lg:gap-3 lg:justify-start">
                   <Phone className="text-emerald-500 dark:text-emerald-400 flex-shrink-0" size={16} />
                   <span className="ltr">{settings.contactPhone}</span>
                 </li>
-                <li className="flex items-center gap-3 justify-center lg:justify-start">
+                <li className="flex items-center gap-2 lg:gap-3 lg:justify-start">
                   <Mail className="text-emerald-500 dark:text-emerald-400 flex-shrink-0" size={16} />
                   <span className="break-all">{settings.contactEmail}</span>
                 </li>
@@ -383,11 +395,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             </div>
 
             {/* Newsletter Column */}
-            <div className="bg-emerald-50/80 dark:bg-emerald-900/10 p-6 lg:p-8 rounded-2xl border border-emerald-100 dark:border-emerald-900/30">
-              <h4 className="text-emerald-950 dark:text-emerald-100 font-black mb-3 text-lg tracking-tight">
+            <div className="col-span-2 lg:col-span-1 bg-emerald-50/80 dark:bg-emerald-900/10 p-4 lg:p-8 rounded-xl lg:rounded-2xl border border-emerald-100 dark:border-emerald-900/30">
+              <h4 className="text-emerald-950 dark:text-emerald-100 font-black mb-2 lg:mb-3 text-base lg:text-lg tracking-tight">
                 {t('النشرة البريدية', 'Newsletter')}
               </h4>
-              <p className="text-xs text-emerald-700/70 dark:text-emerald-400/70 mb-6 font-bold uppercase tracking-wide">
+              <p className="text-xs text-emerald-700/70 dark:text-emerald-400/70 mb-4 lg:mb-6 font-bold uppercase tracking-wide">
                 {t('صُنِعَ بفخر في العراق 🇮🇶', 'Made with pride in Iraq 🇮🇶')}
               </p>
               <form onSubmit={handleSubscribe} className="relative">
@@ -406,7 +418,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           </div>
 
           {/* Bottom Bar */}
-          <div className="pt-8 border-t border-slate-100 dark:border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4">
+          <div className="pt-4 lg:pt-8 border-t border-slate-100 dark:border-slate-800 flex flex-col md:flex-row justify-between items-center gap-3 lg:gap-4">
             <p className="text-xs font-bold uppercase tracking-wide opacity-50 text-slate-600 dark:text-slate-400">
               {settings.footerText || `© ${new Date().getFullYear()} SHAMSIYA PLATFORM`}
             </p>
@@ -417,8 +429,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             </div>
           </div>
         </div>
-      </footer>
-    </div>
+      </footer >
+    </div >
   );
 };
 

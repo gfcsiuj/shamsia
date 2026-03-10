@@ -71,14 +71,14 @@ const Courses: React.FC = () => {
         </div>
 
         <div className="container mx-auto px-4 text-center relative z-10">
-          <h1 className="text-5xl md:text-7xl font-black text-slate-900 dark:text-white mb-6 italic tracking-tight animate-fade-up">
+          <h1 className="text-3xl md:text-5xl lg:text-7xl font-black text-slate-900 dark:text-white mb-4 lg:mb-6 italic tracking-tight animate-fade-up">
             {isEnglish ? (
               <>Our <span className="text-gradient">Training Courses</span></>
             ) : (
               <>دوراتنا <span className="text-gradient">التدريبية</span></>
             )}
           </h1>
-          <p className="text-slate-600 dark:text-slate-300 text-lg md:text-xl max-w-2xl mx-auto font-medium animate-fade-up delay-100">
+          <p className="text-slate-600 dark:text-slate-300 text-sm md:text-lg lg:text-xl max-w-2xl mx-auto font-medium animate-fade-up delay-100">
             {t(
               'تصفح مكتبتنا الواسعة من الدورات التدريبية المصممة لرفع كفاءتك المهنية والشخصية',
               'Browse our extensive library of training courses designed to boost your professional and personal skills'
@@ -89,8 +89,8 @@ const Courses: React.FC = () => {
 
       <div className="container mx-auto px-4 -mt-6 relative z-20">
         {/* Filter Bar - New Design */}
-        <div className="bg-white dark:bg-slate-800 rounded-[2.5rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] dark:shadow-none p-6 mb-12 border border-slate-100 dark:border-slate-700">
-          <div className="flex flex-col md:flex-row gap-6 items-center justify-between">
+        <div className="bg-white dark:bg-slate-800 rounded-[1.5rem] lg:rounded-[2.5rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] dark:shadow-none p-4 lg:p-6 mb-8 lg:mb-12 border border-slate-100 dark:border-slate-700">
+          <div className="flex flex-col md:flex-row gap-4 lg:gap-6 items-center justify-between">
             {/* Categories */}
             <div className="flex items-center gap-3 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 no-scrollbar">
               <Filter className="text-emerald-500 flex-shrink-0" size={22} />
@@ -98,7 +98,7 @@ const Courses: React.FC = () => {
                 <button
                   key={cat.id}
                   onClick={() => setSelectedCategory(cat.id)}
-                  className={`px-6 py-3 rounded-2xl text-sm font-black whitespace-nowrap transition-all duration-300 border border-transparent ${selectedCategory === cat.id
+                  className={`px-4 py-2.5 lg:px-6 lg:py-3 rounded-xl lg:rounded-2xl text-xs lg:text-sm font-black whitespace-nowrap transition-all duration-300 border border-transparent ${selectedCategory === cat.id
                     ? 'bg-slate-900 dark:bg-emerald-600 text-white shadow-xl dark:shadow-emerald-900/50'
                     : 'bg-slate-50 dark:bg-slate-900/50 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-emerald-600 dark:hover:text-emerald-400 dark:border-slate-700'
                     }`}
@@ -128,7 +128,7 @@ const Courses: React.FC = () => {
             <div className="w-12 h-12 border-4 border-emerald-200 dark:border-emerald-900/50 border-t-emerald-600 rounded-full animate-spin"></div>
           </div>
         ) : filteredCourses.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-10">
             {filteredCourses.map((course, index) => (
               <div key={course.id} className="animate-fade-up" style={{ animationDelay: `${index * 100}ms` }}>
                 <CourseCard course={course} />

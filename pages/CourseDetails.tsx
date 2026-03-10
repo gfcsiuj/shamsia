@@ -93,7 +93,7 @@ const CourseDetails: React.FC = () => {
   return (
     <div className="bg-slate-50 dark:bg-slate-900 min-h-screen pb-24 transition-colors duration-300">
       {/* Hero Section - Emerald Theme */}
-      <div className="relative pt-20 pb-32 overflow-hidden">
+      <div className="relative pt-20 pb-16 lg:pb-32 overflow-hidden">
         {/* Background Blobs */}
         <div className="absolute inset-0 -z-10 overflow-hidden">
           <div className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] bg-emerald-100/60 dark:bg-emerald-900/20 rounded-full blur-[120px] animate-blob"></div>
@@ -103,27 +103,27 @@ const CourseDetails: React.FC = () => {
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="flex flex-col lg:flex-row gap-8 items-start">
             <div className="lg:w-2/3 animate-fade-up">
-              <span className="inline-block bg-emerald-600 text-white text-xs font-black px-4 py-2 rounded-xl mb-6 uppercase tracking-wide shadow-lg shadow-emerald-500/20">
+              <span className="inline-block bg-emerald-600 text-white text-[10px] lg:text-xs font-black px-3 py-1.5 lg:px-4 lg:py-2 rounded-lg lg:rounded-xl mb-4 lg:mb-6 uppercase tracking-wide shadow-lg shadow-emerald-500/20">
                 {getCategoryLabel(course.category)}
               </span>
-              <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white mb-6 leading-tight italic tracking-tight animate-fade-up delay-100">
+              <h1 className="text-xl md:text-3xl lg:text-6xl font-black text-slate-900 dark:text-white mb-3 lg:mb-6 leading-tight italic tracking-tight animate-fade-up delay-100">
                 {course.title}
               </h1>
-              <p className="text-slate-600 dark:text-slate-300 text-lg md:text-xl mb-8 leading-relaxed max-w-2xl font-medium animate-fade-up delay-200">
+              <p className="text-slate-600 dark:text-slate-300 text-sm lg:text-xl mb-5 lg:mb-8 leading-relaxed max-w-2xl font-medium animate-fade-up delay-200">
                 {course.description}
               </p>
 
-              <div className="flex flex-wrap gap-6 text-sm md:text-base animate-fade-up delay-300">
-                <div className="flex items-center gap-2 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm px-4 py-2 rounded-xl border border-slate-100 dark:border-slate-700/50">
-                  <User className="text-emerald-600 dark:text-emerald-400" size={18} />
+              <div className="flex flex-wrap gap-2 lg:gap-6 text-xs lg:text-base animate-fade-up delay-300">
+                <div className="flex items-center gap-1.5 lg:gap-2 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm px-3 py-1.5 lg:px-4 lg:py-2 rounded-lg lg:rounded-xl border border-slate-100 dark:border-slate-700/50">
+                  <User className="text-emerald-600 dark:text-emerald-400" size={14} />
                   <span className="font-bold text-slate-700 dark:text-slate-200">{course.instructorText || instructor?.name || t('غير محدد', 'Not specified')}</span>
                 </div>
-                <div className="flex items-center gap-2 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm px-4 py-2 rounded-xl border border-slate-100 dark:border-slate-700/50">
-                  <BarChart className="text-orange-500 dark:text-orange-400" size={18} />
+                <div className="flex items-center gap-1.5 lg:gap-2 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm px-3 py-1.5 lg:px-4 lg:py-2 rounded-lg lg:rounded-xl border border-slate-100 dark:border-slate-700/50">
+                  <BarChart className="text-orange-500 dark:text-orange-400" size={14} />
                   <span className="font-bold text-slate-700 dark:text-slate-200">{course.level}</span>
                 </div>
-                <div className="flex items-center gap-2 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm px-4 py-2 rounded-xl border border-slate-100 dark:border-slate-700/50">
-                  <Award className="text-blue-500 dark:text-blue-400" size={18} />
+                <div className="flex items-center gap-1.5 lg:gap-2 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm px-3 py-1.5 lg:px-4 lg:py-2 rounded-lg lg:rounded-xl border border-slate-100 dark:border-slate-700/50">
+                  <Award className="text-blue-500 dark:text-blue-400" size={14} />
                   <span className="font-bold text-slate-700 dark:text-slate-200">{t('شهادة معتمدة', 'Certified Certificate')}</span>
                 </div>
               </div>
@@ -132,13 +132,13 @@ const CourseDetails: React.FC = () => {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 max-w-7xl -mt-16 relative z-10">
-        <div className="flex flex-col lg:flex-row gap-8">
+      <div className="container mx-auto px-4 max-w-7xl -mt-8 lg:-mt-16 relative z-10">
+        <div className="flex flex-col lg:flex-row gap-5 lg:gap-8">
 
           {/* Main Content Column */}
           <div className="lg:w-2/3 animate-fade-up delay-400">
             {/* Media Preview */}
-            <div className="bg-slate-900 rounded-[2rem] overflow-hidden aspect-video shadow-2xl mb-8 relative group cursor-pointer border-4 border-white dark:border-slate-800">
+            <div className="bg-slate-900 rounded-xl lg:rounded-[2rem] overflow-hidden aspect-video shadow-2xl mb-5 lg:mb-8 relative group cursor-pointer border-2 lg:border-4 border-white dark:border-slate-800">
               {isVideo ? (
                 <div className="w-full h-full bg-slate-800 flex items-center justify-center text-white">
                   <div className="w-20 h-20 bg-emerald-600 rounded-full flex items-center justify-center shadow-2xl shadow-emerald-500/30 group-hover:scale-110 transition-transform">
@@ -151,12 +151,12 @@ const CourseDetails: React.FC = () => {
             </div>
 
             {/* Tabs Navigation */}
-            <div className="bg-white dark:bg-slate-800 rounded-t-[2rem] border-b border-slate-100 dark:border-slate-700 flex overflow-x-auto no-scrollbar">
+            <div className="bg-white dark:bg-slate-800 rounded-t-xl lg:rounded-t-[2rem] border-b border-slate-100 dark:border-slate-700 flex overflow-x-auto no-scrollbar">
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
-                  className={`flex-shrink-0 px-6 md:px-8 py-5 font-black text-sm md:text-base whitespace-nowrap border-b-2 transition-all ${activeTab === tab.id
+                  className={`flex-shrink-0 px-4 lg:px-8 py-3 lg:py-5 font-black text-xs lg:text-base whitespace-nowrap border-b-2 transition-all ${activeTab === tab.id
                     ? 'border-emerald-600 text-emerald-600 dark:text-emerald-400 bg-emerald-50/50 dark:bg-emerald-900/20'
                     : 'border-transparent text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
                     }`}
@@ -167,18 +167,18 @@ const CourseDetails: React.FC = () => {
             </div>
 
             {/* Tab Content */}
-            <div className="bg-white dark:bg-slate-800 rounded-b-[2rem] shadow-lg p-6 md:p-10 min-h-[400px] border border-t-0 border-slate-100 dark:border-slate-700">
+            <div className="bg-white dark:bg-slate-800 rounded-b-xl lg:rounded-b-[2rem] shadow-lg p-4 lg:p-10 min-h-[300px] lg:min-h-[400px] border border-t-0 border-slate-100 dark:border-slate-700">
               {activeTab === 'about' && (
                 <div className="animate-fade-up space-y-8">
                   <div>
-                    <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-6 italic">
+                    <h3 className="text-lg lg:text-2xl font-black text-slate-900 dark:text-white mb-4 lg:mb-6 italic">
                       {t('ماذا ستتعلم؟', 'What Will You Learn?')}
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {course.objectives.map((obj, i) => (
-                        <div key={i} className="flex items-start gap-3 bg-emerald-50/50 dark:bg-emerald-900/10 p-4 rounded-xl border border-emerald-100 dark:border-emerald-500/20">
-                          <CheckCircle className="text-emerald-600 dark:text-emerald-400 flex-shrink-0 mt-0.5" size={20} />
-                          <span className="text-slate-700 dark:text-slate-200 font-medium">{obj}</span>
+                        <div key={i} className="flex items-start gap-2 lg:gap-3 bg-emerald-50/50 dark:bg-emerald-900/10 p-3 lg:p-4 rounded-lg lg:rounded-xl border border-emerald-100 dark:border-emerald-500/20">
+                          <CheckCircle className="text-emerald-600 dark:text-emerald-400 flex-shrink-0 mt-0.5" size={16} />
+                          <span className="text-slate-700 dark:text-slate-200 font-medium text-xs lg:text-base">{obj}</span>
                         </div>
                       ))}
                     </div>
@@ -364,14 +364,14 @@ const CourseDetails: React.FC = () => {
 
           {/* Sidebar */}
           <div className="lg:w-1/3 animate-fade-up delay-500">
-            <div className="bg-white dark:bg-slate-800 rounded-[2rem] shadow-xl p-8 lg:sticky lg:top-24 border border-slate-100 dark:border-slate-700">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl lg:rounded-[2rem] shadow-xl p-4 lg:p-8 lg:sticky lg:top-24 border border-slate-100 dark:border-slate-700">
               {!course.hidePrice && (
                 <>
-                  <div className="text-4xl font-black text-slate-900 dark:text-white mb-2 italic tracking-tight">
+                  <div className="text-xl lg:text-4xl font-black text-slate-900 dark:text-white mb-1 lg:mb-2 italic tracking-tight">
                     {course.priceText || (course.price === 0 ? t('مجاناً', 'Free') : `${course.price.toLocaleString()} ${t('د.ع', 'IQD')}`)}
                   </div>
                   {course.oldPrice && (
-                    <div className="text-slate-500 dark:text-slate-400 line-through mb-6 font-medium">
+                    <div className="text-slate-500 dark:text-slate-400 line-through mb-4 lg:mb-6 font-medium text-sm lg:text-base">
                       {course.oldPrice.toLocaleString()} {t('د.ع', 'IQD')}
                     </div>
                   )}
@@ -380,22 +380,22 @@ const CourseDetails: React.FC = () => {
 
               <Link
                 to={`/courses/${course.id}/register`}
-                className="block w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black text-center py-5 rounded-2xl transition-all shadow-xl shadow-emerald-500/20 mb-8 transform hover:scale-[1.02] active:scale-95 text-lg"
+                className="block w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black text-center py-3 lg:py-5 rounded-xl lg:rounded-2xl transition-all shadow-xl shadow-emerald-500/20 mb-4 lg:mb-8 transform hover:scale-[1.02] active:scale-95 text-sm lg:text-lg"
               >
                 {t('سجل الآن', 'Register Now')}
               </Link>
 
-              <div className="space-y-4 text-sm text-slate-600 dark:text-slate-300">
-                <div className="flex items-center justify-between border-b border-slate-50 dark:border-slate-700/50 pb-4">
-                  <span className="flex items-center gap-2 font-medium"><Clock size={18} className="text-emerald-500 dark:text-emerald-400" /> {t('المدة:', 'Duration:')}</span>
+              <div className="space-y-3 lg:space-y-4 text-xs lg:text-sm text-slate-600 dark:text-slate-300">
+                <div className="flex items-center justify-between border-b border-slate-50 dark:border-slate-700/50 pb-3 lg:pb-4">
+                  <span className="flex items-center gap-1.5 lg:gap-2 font-medium"><Clock size={16} className="text-emerald-500 dark:text-emerald-400 lg:w-[18px] lg:h-[18px]" /> {t('المدة:', 'Duration:')}</span>
                   <span className="font-black text-slate-900 dark:text-white">{course.duration}</span>
                 </div>
-                <div className="flex items-center justify-between border-b border-slate-50 dark:border-slate-700/50 pb-4">
-                  <span className="flex items-center gap-2 font-medium"><Calendar size={18} className="text-emerald-500 dark:text-emerald-400" /> {t('المواعيد:', 'Schedule:')}</span>
+                <div className="flex items-center justify-between border-b border-slate-50 dark:border-slate-700/50 pb-3 lg:pb-4">
+                  <span className="flex items-center gap-1.5 lg:gap-2 font-medium"><Calendar size={16} className="text-emerald-500 dark:text-emerald-400 lg:w-[18px] lg:h-[18px]" /> {t('المواعيد:', 'Schedule:')}</span>
                   <span className="font-black text-slate-900 dark:text-white">{course.startDate}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="flex items-center gap-2 font-medium"><User size={18} className="text-emerald-500 dark:text-emerald-400" /> {t('عدد الطلاب:', 'Enrolled:')}</span>
+                  <span className="flex items-center gap-1.5 lg:gap-2 font-medium"><User size={16} className="text-emerald-500 dark:text-emerald-400 lg:w-[18px] lg:h-[18px]" /> {t('عدد الطلاب:', 'Enrolled:')}</span>
                   <span className="font-black text-slate-900 dark:text-white">{course.studentsCount}</span>
                 </div>
               </div>
