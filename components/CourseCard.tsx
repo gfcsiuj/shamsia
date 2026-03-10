@@ -81,6 +81,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, instructor: propInstruc
                     key={currentImgIdx}
                     src={images[currentImgIdx]}
                     alt={course.title}
+                    loading="lazy"
                     className="w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60"></div>
@@ -146,8 +147,8 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, instructor: propInstruc
                         <Star className="w-3 h-3 lg:w-4 lg:h-4 fill-current" /> {(course.rating || 0).toFixed(1)}
                     </span>
                     {instructorName && (
-                        <span className={`hidden lg:flex items-center gap-2 text-[10px] lg:text-xs font-bold ${isDarkMode ? 'text-emerald-400' : 'text-emerald-600'}`}>
-                            <User className="w-3.5 h-3.5" /> {instructorName}
+                        <span className={`hidden lg:flex items-center gap-2 text-[10px] lg:text-xs font-bold truncate max-w-[120px] xl:max-w-[150px] ${isDarkMode ? 'text-emerald-400' : 'text-emerald-600'}`}>
+                            <User className="w-3.5 h-3.5 shrink-0" /> <span className="truncate">{instructorName}</span>
                         </span>
                     )}
                 </div>

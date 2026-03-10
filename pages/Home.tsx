@@ -34,15 +34,16 @@ const Home: React.FC = () => {
   const [studentsCount, setStudentsCount] = useState(0);
   const [testimonials, setTestimonials] = useState<Testimonial[]>(TESTIMONIALS);
   const [activeTestimonialIndex, setActiveTestimonialIndex] = useState(0);
+  const [isTestimonialHovered, setIsTestimonialHovered] = useState(false);
 
   // Auto-rotate testimonials
   useEffect(() => {
-    if (testimonials.length <= 1) return;
+    if (testimonials.length <= 1 || isTestimonialHovered) return;
     const interval = setInterval(() => {
       setActiveTestimonialIndex(prev => (prev + 1) % testimonials.length);
     }, 5000);
     return () => clearInterval(interval);
-  }, [testimonials.length]);
+  }, [testimonials.length, isTestimonialHovered, activeTestimonialIndex]);
 
   // Fetch real stats from Firebase
   useEffect(() => {
@@ -396,7 +397,11 @@ const Home: React.FC = () => {
               {testimonials.length > 0 && (
                 <div className="relative">
                   {/* Carousel Content */}
-                  <div className="relative p-6 lg:p-16 bg-white/5 border border-white/10 rounded-[1.5rem] lg:rounded-[4.5rem] backdrop-blur-[20px] group hover:border-emerald-500/40 transition-all duration-1000 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] min-h-[300px] lg:min-h-[400px] flex flex-col justify-center">
+                  <div
+                    className="relative p-6 lg:p-16 bg-white/5 border border-white/10 rounded-[1.5rem] lg:rounded-[4.5rem] backdrop-blur-[20px] group hover:border-emerald-500/40 transition-all duration-1000 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] min-h-[300px] lg:min-h-[400px] flex flex-col justify-center"
+                    onMouseEnter={() => setIsTestimonialHovered(true)}
+                    onMouseLeave={() => setIsTestimonialHovered(false)}
+                  >
 
                     {/* Decorative Icon */}
                     <div className={`absolute -top-4 ${isEnglish ? '-left-4 lg:-left-6' : '-right-4 lg:-right-6'} w-14 h-14 lg:w-24 lg:h-24 bg-emerald-600 rounded-xl lg:rounded-[2rem] flex items-center justify-center shadow-2xl group-hover:rotate-12 transition-transform duration-700 z-20`}>

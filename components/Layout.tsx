@@ -23,6 +23,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [instructors, setInstructors] = useState<Instructor[]>([]);
   const [searchResults, setSearchResults] = useState<{ courses: Course[], instructors: Instructor[] }>({ courses: [], instructors: [] });
   const [showResults, setShowResults] = useState(false);
+  const [hasFetched, setHasFetched] = useState(false);
+  const [isFetchingSearch, setIsFetchingSearch] = useState(false);
 
   // Use global theme context
   const { settings, isDarkMode, setIsDarkMode, isEnglish, setIsEnglish, t } = useTheme();
@@ -33,27 +35,31 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     };
     window.addEventListener('scroll', handleScroll);
 
-    // Fetch data for search
-    const fetchData = async () => {
-      try {
-        const [coursesSnap, instructorsSnap] = await Promise.all([
-          db.collection('courses').get(),
-          db.collection('instructors').get()
-        ]);
-
-        const coursesData = coursesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Course));
-        const instructorsData = instructorsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Instructor));
-
-        setCourses(coursesData);
-        setInstructors(instructorsData);
-      } catch (error) {
-        console.error("Error fetching search data:", error);
-      }
-    };
-    fetchData();
-
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Fetch data for search only when user focuses input
+  const fetchSearchData = async () => {
+    if (hasFetched || isFetchingSearch) return;
+    setIsFetchingSearch(true);
+    try {
+      const [coursesSnap, instructorsSnap] = await Promise.all([
+        db.collection('courses').get(),
+        db.collection('instructors').get()
+      ]);
+
+      const coursesData = coursesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Course));
+      const instructorsData = instructorsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Instructor));
+
+      setCourses(coursesData);
+      setInstructors(instructorsData);
+      setHasFetched(true);
+    } catch (error) {
+      console.error("Error fetching search data:", error);
+    } finally {
+      setIsFetchingSearch(false);
+    }
+  };
 
   const handleSearch = (query: string) => {
     setHeaderSearch(query);
@@ -152,8 +158,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     type="text"
                     value={headerSearch}
                     onChange={(e) => handleSearch(e.target.value)}
-                    onFocus={() => { if (headerSearch) setShowResults(true); }}
-                    onBlur={() => setTimeout(() => setShowResults(false), 200)}
+                    onFocus={() => {
+                      fetchSearchData();
+                      if (headerSearch) setShowResults(true);
+                    }}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' && headerSearch.trim()) {
                         navigate(`/courses?q=${encodeURIComponent(headerSearch.trim())}`);
@@ -165,53 +173,69 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   />
                 </div>
 
+                {/* Invisible Overlay to handle Click Outside */}
+                {showResults && (
+                  <div
+                    className="fixed inset-0 z-[100]"
+                    onClick={() => setShowResults(false)}
+                  ></div>
+                )}
+
                 {/* Live Search Results Dropdown */}
-                {showResults && (searchResults.courses.length > 0 || searchResults.instructors.length > 0) && (
+                {showResults && (
                   <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-slate-800 rounded-2xl shadow-xl overflow-hidden z-[101] animate-fade-in border border-slate-100 dark:border-slate-700 max-h-96 overflow-y-auto w-64 -translate-x-8 lg:-translate-x-0">
-                    {searchResults.courses.length > 0 && (
-                      <div className="p-2">
-                        <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 px-3 py-2 uppercase tracking-wider">{t('الدورات', 'Courses')}</h3>
-                        {searchResults.courses.slice(0, 3).map(course => (
-                          <div
-                            key={course.id}
-                            onClick={() => navigate(`/courses?q=${course.title}`)}
-                            className="flex items-center gap-3 p-3 hover:bg-slate-50 dark:hover:bg-slate-700/50 rounded-xl cursor-pointer transition group"
-                          >
-                            <div className="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-900/50 overflow-hidden shrink-0 relative">
-                              {course.media && course.media[0] && course.media[0].type === 'image' ? (
-                                <img src={course.media[0].url} className="w-full h-full object-cover" alt="" />
-                              ) : (
-                                <div className="w-full h-full flex items-center justify-center text-slate-400 dark:text-slate-500"><BookOpen size={16} /></div>
-                              )}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <h4 className="font-bold text-slate-800 dark:text-slate-200 text-xs truncate group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">{course.title}</h4>
-                              <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate">{getCategoryLabel(course.category)}</p>
-                            </div>
-                          </div>
-                        ))}
+                    {headerSearch.trim() && searchResults.courses.length === 0 && searchResults.instructors.length === 0 ? (
+                      <div className="p-4 text-center text-sm font-medium text-slate-500 dark:text-slate-400">
+                        {t('لم يتم العثور على نتائج مطابقة', 'No results found')}
                       </div>
-                    )}
-
-                    {searchResults.courses.length > 0 && searchResults.instructors.length > 0 && <div className="h-px bg-slate-100 dark:bg-slate-700 mx-4"></div>}
-
-                    {searchResults.instructors.length > 0 && (
-                      <div className="p-2">
-                        <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 px-3 py-2 uppercase tracking-wider">{t('المدربون والخريجون', 'Instructors & Graduates')}</h3>
-                        {searchResults.instructors.slice(0, 3).map(inst => (
-                          <div
-                            key={inst.id}
-                            onClick={() => navigate(`/instructors?q=${inst.name}`)}
-                            className="flex items-center gap-3 p-3 hover:bg-slate-50 dark:hover:bg-slate-700/50 rounded-xl cursor-pointer transition group"
-                          >
-                            <img src={inst.image} className="w-8 h-8 rounded-full object-cover border border-slate-100 dark:border-slate-700" alt="" />
-                            <div className="flex-1 min-w-0">
-                              <h4 className="font-bold text-slate-800 dark:text-slate-200 text-xs truncate group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">{inst.name}</h4>
-                              <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate">{inst.specialization || t('مدرب', 'Instructor')}</p>
-                            </div>
+                    ) : (
+                      <>
+                        {searchResults.courses.length > 0 && (
+                          <div className="p-2">
+                            <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 px-3 py-2 uppercase tracking-wider">{t('الدورات', 'Courses')}</h3>
+                            {searchResults.courses.slice(0, 3).map(course => (
+                              <div
+                                key={course.id}
+                                onClick={() => navigate(`/courses?q=${course.title}`)}
+                                className="flex items-center gap-3 p-3 hover:bg-slate-50 dark:hover:bg-slate-700/50 rounded-xl cursor-pointer transition group"
+                              >
+                                <div className="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-900/50 overflow-hidden shrink-0 relative">
+                                  {course.media && course.media[0] && course.media[0].type === 'image' ? (
+                                    <img src={course.media[0].url} className="w-full h-full object-cover" alt="" />
+                                  ) : (
+                                    <div className="w-full h-full flex items-center justify-center text-slate-400 dark:text-slate-500"><BookOpen size={16} /></div>
+                                  )}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <h4 className="font-bold text-slate-800 dark:text-slate-200 text-xs truncate group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">{course.title}</h4>
+                                  <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate">{getCategoryLabel(course.category)}</p>
+                                </div>
+                              </div>
+                            ))}
                           </div>
-                        ))}
-                      </div>
+                        )}
+
+                        {searchResults.courses.length > 0 && searchResults.instructors.length > 0 && <div className="h-px bg-slate-100 dark:bg-slate-700 mx-4"></div>}
+
+                        {searchResults.instructors.length > 0 && (
+                          <div className="p-2">
+                            <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 px-3 py-2 uppercase tracking-wider">{t('المدربون والخريجون', 'Instructors & Graduates')}</h3>
+                            {searchResults.instructors.slice(0, 3).map(inst => (
+                              <div
+                                key={inst.id}
+                                onClick={() => navigate(`/instructors?q=${inst.name}`)}
+                                className="flex items-center gap-3 p-3 hover:bg-slate-50 dark:hover:bg-slate-700/50 rounded-xl cursor-pointer transition group"
+                              >
+                                <img src={inst.image} className="w-8 h-8 rounded-full object-cover border border-slate-100 dark:border-slate-700" alt="" />
+                                <div className="flex-1 min-w-0">
+                                  <h4 className="font-bold text-slate-800 dark:text-slate-200 text-xs truncate group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">{inst.name}</h4>
+                                  <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate">{inst.specialization || t('مدرب', 'Instructor')}</p>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </>
                     )}
                   </div>
                 )}
@@ -360,7 +384,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     '/calendar': t('التـقـويــــــــم', 'Calendar'),
                     '/certificates': t('الشـهادات', 'Certificates'),
                     '/instructors': t('أعـضــــــاؤنـا', 'Members'),
-                    '/about': t('مـــــن نــحــــن', 'About Us'),
+                    '/about': t('مــــن نـحــــن', 'About Us'),
                     '/contact': t('اتصــــل بنـا', 'Contact'),
                   };
                   return (

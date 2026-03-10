@@ -24,11 +24,13 @@ import Settings from './pages/admin/Settings';
 import CalendarAdmin from './pages/admin/CalendarAdmin';
 import ProtectedRoute from './components/ProtectedRoute';
 import Maintenance from './components/Maintenance';
+import NotFound from './pages/NotFound';
 import LoadingScreen from './components/LoadingScreen';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { VisualEditProvider } from './context/VisualEditContext'; // Import
 import VisualEditor from './components/VisualEditor'; // Import
+import ScrollToTop from './components/ScrollToTop';
 
 // Component to handle maintenance logic
 const MaintenanceGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -58,6 +60,7 @@ const App: React.FC = () => {
       <ThemeProvider>
         <VisualEditProvider> {/* Wrap App */}
           <MaintenanceGuard>
+            <ScrollToTop />
             <VisualEditor /> {/* Render Overlay */}
             <Routes>
               {/* Public Routes - Wrapped in Layout */}
@@ -155,8 +158,8 @@ const App: React.FC = () => {
                 }
               />
 
-              {/* 404 Redirect */}
-              <Route path="*" element={<Navigate to="/" replace />} />
+              {/* 404 Catch All */}
+              <Route path="*" element={<Layout><NotFound /></Layout>} />
             </Routes>
           </MaintenanceGuard>
         </VisualEditProvider>

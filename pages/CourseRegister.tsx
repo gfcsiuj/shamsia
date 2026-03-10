@@ -152,11 +152,12 @@ const CourseRegister: React.FC = () => {
 
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-black text-slate-700 dark:text-slate-300 mb-2">
+                    <label htmlFor="course_select" className="block text-sm font-black text-slate-700 dark:text-slate-300 mb-2">
                       {t('اختر الدورة التدريبية', 'Select Course')}
                     </label>
                     <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full">
                       <select
+                        id="course_select"
                         value={selectedCourseId}
                         onChange={(e) => setSelectedCourseId(e.target.value)}
                         className="flex-1 min-w-0 w-full px-4 py-4 rounded-xl bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 dark:text-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 dark:focus:ring-emerald-900/30 outline-none transition cursor-pointer font-medium"
@@ -188,10 +189,11 @@ const CourseRegister: React.FC = () => {
               </h2>
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div>
-                  <label className="block text-sm font-black text-slate-700 dark:text-slate-300 mb-2">
+                  <label htmlFor="student_name" className="block text-sm font-black text-slate-700 dark:text-slate-300 mb-2">
                     {t('الاسم الثلاثي', 'Full Name')}
                   </label>
                   <input
+                    id="student_name"
                     type="text"
                     required
                     className="w-full px-4 py-4 rounded-xl bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 dark:text-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 dark:focus:ring-emerald-900/30 outline-none transition font-medium"
@@ -203,10 +205,11 @@ const CourseRegister: React.FC = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div>
-                    <label className="block text-sm font-black text-slate-700 dark:text-slate-300 mb-2">
+                    <label htmlFor="student_phone" className="block text-sm font-black text-slate-700 dark:text-slate-300 mb-2">
                       {t('رقم الهاتف', 'Phone Number')}
                     </label>
                     <input
+                      id="student_phone"
                       type="tel"
                       required
                       className="w-full px-4 py-4 rounded-xl bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 dark:text-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 dark:focus:ring-emerald-900/30 outline-none transition font-medium"
@@ -216,10 +219,11 @@ const CourseRegister: React.FC = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-black text-slate-700 dark:text-slate-300 mb-2">
+                    <label htmlFor="student_email" className="block text-sm font-black text-slate-700 dark:text-slate-300 mb-2">
                       {t('البريد الإلكتروني', 'Email')}
                     </label>
                     <input
+                      id="student_email"
                       type="email"
                       required
                       className="w-full px-4 py-4 rounded-xl bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 dark:text-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 dark:focus:ring-emerald-900/30 outline-none transition font-medium"
@@ -231,10 +235,11 @@ const CourseRegister: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-black text-slate-700 dark:text-slate-300 mb-2">
+                  <label htmlFor="student_job" className="block text-sm font-black text-slate-700 dark:text-slate-300 mb-2">
                     {t('المسمى الوظيفي / التخصص الدراسي', 'Job Title / Field of Study')}
                   </label>
                   <input
+                    id="student_job"
                     type="text"
                     className="w-full px-4 py-4 rounded-xl bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 dark:text-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 dark:focus:ring-emerald-900/30 outline-none transition font-medium"
                     placeholder={t('مثال: طالب علوم حاسوب / مهندس مدني', 'Example: Computer Science Student / Civil Engineer')}

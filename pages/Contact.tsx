@@ -114,10 +114,11 @@ const Contact: React.FC = () => {
             </h2>
             <form onSubmit={handleSubmit} className="space-y-5">
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">
+                <label htmlFor="contact_name" className="block text-sm font-bold text-slate-700 mb-2">
                   {t('الاسم الكامل', 'Full Name')}
                 </label>
                 <input
+                  id="contact_name"
                   type="text"
                   required
                   className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 outline-none transition font-medium"
@@ -129,10 +130,11 @@ const Contact: React.FC = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-2">
+                  <label htmlFor="contact_email" className="block text-sm font-bold text-slate-700 mb-2">
                     {t('البريد الإلكتروني', 'Email')}
                   </label>
                   <input
+                    id="contact_email"
                     type="email"
                     required
                     className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 outline-none transition font-medium"
@@ -142,10 +144,11 @@ const Contact: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-2">
+                  <label htmlFor="contact_phone" className="block text-sm font-bold text-slate-700 mb-2">
                     {t('رقم الهاتف', 'Phone Number')}
                   </label>
                   <input
+                    id="contact_phone"
                     type="tel"
                     className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 outline-none transition font-medium"
                     placeholder="077xxxxxxxx"
@@ -156,10 +159,11 @@ const Contact: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">
+                <label htmlFor="contact_message" className="block text-sm font-bold text-slate-700 mb-2">
                   {t('الرسالة', 'Message')}
                 </label>
                 <textarea
+                  id="contact_message"
                   rows={4}
                   required
                   className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 outline-none transition resize-none font-medium"
