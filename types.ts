@@ -144,6 +144,13 @@ export interface SiteSettings {
 
   // Language
   defaultLanguage?: 'ar' | 'en';
+
+  // Home Page Stats
+  statsMode?: 'auto' | 'manual';
+  manualCoursesCount?: number;
+  manualTraineesCount?: number;
+  manualInstructorsCount?: number;
+  manualPartnersCount?: number;
 }
 
 export interface Certificate {

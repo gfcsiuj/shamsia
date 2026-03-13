@@ -69,12 +69,14 @@ const Home: React.FC = () => {
     fetchStats();
   }, []);
 
-  // Stats data with real values from database
+  const isAuto = settings.statsMode !== 'manual';
+
+  // Stats data with real values from database or settings
   const STATS = [
-    { id: 1, value: `${coursesCount}+`, label: t('دورة تدريبية', 'Training Courses'), icon: Play, color: 'emerald' },
-    { id: 2, value: `${studentsCount}+`, label: t('متدرب', 'Trainees'), icon: Heart, color: 'orange' },
-    { id: 3, value: `${instructorsCount}+`, label: t('مدرب معتمد', 'Certified Trainers'), icon: UserCheck, color: 'blue' },
-    { id: 4, value: '15', label: t('شريك توظيف استراتيجي', 'Strategic Partners'), icon: Rocket, color: 'purple' },
+    { id: 1, value: `+${isAuto ? coursesCount : (settings.manualCoursesCount || 0)}`, label: t('دورة تدريبية', 'Training Courses'), icon: Play, color: 'emerald' },
+    { id: 2, value: `+${isAuto ? studentsCount : (settings.manualTraineesCount || 0)}`, label: t('متدرب وخريج', 'Trainees & Graduates'), icon: Heart, color: 'orange' },
+    { id: 3, value: `+${isAuto ? instructorsCount : (settings.manualInstructorsCount || 0)}`, label: t('مدرب معتمد', 'Certified Trainers'), icon: UserCheck, color: 'blue' },
+    { id: 4, value: `${isAuto ? '15' : (settings.manualPartnersCount || 0)}`, label: t('شريك توظيف استراتيجي', 'Strategic Partners'), icon: Rocket, color: 'purple' },
   ];
 
   // Fetch courses from database
@@ -217,7 +219,7 @@ const Home: React.FC = () => {
             {/* Hero Image */}
             <div className="lg:w-2/5 relative w-full perspective-1000 order-1 lg:order-2 mb-4 lg:mb-0 px-8 lg:px-0">
               <div className="rounded-[2rem] lg:rounded-[4rem] bg-white p-3 lg:p-6 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.1)] border border-slate-100 animate-float max-w-[280px] lg:max-w-md mx-auto relative group overflow-hidden">
-                <img src="https://d.top4top.io/p_37213rq871.jpg" alt="Hero Student" className="rounded-[2.5rem] lg:rounded-[3rem] w-full aspect-[4/5] object-cover transition-transform duration-1000 group-hover:scale-105" />
+                <img src="https://e.top4top.io/p_3724orxml1.png" alt="Hero Student" className="rounded-[2.5rem] lg:rounded-[3rem] w-full aspect-[4/5] object-cover transition-transform duration-1000 group-hover:scale-105" />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/20 to-transparent"></div>
               </div>
 

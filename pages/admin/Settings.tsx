@@ -260,6 +260,72 @@ const Settings: React.FC = () => {
                                 </div>
                             </div>
 
+                            {/* Home Page Stats */}
+                            <div className="bg-white rounded-2xl shadow-lg border border-slate-100 p-6 md:p-8">
+                                <div className="flex items-center gap-3 mb-6 border-b border-slate-100 pb-4">
+                                    <div className="p-3 bg-emerald-100 text-emerald-600 rounded-xl">
+                                        <Monitor size={24} />
+                                    </div>
+                                    <div>
+                                        <h2 className="text-lg font-bold text-slate-800">إحصائيات الصفحة الرئيسية</h2>
+                                        <p className="text-sm text-slate-500">طريقة حساب وعرض الأرقام (دورات، متدربين...)</p>
+                                    </div>
+                                </div>
+
+                                <div className="mb-6">
+                                    <label className="block text-sm font-bold text-slate-700 mb-2">مصدر الإحصائيات</label>
+                                    <select
+                                        className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:border-emerald-500 outline-none transition"
+                                        value={formData.statsMode || 'auto'}
+                                        onChange={e => setFormData({ ...formData, statsMode: e.target.value as 'auto' | 'manual' })}
+                                    >
+                                        <option value="auto">تلقائي (من السجلات الفعلية للمنصة)</option>
+                                        <option value="manual">يدوي (يتم إدخاله من قبل الإدارة)</option>
+                                    </select>
+                                </div>
+
+                                {formData.statsMode === 'manual' && (
+                                    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 animate-fade-in">
+                                        <div>
+                                            <label className="block text-sm font-bold text-slate-700 mb-2">الدورات التدريبية</label>
+                                            <input
+                                                type="number"
+                                                className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 outline-none transition"
+                                                value={formData.manualCoursesCount || 0}
+                                                onChange={e => setFormData({ ...formData, manualCoursesCount: Number(e.target.value) })}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-bold text-slate-700 mb-2">المتدربون والخريجون</label>
+                                            <input
+                                                type="number"
+                                                className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 outline-none transition"
+                                                value={formData.manualTraineesCount || 0}
+                                                onChange={e => setFormData({ ...formData, manualTraineesCount: Number(e.target.value) })}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-bold text-slate-700 mb-2">المدربون المعتمدون</label>
+                                            <input
+                                                type="number"
+                                                className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 outline-none transition"
+                                                value={formData.manualInstructorsCount || 0}
+                                                onChange={e => setFormData({ ...formData, manualInstructorsCount: Number(e.target.value) })}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-bold text-slate-700 mb-2">شركاء استراتيجيون</label>
+                                            <input
+                                                type="number"
+                                                className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 outline-none transition"
+                                                value={formData.manualPartnersCount || 0}
+                                                onChange={e => setFormData({ ...formData, manualPartnersCount: Number(e.target.value) })}
+                                            />
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
                             {/* Success Partners */}
                             <div className="bg-white rounded-2xl shadow-lg border border-slate-100 p-6 md:p-8">
                                 <div className="flex items-center gap-3 mb-6 border-b border-slate-100 pb-4">
