@@ -11,6 +11,7 @@ import Calendar from './pages/Calendar';
 import Certificates from './pages/Certificates';
 import CourseRegister from './pages/CourseRegister';
 import TrainerRegister from './pages/TrainerRegister';
+import Documentation from './pages/Documentation';
 import Login from './pages/admin/Login';
 import VerifyCertificate from './pages/VerifyCertificate';
 import Dashboard from './pages/admin/Dashboard';
@@ -78,6 +79,7 @@ const App: React.FC = () => {
                 <Route path="/calendar" element={<Calendar />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/verify/:id" element={<VerifyCertificate />} />
+                <Route path="/documentation" element={<Documentation />} />
               </Route>
 
               {/* Admin Routes - Standalone (No Public Layout) */}
