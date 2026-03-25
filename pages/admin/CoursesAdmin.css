@@ -399,3 +399,27 @@ select.ca-input {
   transform: translateY(-1px);
   box-shadow: 0 8px 25px -5px rgba(99, 102, 241, 0.5);
 }
+
+/* --- Mobile Responsive Modal --- */
+@media (max-width: 640px) {
+  .ca-modal-content {
+    border-radius: 0 !important;
+    max-height: 100vh !important;
+    height: 100vh !important;
+  }
+
+  .ca-modal-overlay {
+    padding: 0 !important;
+  }
+
+  .ca-card {
+    border-radius: 1rem;
+    padding: 1rem;
+  }
+
+  .ai-overlay-content {
+    border-radius: 0;
+    padding: 1rem;
+    max-height: 100vh;
+  }
+}

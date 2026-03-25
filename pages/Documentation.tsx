@@ -602,7 +602,7 @@ hr { border: none; border-top: 1px solid #e2e8f0; margin: 24px 0; }
       {/* Tab Navigation */}
       <section className="sticky top-[60px] lg:top-[72px] z-40 bg-slate-50/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-800/50 px-4 py-4">
         <div className="container mx-auto max-w-5xl">
-          <div className="flex gap-3 overflow-x-auto pb-1 justify-center">
+          <div className="flex gap-3 overflow-x-auto pb-1 justify-start sm:justify-center">
             <TabButton active={activeSection === 'build'} onClick={() => setActiveSection('build')} icon={Code2} label={t('بناء الموقع', 'Building')} color="blue" />
             <TabButton active={activeSection === 'frontend'} onClick={() => setActiveSection('frontend')} icon={Monitor} label={t('واجهة المستخدم', 'Frontend')} color="emerald" />
             <TabButton active={activeSection === 'admin'} onClick={() => setActiveSection('admin')} icon={Shield} label={t('لوحة التحكم', 'Admin Panel')} color="purple" />
@@ -655,7 +655,7 @@ hr { border: none; border-top: 1px solid #e2e8f0; margin: 24px 0; }
                     <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">{t('التقنيات الأساسية المستخدمة', 'Core technologies used')}</p>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                   {languages.map((lang) => {
                     const colorMap: Record<string, string> = {
                       blue: 'border-blue-200 dark:border-blue-800/50 hover:bg-blue-50 dark:hover:bg-blue-900/20',
@@ -733,7 +733,7 @@ hr { border: none; border-top: 1px solid #e2e8f0; margin: 24px 0; }
                     <h2 className="text-2xl lg:text-3xl font-black text-slate-900 dark:text-white italic tracking-tight">{t('ميزات التصميم', 'Design Features')}</h2>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                   {designFeatures.map((f) => (
                     <div key={f.name} className="bg-white dark:bg-slate-800/60 p-5 rounded-2xl border border-slate-100 dark:border-slate-700/50 text-center hover:shadow-lg transition-all group">
                       <div className="w-12 h-12 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">

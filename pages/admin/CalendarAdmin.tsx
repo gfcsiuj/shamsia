@@ -202,7 +202,19 @@ const CalendarAdmin: React.FC = () => {
             </aside>
 
             {/* Main */}
-            <main className="flex-1 md:mr-72 p-6">
+            <main className="flex-1 md:mr-72 p-4 md:p-6">
+                {/* Mobile Header */}
+                <div className="md:hidden flex items-center justify-between mb-4 bg-gradient-to-r from-primary-800 to-primary-900 p-4 rounded-2xl text-white -mx-4 -mt-4">
+                    <div className="flex items-center gap-3">
+                        <Link to="/admin/dashboard" className="p-2 bg-white/10 rounded-xl">
+                            <LayoutDashboard size={20} />
+                        </Link>
+                        <h2 className="text-lg font-black">إدارة التقويم</h2>
+                    </div>
+                    <button onClick={handleLogout} className="p-2 bg-red-500/20 rounded-xl text-red-300">
+                        <LogOut size={18} />
+                    </button>
+                </div>
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
                     <div>
@@ -261,7 +273,7 @@ const CalendarAdmin: React.FC = () => {
                                                 </span>
                                             </td>
                                             <td className="px-5 py-4">
-                                                <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition">
+                                                <div className="flex items-center gap-2 sm:opacity-0 sm:group-hover:opacity-100 transition">
                                                     <button onClick={() => openEdit(entry)} className="p-2 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 transition" title="تعديل">
                                                         <Pencil size={16} />
                                                     </button>
@@ -311,7 +323,7 @@ const CalendarAdmin: React.FC = () => {
                             </div>
 
                             {/* Dates Row */}
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-bold text-slate-700 mb-2">تاريخ البدء <span className="text-red-500">*</span></label>
                                     <input type="text" placeholder="مثال: 2026/03/01" value={form.startDate}
@@ -327,7 +339,7 @@ const CalendarAdmin: React.FC = () => {
                             </div>
 
                             {/* Lectures & Duration Row */}
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-bold text-slate-700 mb-2">عدد المحاضرات</label>
                                     <input type="number" placeholder="0" value={form.lecturesCount ?? ''}
@@ -343,7 +355,7 @@ const CalendarAdmin: React.FC = () => {
                             </div>
 
                             {/* Instructor & Location Row */}
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-bold text-slate-700 mb-2">المدرب</label>
                                     <input type="text" placeholder="اسم المدرب" value={form.instructor || ''}
@@ -372,7 +384,7 @@ const CalendarAdmin: React.FC = () => {
                             </div>
 
                             {/* Price Row */}
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-bold text-slate-700 mb-2">السعر (د.ع)</label>
                                     <input type="number" placeholder="0" value={form.price ?? ''}

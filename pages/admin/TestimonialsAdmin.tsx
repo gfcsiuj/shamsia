@@ -102,29 +102,29 @@ const TestimonialsAdmin: React.FC = () => {
     });
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-green-50/20 to-orange-50/20 p-6 md:p-8">
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-green-50/20 to-orange-50/20 p-4 md:p-8">
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
-                <div className="relative bg-gradient-to-r from-teal-600 to-emerald-700 p-10 rounded-[3rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.15)] overflow-hidden mb-8">
+                <div className="relative bg-gradient-to-r from-teal-600 to-emerald-700 p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.15)] overflow-hidden mb-6 md:mb-8">
                     <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDE0aDRtLTQgNGg0bS00IDRoNE00MCAxNGg0bS00IDRoNG0tNCA0aDQiLz48L2c+PC9nPjwvc3ZnPg==')] opacity-30"></div>
-                    <div className="flex items-center justify-between relative z-10">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between relative z-10 gap-4">
                         <div className="flex items-center gap-4">
                             <Link to="/admin/dashboard" className="p-2.5 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 hover:bg-white/20 transition text-white">
                                 <ArrowRight size={20} />
                             </Link>
                             <div>
-                                <h1 className="text-3xl md:text-4xl font-black text-white mb-2 italic tracking-tight">💬 آراء المتدربين</h1>
-                                <p className="text-teal-100 text-base md:text-lg font-medium">إدارة تقييمات وآراء المتدربين</p>
+                                <h1 className="text-2xl md:text-4xl font-black text-white mb-1 md:mb-2 italic tracking-tight">💬 آراء المتدربين</h1>
+                                <p className="text-teal-100 text-sm md:text-lg font-medium">إدارة تقييمات وآراء المتدربين</p>
                             </div>
                         </div>
-                        <button onClick={openAdd} className="bg-white text-teal-700 px-5 py-2.5 rounded-xl flex items-center gap-2 font-bold transition shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                        <button onClick={openAdd} className="bg-white text-teal-700 px-5 py-2.5 rounded-xl flex items-center justify-center gap-2 font-bold transition shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 w-full sm:w-auto">
                             <Plus size={20} /> إضافة رأي
                         </button>
                     </div>
                 </div>
 
                 {/* Stats */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-6 mb-6 md:mb-8">
                     <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
                         <div className="flex items-center gap-3 mb-2">
                             <div className="w-10 h-10 bg-teal-100 rounded-xl flex items-center justify-center"><MessageSquare className="text-teal-600" size={20} /></div>

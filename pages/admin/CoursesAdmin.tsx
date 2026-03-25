@@ -323,22 +323,22 @@ const CoursesAdmin: React.FC = () => {
 
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-green-50/20 to-orange-50/20 p-6 md:p-8">
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-green-50/20 to-orange-50/20 p-4 md:p-8">
             <div className="max-w-7xl mx-auto">
                 {/* Enhanced Header with Gradient */}
                 {/* Enhanced Header with Gradient */}
                 {/* Enhanced Header with Gradient */}
-                <div className="relative bg-gradient-to-r from-orange-500 to-orange-700 p-10 rounded-[3rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.15)] overflow-hidden mb-8">
+                <div className="relative bg-gradient-to-r from-orange-500 to-orange-700 p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.15)] overflow-hidden mb-6 md:mb-8">
                     <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48cGF0aCBkPSJNMzYgMTRoNG0tNCA0aDRtLTQgNGg0TTQwIDE0aDRtLTQgNGg0bS00IDRoNCIvPjwvZz48L2c+PC9zdmc+')] opacity-20"></div>
                     <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
-                    <div className="flex items-center justify-between relative z-10">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between relative z-10 gap-4">
                         <div className="flex items-center gap-4">
                             <Link to="/admin/dashboard" className="p-2.5 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 hover:bg-white/20 transition text-white">
                                 <ArrowRight size={20} />
                             </Link>
                             <div>
-                                <h1 className="text-3xl md:text-4xl font-black text-white mb-2 italic tracking-tight">📖 إدارة الدورات</h1>
-                                <p className="text-orange-100 text-base md:text-lg font-medium">إضافة وتعديل الدورات التدريبية ومحتواها</p>
+                                <h1 className="text-2xl md:text-4xl font-black text-white mb-1 md:mb-2 italic tracking-tight">📖 إدارة الدورات</h1>
+                                <p className="text-orange-100 text-sm md:text-lg font-medium">إضافة وتعديل الدورات التدريبية ومحتواها</p>
                             </div>
                         </div>
                         <div className="flex items-center gap-4">
@@ -354,7 +354,7 @@ const CoursesAdmin: React.FC = () => {
                             </div>
                             <button
                                 onClick={() => { setFormData(initialFormState); setIsEditing(true); setMediaFile(null); setActiveTab('basic'); }}
-                                className="bg-white text-orange-700 px-5 py-2.5 rounded-xl flex items-center gap-2 font-bold transition shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                                className="bg-white text-orange-700 px-5 py-2.5 rounded-xl flex items-center justify-center gap-2 font-bold transition shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 w-full sm:w-auto"
                             >
                                 <Plus size={20} />
                                 إضافة دورة
@@ -366,7 +366,7 @@ const CoursesAdmin: React.FC = () => {
                 {loading ? (
                     <div className="flex justify-center py-20"><Loader2 className="animate-spin text-primary-600" size={40} /></div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
                         {courses.filter(c => c.title.toLowerCase().includes(searchQuery.toLowerCase()) || c.category.toLowerCase().includes(searchQuery.toLowerCase())).map((course) => (
                             <div key={course.id} className="bg-white rounded-[3rem] shadow-sm border border-slate-100 overflow-hidden hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] transition-all duration-500 hover:-translate-y-3 group">
                                 <div className="h-52 lg:h-56 relative">
@@ -403,8 +403,8 @@ const CoursesAdmin: React.FC = () => {
 
                 {/* --- High End Floating Modal --- */}
                 {isEditing && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 ca-modal-overlay">
-                        <div className="ca-modal-content w-full max-w-7xl max-h-[95vh] rounded-2xl flex flex-col overflow-hidden">
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4 ca-modal-overlay">
+                        <div className="ca-modal-content w-full max-w-7xl h-full sm:h-auto sm:max-h-[95vh] rounded-none sm:rounded-2xl flex flex-col overflow-hidden">
 
                             {/* Header */}
                             <div className="bg-white px-8 py-5 border-b border-slate-100 flex justify-between items-center shrink-0">

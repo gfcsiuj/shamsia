@@ -189,26 +189,26 @@ const RegistrationsAdmin: React.FC = () => {
     const pendingCount = registrations.filter(r => r.status === 'pending' || r.status === 'new').length;
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-green-50/20 to-orange-50/20 p-6 md:p-8">
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-green-50/20 to-orange-50/20 p-4 md:p-8">
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
-                <div className="relative bg-gradient-to-r from-indigo-600 to-purple-700 p-10 rounded-[3rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.15)] overflow-hidden mb-8">
+                <div className="relative bg-gradient-to-r from-indigo-600 to-purple-700 p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.15)] overflow-hidden mb-6 md:mb-8">
                     <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDE0aDRtLTQgNGg0bS00IDRoNE00MCAxNGg0bS00IDRoNG0tNCA0aDQiLz48L2c+PC9nPjwvc3ZnPg==')] opacity-30"></div>
-                    <div className="flex items-center justify-between relative z-10">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between relative z-10 gap-4">
                         <div className="flex items-center gap-4">
                             <Link to="/admin/dashboard" className="p-2.5 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 hover:bg-white/20 transition text-white">
                                 <ArrowRight size={20} />
                             </Link>
                             <div>
-                                <h1 className="text-3xl md:text-4xl font-black text-white mb-2 italic tracking-tight">📋 إدارة التسجيلات</h1>
-                                <p className="text-indigo-100 text-base md:text-lg font-medium">متابعة طلبات التسجيل ورسائل التواصل وطلبات المدربين</p>
+                                <h1 className="text-2xl md:text-4xl font-black text-white mb-1 md:mb-2 italic tracking-tight">📋 إدارة التسجيلات</h1>
+                                <p className="text-indigo-100 text-sm md:text-lg font-medium">متابعة طلبات التسجيل ورسائل التواصل وطلبات المدربين</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 {/* Stats */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mb-6 md:mb-8">
                     <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
                         <div className="flex items-center gap-3 mb-2">
                             <div className="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center"><BookOpen className="text-emerald-600" size={20} /></div>
@@ -240,22 +240,22 @@ const RegistrationsAdmin: React.FC = () => {
                 </div>
 
                 {/* Filters */}
-                <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm mb-6 flex flex-wrap gap-3 items-center">
-                    <div className="flex gap-2">
+                <div className="bg-white rounded-2xl p-3 md:p-4 border border-slate-100 shadow-sm mb-4 md:mb-6 flex flex-col sm:flex-row flex-wrap gap-3 items-stretch sm:items-center">
+                    <div className="flex gap-2 overflow-x-auto pb-1 sm:pb-0">
                         {(['all', 'course', 'contact', 'trainer'] as const).map(f => (
-                            <button key={f} onClick={() => setFilter(f)} className={`px-4 py-2 rounded-xl text-sm font-bold transition ${filter === f ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>
+                            <button key={f} onClick={() => setFilter(f)} className={`px-4 py-2 rounded-xl text-sm font-bold transition whitespace-nowrap ${filter === f ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>
                                 {f === 'all' ? 'الكل' : f === 'course' ? 'تسجيلات' : f === 'contact' ? 'رسائل' : 'طلبات مدربين'}
                             </button>
                         ))}
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 overflow-x-auto pb-1 sm:pb-0">
                         {['all', 'pending', 'new', 'approved', 'rejected'].map(s => (
-                            <button key={s} onClick={() => setStatusFilter(s)} className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${statusFilter === s ? 'bg-indigo-600 text-white' : 'bg-slate-50 text-slate-500 hover:bg-slate-100'}`}>
+                            <button key={s} onClick={() => setStatusFilter(s)} className={`px-3 py-1.5 rounded-lg text-xs font-bold transition whitespace-nowrap ${statusFilter === s ? 'bg-indigo-600 text-white' : 'bg-slate-50 text-slate-500 hover:bg-slate-100'}`}>
                                 {s === 'all' ? 'كل الحالات' : s === 'pending' ? 'انتظار' : s === 'new' ? 'جديد' : s === 'approved' ? 'مقبول' : 'مرفوض'}
                             </button>
                         ))}
                     </div>
-                    <div className="flex-1 min-w-[200px]">
+                    <div className="flex-1 min-w-0 sm:min-w-[200px]">
                         <div className="relative">
                             <Search size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
                             <input type="text" placeholder="بحث بالاسم أو الهاتف أو الدورة..." className="w-full pr-10 pl-4 py-2 rounded-xl border border-slate-200 text-sm outline-none focus:border-indigo-400" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
@@ -271,7 +271,7 @@ const RegistrationsAdmin: React.FC = () => {
                 ) : (
                     <div className="space-y-3">
                         {filtered.map(reg => (
-                            <div key={reg.id} className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:shadow-md transition-all flex items-center gap-4 cursor-pointer group" onClick={() => setSelected(reg)}>
+                            <div key={reg.id} className="bg-white rounded-2xl p-4 md:p-5 border border-slate-100 shadow-sm hover:shadow-md transition-all flex items-center gap-3 md:gap-4 cursor-pointer group" onClick={() => setSelected(reg)}>
                                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${getTypeBgClass(reg.type)}`}>
                                     {getTypeIcon(reg.type)}
                                 </div>
@@ -288,7 +288,7 @@ const RegistrationsAdmin: React.FC = () => {
                                 <div className="text-xs text-slate-400 hidden md:block">
                                     {new Date(reg.createdAt).toLocaleDateString('ar-IQ')}
                                 </div>
-                                <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition">
+                                <div className="flex items-center gap-2 sm:opacity-0 sm:group-hover:opacity-100 transition">
                                     <button onClick={e => { e.stopPropagation(); updateStatus(reg.id, 'approved'); }} className="p-2 hover:bg-green-50 rounded-lg text-green-600 transition" title="قبول"><CheckCircle size={18} /></button>
                                     <button onClick={e => { e.stopPropagation(); updateStatus(reg.id, 'rejected'); }} className="p-2 hover:bg-red-50 rounded-lg text-red-600 transition" title="رفض"><XCircle size={18} /></button>
                                     <button onClick={e => { e.stopPropagation(); deleteRegistration(reg.id); }} className="p-2 hover:bg-red-50 rounded-lg text-red-400 transition" title="حذف"><Trash2 size={18} /></button>

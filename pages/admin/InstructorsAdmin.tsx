@@ -207,24 +207,24 @@ const InstructorsAdmin: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-green-50/20 to-orange-50/20 p-6 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-green-50/20 to-orange-50/20 p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
         {/* Enhanced Header with Gradient */}
-        <div className="relative bg-gradient-to-r from-green-600 to-green-700 p-10 rounded-[3rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.15)] overflow-hidden mb-8">
+        <div className="relative bg-gradient-to-r from-green-600 to-green-700 p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.15)] overflow-hidden mb-6 md:mb-8">
           <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDE0aDRtLTQgNGg0bS00IDRoNE00MCAxNGg0bS00IDRoNG0tNCA0aDQiLz48L2c+PC9nPjwvc3ZnPg==')] opacity-30"></div>
-          <div className="flex items-center justify-between relative z-10">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between relative z-10 gap-4">
             <div className="flex items-center gap-4">
               <Link to="/admin/dashboard" className="p-2.5 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 hover:bg-white/20 transition text-white">
                 <ArrowRight size={20} />
               </Link>
               <div>
-                <h1 className="text-3xl md:text-4xl font-black text-white mb-2 italic tracking-tight">👥 إدارة المدربين</h1>
-                <p className="text-green-100 text-base md:text-lg font-medium">إدارة ملفات المدربين والبيانات الخاصة بهم</p>
+                <h1 className="text-2xl md:text-4xl font-black text-white mb-1 md:mb-2 italic tracking-tight">👥 إدارة المدربين</h1>
+                <p className="text-green-100 text-sm md:text-lg font-medium">إدارة ملفات المدربين والبيانات الخاصة بهم</p>
               </div>
             </div>
             <button
               onClick={() => { setFormData(initialFormState); setIsEditing(true); setImageFile(null); }}
-              className="bg-white text-primary-700 px-5 py-2.5 rounded-xl flex items-center gap-2 font-bold transition shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              className="bg-white text-primary-700 px-5 py-2.5 rounded-xl flex items-center justify-center gap-2 font-bold transition shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 w-full sm:w-auto"
             >
               <Plus size={20} />
               إضافة مدرب
@@ -235,13 +235,13 @@ const InstructorsAdmin: React.FC = () => {
         {loading ? (
           <div className="flex justify-center py-20"><Loader2 className="animate-spin text-primary-600" size={40} /></div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
             {instructors.map((instructor) => (
               <div key={instructor.id} className="bg-white rounded-[3rem] shadow-sm border border-slate-100 p-8 hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] transition-all duration-500 hover:-translate-y-3 group relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary-500 to-secondary-500"></div>
                 <div className="flex justify-between items-start mb-6">
                   <img src={instructor.image} alt={instructor.name} className="w-20 h-20 rounded-[2rem] object-cover border-4 border-slate-100 shadow-lg transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6" />
-                  <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div className="flex gap-2 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-300">
                     <button onClick={() => handleEdit(instructor)} className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition" title="تعديل"><Pencil size={18} /></button>
                     <button onClick={() => handleDelete(instructor.id)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition" title="حذف"><Trash2 size={18} /></button>
                   </div>
@@ -276,8 +276,8 @@ const InstructorsAdmin: React.FC = () => {
 
         {/* High End Floating Modal */}
         {isEditing && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 ia-modal-overlay">
-            <div className="ia-modal-content w-full max-w-4xl max-h-[90vh] rounded-2xl flex flex-col overflow-hidden">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4 ia-modal-overlay">
+            <div className="ia-modal-content w-full max-w-4xl h-full sm:h-auto sm:max-h-[90vh] rounded-none sm:rounded-2xl flex flex-col overflow-hidden">
 
               {/* Header */}
               <div className="px-8 py-5 border-b border-slate-100 flex justify-between items-center bg-white shrink-0">

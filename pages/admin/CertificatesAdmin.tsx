@@ -186,35 +186,35 @@ const CertificatesAdmin: React.FC = () => {
     ];
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-green-50/20 to-orange-50/20 p-6 md:p-8">
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-green-50/20 to-orange-50/20 p-4 md:p-8">
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
-                <div className="relative bg-gradient-to-r from-amber-500 to-orange-600 p-10 rounded-[3rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.15)] overflow-hidden mb-8">
+                <div className="relative bg-gradient-to-r from-amber-500 to-orange-600 p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.15)] overflow-hidden mb-6 md:mb-8">
                     <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDE0aDRtLTQgNGg0bS00IDRoNE00MCAxNGg0bS00IDRoNG0tNCA0aDQiLz48L2c+PC9nPjwvc3ZnPg==')] opacity-30"></div>
-                    <div className="flex items-center justify-between relative z-10">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between relative z-10 gap-4">
                         <div className="flex items-center gap-4">
                             <Link to="/admin/dashboard" className="p-2.5 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 hover:bg-white/20 transition text-white">
                                 <ArrowRight size={20} />
                             </Link>
                             <div>
-                                <h1 className="text-3xl md:text-4xl font-black text-white mb-2 italic tracking-tight">🏆 إدارة الشهادات</h1>
-                                <p className="text-amber-100 text-base md:text-lg font-medium">إصدار وإدارة جميع أنواع الشهادات</p>
+                                <h1 className="text-2xl md:text-4xl font-black text-white mb-1 md:mb-2 italic tracking-tight">🏆 إدارة الشهادات</h1>
+                                <p className="text-amber-100 text-sm md:text-lg font-medium">إصدار وإدارة جميع أنواع الشهادات</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 {/* Tabs */}
-                <div className="bg-white rounded-2xl shadow-lg border border-slate-100 p-2 mb-8">
-                    <div className="flex gap-1">
+                <div className="bg-white rounded-2xl shadow-lg border border-slate-100 p-1.5 md:p-2 mb-6 md:mb-8">
+                    <div className="flex gap-1 overflow-x-auto">
                         {tabs.map(tab => {
                             const Icon = tab.icon;
                             const isActive = activeTab === tab.id;
                             const colors: Record<string, string> = { amber: 'from-amber-500 to-orange-500', teal: 'from-teal-500 to-emerald-600', purple: 'from-purple-500 to-indigo-600', rose: 'from-rose-500 to-pink-600' };
                             return (
                                 <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-                                    className={`flex-1 flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl font-bold text-sm transition-all duration-300 ${isActive ? `bg-gradient-to-r ${colors[tab.color]} text-white shadow-lg` : 'text-slate-500 hover:bg-slate-50'}`}>
-                                    <Icon size={18} /> {tab.label}
+                                    className={`flex-1 min-w-0 flex items-center justify-center gap-1.5 md:gap-2 px-3 md:px-4 py-3 md:py-3.5 rounded-xl font-bold text-xs md:text-sm transition-all duration-300 whitespace-nowrap ${isActive ? `bg-gradient-to-r ${colors[tab.color]} text-white shadow-lg` : 'text-slate-500 hover:bg-slate-50'}`}>
+                                    <Icon size={16} className="shrink-0" /> <span className="hidden sm:inline">{tab.label}</span><span className="sm:hidden">{tab.label.split(' ').pop()}</span>
                                 </button>
                             );
                         })}
@@ -224,9 +224,9 @@ const CertificatesAdmin: React.FC = () => {
                 {/* ═══════════════════  TAB 1: Student Certificates ═══════════════════ */}
                 {activeTab === 'students' && (
                     <div className="animate-fade-in">
-                        <div className="flex justify-between items-center mb-6">
-                            <h2 className="text-xl font-black text-slate-800">شهادات المتدربين</h2>
-                            <button onClick={() => setIssueModal(true)} className="bg-amber-600 hover:bg-amber-700 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 font-bold transition shadow-lg">
+                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6">
+                            <h2 className="text-lg md:text-xl font-black text-slate-800">شهادات المتدربين</h2>
+                            <button onClick={() => setIssueModal(true)} className="bg-amber-600 hover:bg-amber-700 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 font-bold transition shadow-lg w-full sm:w-auto justify-center">
                                 <Plus size={18} /> إصدار شهادة
                             </button>
                         </div>
