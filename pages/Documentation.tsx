@@ -133,7 +133,7 @@ const adminSections = [
     'رمز QR: يُنشأ تلقائياً ويمكن لأي شخص مسحه للتحقق من الشهادة عبر صفحة /verify',
     'الحالة: "صادرة" (سارية) أو "ملغاة" (تم إلغاؤها)',
     '✏️ يمكنك تعديل بيانات الشهادة أو تغيير حالتها لاحقاً',
-    'الزوار يمكنهم التحقق من أي شهادة عبر رابط shamsia.netlify.app/verify/رقم-الشهادة',
+    'الزوار يمكنهم التحقق من أي شهادة عبر رابط shamsia.org/verify/رقم-الشهادة',
   ] },
   { name: 'آراء المتدربين', icon: MessageSquare, color: 'teal', desc: 'إضافة وإدارة التقييمات التي تظهر في الصفحة الرئيسية', details: [
     '📋 لإضافة رأي متدرب: اضغط "إضافة رأي" ثم:',
@@ -301,7 +301,7 @@ hr { border: none; border-top: 1px solid #e2e8f0; margin: 24px 0; }
 <div class="cover">
   <h1>📖 توثيق منصة شمسية التعليمية</h1>
   <p class="subtitle">دليل شامل يوضح كيف تم بناء الموقع، وما يراه المستخدم، وكيفية إدارته بالكامل</p>
-  <p class="url">🔗 https://shamsia.netlify.app</p>
+  <p class="url">🔗 https://shamsia.org</p>
   <p class="date">تم إعداد هذا التوثيق بتاريخ: 24 مارس 2026</p>
   <p class="dev">تطوير: محمد حازم أحمد الخاتوني</p>
 </div>
@@ -335,7 +335,7 @@ hr { border: none; border-top: 1px solid #e2e8f0; margin: 24px 0; }
   </table>
 
   <h3>🚀 Netlify - الاستضافة والنشر</h3>
-  <div class="info-box">الموقع مستضاف ومنشور على <b>Netlify</b> عبر الرابط: <code>https://shamsia.netlify.app</code></div>
+  <div class="info-box">الموقع مستضاف ومنشور على <b>Netlify</b> عبر الرابط: <code>https://shamsia.org</code></div>
 
   <h3>📦 مجموعات البيانات في Firestore</h3>
   <table><tr><th>المجموعة</th><th>المحتوى</th></tr>
@@ -395,7 +395,7 @@ hr { border: none; border-top: 1px solid #e2e8f0; margin: 24px 0; }
   <h2>القسم الثالث: لوحة التحكم</h2>
   <h3>🔓 كيفية الدخول</h3>
   <ol>
-  <li>افتح الرابط: <code>shamsia.netlify.app/admin</code></li>
+  <li>افتح الرابط: <code>shamsia.org/admin</code></li>
   <li>أدخل البريد الإلكتروني وكلمة المرور</li>
   <li>اضغط "تسجيل الدخول" للانتقال للوحة التحكم</li>
   </ol>
@@ -465,7 +465,7 @@ hr { border: none; border-top: 1px solid #e2e8f0; margin: 24px 0; }
   <li>رمز QR يُنشأ تلقائياً للتحقق</li>
   <li>الحالة: صادرة أو ملغاة</li>
   </ol>
-  <p>التحقق: <code>shamsia.netlify.app/verify/رقم-الشهادة</code></p>
+  <p>التحقق: <code>shamsia.org/verify/رقم-الشهادة</code></p>
   </div>
 
   <div class="sub-section">
@@ -586,9 +586,9 @@ hr { border: none; border-top: 1px solid #e2e8f0; margin: 24px 0; }
               'A comprehensive guide explaining how the site was built, what the user sees, and how to manage it'
             )}
           </p>
-          <a href="https://shamsia.netlify.app" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold text-sm hover:underline">
+          <a href="https://shamsia.org" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold text-sm hover:underline">
             <ExternalLink size={16} />
-            shamsia.netlify.app
+            shamsia.org
           </a>
           <div className="mt-6">
             <button onClick={handlePrint} className="inline-flex items-center gap-2.5 px-6 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black text-sm hover:bg-slate-800 dark:hover:bg-slate-100 transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95">
@@ -707,7 +707,7 @@ hr { border: none; border-top: 1px solid #e2e8f0; margin: 24px 0; }
                   </div>
                   <div>
                     <h4 className="font-black text-lg">{t('Netlify - الاستضافة والنشر', 'Netlify - Hosting & Deployment')}</h4>
-                    <p className="text-teal-100 text-sm font-medium">{t('الموقع مستضاف ومنشور على', 'Website hosted and deployed on')} <a href="https://shamsia.netlify.app" target="_blank" rel="noopener noreferrer" className="underline font-bold text-white">shamsia.netlify.app</a></p>
+                    <p className="text-teal-100 text-sm font-medium">{t('الموقع مستضاف ومنشور على', 'Website hosted and deployed on')} <a href="https://shamsia.org" target="_blank" rel="noopener noreferrer" className="underline font-bold text-white">shamsia.org</a></p>
                   </div>
                 </div>
 
@@ -827,7 +827,7 @@ hr { border: none; border-top: 1px solid #e2e8f0; margin: 24px 0; }
                     <h2 className="text-2xl lg:text-4xl font-black italic tracking-tight">{t('🔓 كيفية الدخول', '🔓 How to Login')}</h2>
                   </div>
                   <div className="space-y-3 text-sm lg:text-base font-medium text-purple-100">
-                    <p className="flex items-center gap-3"><span className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center font-black text-white shrink-0">1</span>{t('افتح الرابط', 'Open')} <code className="bg-white/10 px-3 py-1 rounded-lg text-white font-bold">shamsia.netlify.app/admin</code></p>
+                    <p className="flex items-center gap-3"><span className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center font-black text-white shrink-0">1</span>{t('افتح الرابط', 'Open')} <code className="bg-white/10 px-3 py-1 rounded-lg text-white font-bold">shamsia.org/admin</code></p>
                     <p className="flex items-center gap-3"><span className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center font-black text-white shrink-0">2</span>{t('أدخل البريد الإلكتروني وكلمة المرور', 'Enter email and password')}</p>
                     <p className="flex items-center gap-3"><span className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center font-black text-white shrink-0">3</span>{t('اضغط "تسجيل الدخول" للانتقال للوحة التحكم', 'Click "Login" to enter the dashboard')}</p>
                   </div>

@@ -203,35 +203,19 @@ const CourseRegister: React.FC = () => {
                   />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <div>
-                    <label htmlFor="student_phone" className="block text-sm font-black text-slate-700 dark:text-slate-300 mb-2">
-                      {t('رقم الهاتف', 'Phone Number')}
-                    </label>
-                    <input
-                      id="student_phone"
-                      type="tel"
-                      required
-                      className="w-full px-4 py-4 rounded-xl bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 dark:text-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 dark:focus:ring-emerald-900/30 outline-none transition font-medium"
-                      placeholder="077xxxxxxxx"
-                      value={formData.phone}
-                      onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="student_email" className="block text-sm font-black text-slate-700 dark:text-slate-300 mb-2">
-                      {t('البريد الإلكتروني', 'Email')}
-                    </label>
-                    <input
-                      id="student_email"
-                      type="email"
-                      required
-                      className="w-full px-4 py-4 rounded-xl bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 dark:text-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 dark:focus:ring-emerald-900/30 outline-none transition font-medium"
-                      placeholder="example@mail.com"
-                      value={formData.email}
-                      onChange={e => setFormData({ ...formData, email: e.target.value })}
-                    />
-                  </div>
+                <div>
+                  <label htmlFor="student_phone" className="block text-sm font-black text-slate-700 dark:text-slate-300 mb-2">
+                    {t('رقم الهاتف', 'Phone Number')}
+                  </label>
+                  <input
+                    id="student_phone"
+                    type="tel"
+                    required
+                    className="w-full px-4 py-4 rounded-xl bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 dark:text-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 dark:focus:ring-emerald-900/30 outline-none transition font-medium"
+                    placeholder="077xxxxxxxx"
+                    value={formData.phone}
+                    onChange={e => setFormData({ ...formData, phone: e.target.value })}
+                  />
                 </div>
 
                 <div>

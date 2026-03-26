@@ -11,7 +11,7 @@ const MobileBottomNav: React.FC = () => {
   // Navigation items with translation support
   const navItems = [
     { id: 'home', icon: Home, label: t('الرئيسية', 'Home'), path: '/' },
-    { id: 'courses', icon: BookOpen, label: t('الـدورات', 'Courses'), path: '/courses' },
+    { id: 'courses', icon: BookOpen, label: t('الدورات', 'Courses'), path: '/courses' },
     { id: 'certificates', icon: Award, label: t('الشهادات', 'Certificates'), path: '/certificates' },
     { id: 'instructors', icon: Users, label: t('اعضاؤنا', 'Instructors/Graduates'), path: '/instructors' },
     { id: 'about', icon: Info, label: t('من نحن', 'About'), path: '/about' },
